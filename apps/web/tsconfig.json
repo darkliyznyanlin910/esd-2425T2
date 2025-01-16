@@ -1,11 +1,15 @@
 {
   "extends": "@repo/typescript-config/nextjs.json",
   "compilerOptions": {
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ]
+    "lib": ["ES2022", "dom", "dom.iterable"],
+    "jsx": "preserve",
+    "baseUrl": ".",
+    "paths": {
+      "~/*": ["./src/*"]
+    },
+    "plugins": [{ "name": "next" }],
+    "module": "esnext",
+    "moduleResolution": "Bundler"
   },
   "include": [
     "**/*.ts",
@@ -16,5 +20,5 @@
   ],
   "exclude": [
     "node_modules"
-  ]
+  ],
 }

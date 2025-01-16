@@ -1,0 +1,37 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    environment:
+      - NODE_ENV=production
+    env_file:
+      - .env
+    networks:
+      - kong-net
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    environment:
+      - NODE_ENV=production
+    env_file:
+      - .env
+    networks:
+      - kong-net
+
+  kong:
+    image: kong:3.5
+    environment:
+      - KONG_DATABASE=off
+      - KONG_DECLARATIVE_CONFIG=/usr/local/kong/declarative/kong.yml
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./kong.yml:/usr/local/kong/declarative/kong.yml
+    networks:
+      - kong-net
+
+networks:
+  kong-net:
+    driver: bridge
