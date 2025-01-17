@@ -95,8 +95,10 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Deploy to AWS
+      - name: Install Terraform
         uses: hashicorp/setup-terraform@v3
+
+      - name: Deploy to AWS
         run: |
           cd terraform
           ./deploy.sh ${{ inputs.image_tag || 'development' }}
