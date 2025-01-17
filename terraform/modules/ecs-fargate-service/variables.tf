@@ -75,4 +75,9 @@ variable "environment" {
     value     = string
   }))
   default = []
+}
+
+variable "alb_subnet_ids" {
+  type        = list(string)
+  description = "Subnet IDs for ALB"
 } 

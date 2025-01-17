@@ -18,14 +18,6 @@ resource "aws_ecs_task_definition" "app" {
         }
       ]
       environment = var.environment
-      logConfiguration = {
-        logDriver = "awslogs"
-        options = {
-          "awslogs-group"         = "/ecs/${var.service_name}"
-          "awslogs-region"        = var.aws_region
-          "awslogs-stream-prefix" = "ecs"
-        }
-      }
     }
   ])
 }
@@ -36,6 +28,8 @@ resource "aws_ecs_service" "app" {
   task_definition = aws_ecs_task_definition.app.arn
   desired_count   = var.desired_count
   launch_type     = "FARGATE"
+
+  depends_on = [aws_lb_listener.app]
 
   network_configuration {
     subnets          = var.subnet_ids
