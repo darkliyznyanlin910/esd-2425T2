@@ -96,6 +96,7 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Deploy to AWS
+        uses: hashicorp/setup-terraform@v3
         run: |
           cd terraform
           ./deploy.sh ${{ inputs.image_tag || 'development' }}
