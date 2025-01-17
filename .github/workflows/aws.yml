@@ -98,6 +98,18 @@ jobs:
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v3
 
+      - name: Get env from AWS Secrets Manager
+        id: get-env
+        shell: bash
+        env:
+          SECRET_PATH: esd-itsa/${{ inputs.image_tag || 'development' }}/secrets
+        run: |
+          # Get secrets from AWS Secrets Manager
+          secrets=$(aws secretsmanager get-secret-value --secret-id $SECRET_PATH --query SecretString --output text)
+
+          # Convert JSON to env file format
+          echo "$secrets" | jq -r 'to_entries | .[] | "\(.key)=\(.value)"' > .env
+
       - name: Deploy to AWS
         run: |
           cd terraform
