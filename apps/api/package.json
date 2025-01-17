@@ -41,17 +41,5 @@
     "eslint": "^8.57.0",
     "typescript": "5.5.4"
   },
-  "prettier": "@repo/prettier",
-  "pnpm": {
-    "supportedArchitectures": {
-      "cpu": [
-        "arm64",
-        "x64"
-      ],
-      "os": [
-        "darwin",
-        "linux"
-      ]
-    }
-  }
+  "prettier": "@repo/prettier"
 }
