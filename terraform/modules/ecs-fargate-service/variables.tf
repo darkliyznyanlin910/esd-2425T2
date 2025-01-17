@@ -68,7 +68,7 @@ variable "health_check_path" {
   default     = "/"
 }
 
-variable "environment" {
+variable "environment_variables" {
   description = "List of environment variables to inject into the container"
   type = list(object({
     name      = string
@@ -80,4 +80,16 @@ variable "environment" {
 variable "alb_subnet_ids" {
   type        = list(string)
   description = "Subnet IDs for ALB"
+}
+
+variable "domain_name" {
+  description = "Custom domain name (optional)"
+  type        = string
+  default     = ""
+}
+
+variable "zone_id" {
+  description = "Route53 hosted zone ID (required if domain_name is specified)"
+  type        = string
+  default     = ""
 } 

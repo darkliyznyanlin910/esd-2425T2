@@ -21,97 +21,6 @@ resource "aws_ecs_cluster" "main" {
   name = var.cluster_name
 }
 
-resource "aws_vpc" "main" {
-  cidr_block = "10.0.0.0/16"
-  enable_dns_hostnames = true
-  enable_dns_support = true
-}
-
-# Create public subnets for ALB
-resource "aws_subnet" "main_1" {
-  vpc_id     = aws_vpc.main.id
-  cidr_block = "10.0.1.0/24"
-  availability_zone = "${var.aws_region}a"
-  # Keep this true since ALB needs to be in public subnet
-  map_public_ip_on_launch = true
-}
-
-resource "aws_subnet" "main_2" {
-  vpc_id     = aws_vpc.main.id
-  cidr_block = "10.0.2.0/24"
-  availability_zone = "${var.aws_region}b"
-  map_public_ip_on_launch = true
-}
-
-# Create private subnets for ECS tasks
-resource "aws_subnet" "private_1" {
-  vpc_id     = aws_vpc.main.id
-  cidr_block = "10.0.3.0/24"
-  availability_zone = "${var.aws_region}a"
-}
-
-resource "aws_subnet" "private_2" {
-  vpc_id     = aws_vpc.main.id
-  cidr_block = "10.0.4.0/24"
-  availability_zone = "${var.aws_region}b"
-}
-
-# NAT Gateway for private subnets
-resource "aws_eip" "nat" {
-  domain = "vpc"
-}
-
-resource "aws_nat_gateway" "main" {
-  allocation_id = aws_eip.nat.id
-  subnet_id     = aws_subnet.main_1.id
-}
-
-# Internet Gateway (needed for ALB)
-resource "aws_internet_gateway" "main" {
-  vpc_id = aws_vpc.main.id
-}
-
-# Public Route Table
-resource "aws_route_table" "public" {
-  vpc_id = aws_vpc.main.id
-
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.main.id
-  }
-}
-
-# Private Route Table
-resource "aws_route_table" "private" {
-  vpc_id = aws_vpc.main.id
-
-  route {
-    cidr_block = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.main.id
-  }
-}
-
-# Route Table Associations
-resource "aws_route_table_association" "public_1" {
-  subnet_id      = aws_subnet.main_1.id
-  route_table_id = aws_route_table.public.id
-}
-
-resource "aws_route_table_association" "public_2" {
-  subnet_id      = aws_subnet.main_2.id
-  route_table_id = aws_route_table.public.id
-}
-
-resource "aws_route_table_association" "private_1" {
-  subnet_id      = aws_subnet.private_1.id
-  route_table_id = aws_route_table.private.id
-}
-
-resource "aws_route_table_association" "private_2" {
-  subnet_id      = aws_subnet.private_2.id
-  route_table_id = aws_route_table.private.id
-}
-
 data "aws_ecr_image" "web-repo" {
   repository_name = "esd-itsa-web"
   image_tag = terraform.workspace
@@ -121,6 +30,10 @@ data "aws_ecr_image" "web-repo" {
 data "aws_ecr_image" "api-repo" {
   repository_name = "esd-itsa-api"
   image_tag = terraform.workspace
+}
+
+data "aws_route53_zone" "main" {
+  name = "johnnyknl.com"
 }
 
 module "web_app" {
@@ -135,10 +48,12 @@ module "web_app" {
   subnet_ids     = [aws_subnet.private_1.id, aws_subnet.private_2.id]
   alb_subnet_ids = [aws_subnet.main_1.id, aws_subnet.main_2.id]
   assign_public_ip = false
+  domain_name = format("web.esd-itsa.%s.johnnyknl.com", terraform.workspace)
+  zone_id = data.aws_route53_zone.main.zone_id
 }
 
 output "web_app_url" {
-  value = module.web_app.alb_dns_name
+  value = module.web_app.domain_name
 }
 
 module "api_app" {
@@ -153,14 +68,16 @@ module "api_app" {
   subnet_ids     = [aws_subnet.private_1.id, aws_subnet.private_2.id]
   alb_subnet_ids = [aws_subnet.main_1.id, aws_subnet.main_2.id]
   assign_public_ip = false
-  environment = [
+  environment_variables = [
     {
       name  = "DB_HOST"
       value = local.environment_variables["DB_HOST"]
     }
   ]
+  domain_name = format("api.esd-itsa.%s.johnnyknl.com", terraform.workspace)
+  zone_id = data.aws_route53_zone.main.zone_id
 }
 
 output "api_app_url" {
-  value = module.api_app.alb_dns_name
+  value = module.api_app.domain_name
 }
