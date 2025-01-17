@@ -4,6 +4,12 @@ variable "aws_region" {
   default     = "ap-southeast-1"
 }
 
+variable "aws_profile" {
+  description = "AWS profile"
+  type        = string
+  default     = "esd-itsa"
+}
+
 variable "cluster_name" {
   description = "Name of the ECS cluster"
   type        = string

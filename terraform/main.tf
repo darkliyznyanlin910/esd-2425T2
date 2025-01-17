@@ -14,7 +14,7 @@ terraform {
 
 provider "aws" {
   region = var.aws_region
-  profile = try(coalesce("esd-itsa"), "default")
+  profile = var.aws_profile
 }
 
 resource "aws_ecs_cluster" "main" {
