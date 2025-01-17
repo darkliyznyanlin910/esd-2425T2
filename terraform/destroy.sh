@@ -15,13 +15,13 @@ terraform workspace select $ENVIRONMENT || terraform workspace new $ENVIRONMENT
 
 # Apply with variables
 if [ -n "$2" ]; then
-    terraform apply \
+    terraform destroy \
         -var="environment=${ENVIRONMENT}" \
         -var="aws_profile=${2}" \
         -var-file="terraform.tfvars" \
         -auto-approve
 else
-    terraform apply \
+    terraform destroy \
         -var="environment=${ENVIRONMENT}" \
         -var-file="terraform.tfvars" \
         -auto-approve

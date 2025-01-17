@@ -14,7 +14,7 @@ terraform {
 
 provider "aws" {
   region = var.aws_region
-  profile = terraform.workspace == "local" ? var.aws_profile : null
+  profile = var.aws_profile == "esd-itsa" ? var.aws_profile : null
 }
 
 resource "aws_ecs_cluster" "main" {
@@ -114,13 +114,13 @@ resource "aws_route_table_association" "private_2" {
 
 data "aws_ecr_image" "web-repo" {
   repository_name = "esd-itsa-web"
-  image_tag = var.environment
+  image_tag = terraform.workspace
 
 }
 
 data "aws_ecr_image" "api-repo" {
   repository_name = "esd-itsa-api"
-  image_tag = var.environment
+  image_tag = terraform.workspace
 }
 
 module "web_app" {
