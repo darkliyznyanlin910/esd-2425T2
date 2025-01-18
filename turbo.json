@@ -10,6 +10,9 @@
     "lint": {
       "dependsOn": ["^lint"]
     },
+    "format": {
+      "dependsOn": ["^format"]
+    },
     "check-types": {
       "dependsOn": ["^check-types"]
     },
@@ -22,7 +25,7 @@
       "persistent": true
     }
   },
-  "globalEnv": [],
+  "globalEnv": ["PORT", "DB_HOST"],
   "globalPassThroughEnv": [
     "NODE_ENV",
     "CI",

@@ -6,7 +6,7 @@
     "baseUrl": ".",
     "paths": {
       "~/*": ["./src/*"],
-      "@repo/ui/*": ["../../packages/ui/src/*"] // TODO: fix this to be more dynamic
+      "@repo/ui/*": ["../../packages/ui/src/*"] // Need to fix this to be more dynamic
     },
     "plugins": [{ "name": "next" }],
     "module": "esnext",

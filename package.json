@@ -5,14 +5,15 @@
     "build": "turbo build",
     "dev": "turbo dev",
     "lint": "turbo lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "format": "turbo run format --continue -- --cache --cache-location .cache/.prettiercache",
+    "format:fix": "turbo run format --continue -- --write --cache --cache-location .cache/.prettiercache",
     "clean": "git clean -xdf node_modules",
     "clean:workspaces": "turbo run clean"
   },
   "devDependencies": {
-    "prettier": "^3.2.5",
+    "prettier": "catalog:",
     "turbo": "^2.3.3",
-    "typescript": "5.5.4"
+    "typescript": "catalog:"
   },
   "packageManager": "pnpm@9.0.0",
   "engines": {
