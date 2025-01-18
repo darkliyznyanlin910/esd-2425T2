@@ -7,13 +7,13 @@
   },
   "scripts": {
     "build": "tsc",
-    "clean": "rm -rf dist",
     "start": "pnpm with-env tsx src/index.ts",
     "dev": "pnpm with-env tsx watch src/index.ts",
     "lint": "tsc --noEmit && eslint \"src/**/*.ts*\" --max-warnings 0",
     "test": "jest --detectOpenHandles",
     "typecheck": "tsc --noEmit",
-    "with-env": "dotenv -e ../../.env --"
+    "with-env": "dotenv -e ../../.env --",
+    "clean": "git clean -xdf .cache .next .turbo node_modules dist"
   },
   "dependencies": {
     "@t3-oss/env-core": "^0.11.1",

@@ -24,8 +24,25 @@ jobs:
       - id: check
         run: echo "should_deploy=true" >> $GITHUB_OUTPUT
 
-  build-and-push:
+  check-environment:
     needs: check-deploy
+    if: needs.check-deploy.outputs.should_deploy == 'true'
+    runs-on: ubuntu-latest
+    outputs:
+      environment: ${{ steps.set-env.outputs.environment }}
+    steps:
+      - id: set-env
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "environment=${{ inputs.image_tag }}" >> $GITHUB_OUTPUT
+          else
+            echo "environment=development" >> $GITHUB_OUTPUT
+          fi
+
+  build-and-push:
+    needs:
+      - check-deploy
+      - check-environment
     if: needs.check-deploy.outputs.should_deploy == 'true'
     runs-on: ubuntu-latest
 
@@ -47,7 +64,7 @@ jobs:
         id: get-env
         shell: bash
         env:
-          SECRET_PATH: esd-itsa/${{ inputs.image_tag || 'development' }}/secrets
+          SECRET_PATH: esd-itsa/${{ needs.check-environment.outputs.environment }}/secrets
         run: |
           # Get secrets from AWS Secrets Manager
           secrets=$(aws secretsmanager get-secret-value --secret-id $SECRET_PATH --query SecretString --output text)
@@ -60,7 +77,7 @@ jobs:
         shell: bash
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          IMAGE_TAG: ${{ inputs.image_tag || 'development' }}
+          IMAGE_TAG: ${{ needs.check-environment.outputs.environment }}
         run: |
           # Build and push Expert image
           docker build ./. -f ./apps/web/Dockerfile -t $ECR_REGISTRY/esd-itsa-web:$IMAGE_TAG
@@ -80,6 +97,7 @@ jobs:
   deploy:
     needs:
       - check-deploy
+      - check-environment
       - build-and-push
     if: needs.check-deploy.outputs.should_deploy == 'true'
     runs-on: ubuntu-latest
@@ -100,7 +118,7 @@ jobs:
         id: get-env
         shell: bash
         env:
-          SECRET_PATH: esd-itsa/${{ inputs.image_tag || 'development' }}/secrets
+          SECRET_PATH: esd-itsa/${{ needs.check-environment.outputs.environment }}/secrets
         run: |
           # Get secrets from AWS Secrets Manager
           secrets=$(aws secretsmanager get-secret-value --secret-id $SECRET_PATH --query SecretString --output text)
@@ -111,4 +129,4 @@ jobs:
       - name: Deploy to AWS
         run: |
           cd terraform
-          ./deploy.sh ${{ inputs.image_tag || 'development' }} default
+          ./deploy.sh ${{ needs.check-environment.outputs.environment }} default

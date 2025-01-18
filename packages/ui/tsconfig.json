@@ -1,8 +1,14 @@
 {
-  "extends": "@repo/typescript-config/react-library.json",
+  "extends": "@repo/typescript-config/internal-package.json",
   "compilerOptions": {
-    "outDir": "dist"
+    "lib": ["ES2022", "dom", "dom.iterable"],
+    "jsx": "preserve",
+    "rootDir": ".",
+    "baseUrl": ".",
+    "paths": {
+      "@repo/ui/*": ["src/*"]
+    }
   },
-  "include": ["src"],
+  "include": ["src", "tailwind.config.ts"],
   "exclude": ["node_modules", "dist"]
 }
