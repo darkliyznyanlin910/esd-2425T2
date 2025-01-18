@@ -5,6 +5,7 @@ services:
       dockerfile: apps/web/Dockerfile
     environment:
       - NODE_ENV=production
+      - DEPLOYMENT_ENVIRONMENT=docker
     env_file:
       - .env
     networks:
@@ -15,6 +16,7 @@ services:
       dockerfile: apps/api/Dockerfile
     environment:
       - NODE_ENV=production
+      - DEPLOYMENT_ENVIRONMENT=docker
     env_file:
       - .env
     networks:

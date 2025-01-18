@@ -1,9 +1,10 @@
 import { createEnv } from "@t3-oss/env-nextjs";
-import { vercel } from "@t3-oss/env-nextjs/presets";
 import { z } from "zod";
 
+import { env as serviceDiscoveryEnv } from "@repo/service-discovery/env";
+
 export const env = createEnv({
-  extends: [vercel()],
+  extends: [serviceDiscoveryEnv],
   shared: {
     NODE_ENV: z
       .enum(["development", "production", "test"])
