@@ -48,6 +48,12 @@ module "web_app" {
   subnet_ids     = [aws_subnet.private_1.id, aws_subnet.private_2.id]
   alb_subnet_ids = [aws_subnet.main_1.id, aws_subnet.main_2.id]
   assign_public_ip = false
+  environment_variables = [
+    {
+      name  = "POSTGRES_URL"
+      value = local.environment_variables["POSTGRES_URL"]
+    }
+  ]
   domain_name = format("web.esd-itsa.%s.johnnyknl.com", terraform.workspace)
   zone_id = data.aws_route53_zone.main.zone_id
 }
@@ -70,8 +76,8 @@ module "api_app" {
   assign_public_ip = false
   environment_variables = [
     {
-      name  = "DB_HOST"
-      value = local.environment_variables["DB_HOST"]
+      name  = "POSTGRES_URL"
+      value = local.environment_variables["POSTGRES_URL"]
     }
   ]
   domain_name = format("api.esd-itsa.%s.johnnyknl.com", terraform.workspace)

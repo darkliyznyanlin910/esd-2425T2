@@ -3,10 +3,10 @@ import { z } from "zod";
 
 export const env = createEnv({
   server: {
-    DB_HOST: z.string(),
+    POSTGRES_URL: z.string(),
   },
   runtimeEnv: {
-    DB_HOST: process.env.DB_HOST,
+    POSTGRES_URL: process.env.POSTGRES_URL,
   },
   skipValidation: process.env.npm_lifecycle_event === "lint",
 });
