@@ -1,11 +1,10 @@
 # ESD + ITSA
 
-Brief description of what your project does.
-
 ### Prerequisites
 
 1. node
 2. pnpm
+3. turbo
 
 ## Installation
 
@@ -26,6 +25,27 @@ pnpm run dev
 ```bash
 docker compose up -d
 ```
+
+## Github Actions
+
+### AWS
+
+#### Prequisite
+
+Add in these repository secrets
+
+- `AWS_ACCESS_KEY_ID`
+- `AWS_SECRET_ACCESS_KEY`
+- `AWS_REGION`
+
+#### Usage
+
+1. Commit message need to contain `deploy` (case-insensitive) to trigger the workflow
+
+2. Specify the environment to deploy
+
+- `deploy` (case-insensitive): to deploy to development environment
+- `deploy-prod` (case-insensitive): to deploy to production environment
 
 ## Contributing
 

@@ -35,6 +35,8 @@ jobs:
         run: |
           if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
             echo "environment=${{ inputs.image_tag }}" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.event.head_commit.message }}" == *"deploy-prod"* ]]; then
+            echo "environment=production" >> $GITHUB_OUTPUT
           else
             echo "environment=development" >> $GITHUB_OUTPUT
           fi
