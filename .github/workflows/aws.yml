@@ -1,0 +1,134 @@
+name: AWS Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: "Environment to deploy to"
+        required: true
+        type: choice
+        options:
+          - development
+          - production
+  push:
+    branches:
+      - main
+
+jobs:
+  check-deploy:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, 'deploy')
+    outputs:
+      should_deploy: ${{ (github.event_name == 'workflow_dispatch' && inputs.image_tag != '') || steps.check.outputs.should_deploy }}
+    steps:
+      - id: check
+        run: echo "should_deploy=true" >> $GITHUB_OUTPUT
+
+  check-environment:
+    needs: check-deploy
+    if: needs.check-deploy.outputs.should_deploy == 'true'
+    runs-on: ubuntu-latest
+    outputs:
+      environment: ${{ steps.set-env.outputs.environment }}
+    steps:
+      - id: set-env
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "environment=${{ inputs.image_tag }}" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.event.head_commit.message }}" == *"deploy-prod"* ]]; then
+            echo "environment=production" >> $GITHUB_OUTPUT
+          else
+            echo "environment=development" >> $GITHUB_OUTPUT
+          fi
+
+  build-and-push:
+    needs:
+      - check-deploy
+      - check-environment
+    if: needs.check-deploy.outputs.should_deploy == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Get env from AWS Secrets Manager
+        id: get-env
+        shell: bash
+        env:
+          SECRET_PATH: esd-itsa/${{ needs.check-environment.outputs.environment }}/secrets
+        run: |
+          # Get secrets from AWS Secrets Manager
+          secrets=$(aws secretsmanager get-secret-value --secret-id $SECRET_PATH --query SecretString --output text)
+
+          # Convert JSON to env file format
+          echo "$secrets" | jq -r 'to_entries | .[] | "\(.key)=\(.value)"' > .env
+
+      - name: Build and push images
+        id: build-publish
+        shell: bash
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ needs.check-environment.outputs.environment }}
+        run: |
+          # Build and push Expert image
+          docker build ./. -f ./apps/web/Dockerfile -t $ECR_REGISTRY/esd-itsa-web:$IMAGE_TAG
+          docker push $ECR_REGISTRY/esd-itsa-web:$IMAGE_TAG &
+
+          # Build and push Expert image
+          docker build ./. -f ./apps/api/Dockerfile -t $ECR_REGISTRY/esd-itsa-api:$IMAGE_TAG
+          docker push $ECR_REGISTRY/esd-itsa-api:$IMAGE_TAG &
+
+          # Wait for both pushes to complete
+          wait
+
+          echo "image_tag=$IMAGE_TAG" >> $GITHUB_OUTPUT
+          echo "web_image=$ECR_REGISTRY/esd-itsa-web:$IMAGE_TAG" >> $GITHUB_OUTPUT
+          echo "api_image=$ECR_REGISTRY/esd-itsa-api:$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+  deploy:
+    needs:
+      - check-deploy
+      - check-environment
+      - build-and-push
+    if: needs.check-deploy.outputs.should_deploy == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Get env from AWS Secrets Manager
+        id: get-env
+        shell: bash
+        env:
+          SECRET_PATH: esd-itsa/${{ needs.check-environment.outputs.environment }}/secrets
+        run: |
+          # Get secrets from AWS Secrets Manager
+          secrets=$(aws secretsmanager get-secret-value --secret-id $SECRET_PATH --query SecretString --output text)
+
+          # Convert JSON to env file format
+          echo "$secrets" | jq -r 'to_entries | .[] | "\(.key)=\(.value)"' > .env
+
+      - name: Deploy to AWS
+        run: |
+          cd terraform
+          ./deploy.sh ${{ needs.check-environment.outputs.environment }} default
