@@ -24,7 +24,6 @@ resource "aws_ecs_cluster" "main" {
 data "aws_ecr_image" "web-repo" {
   repository_name = "esd-itsa-web"
   image_tag = terraform.workspace
-
 }
 
 data "aws_ecr_image" "api-repo" {
