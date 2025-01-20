@@ -1,6 +1,6 @@
 import { createEnv } from "@t3-oss/env-core";
 
-import { env as dbEnv } from "@repo/db/env";
+import { env as dbEnv } from "@repo/db-user/env";
 import { env as serviceDiscoveryEnv } from "@repo/service-discovery/env";
 
 export const env = createEnv({
