@@ -17,10 +17,7 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
 
   // Reporter configuration
-  reporter: [
-    ['html'],  // Generate HTML report
-    ['list']   // Console output
-  ],
+  reporter: 'list',   // Only console output, no HTML reports
 
   use: {
     // Base URL to use in actions like `await page.goto('/')`.
