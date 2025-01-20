@@ -4,7 +4,9 @@ import { z } from "zod";
 export const env = createEnv({
   server: {},
   shared: {
-    DEPLOYMENT_ENVIRONMENT: z.enum(["local", "docker", "aws-prod", "aws-dev"]),
+    DEPLOYMENT_ENVIRONMENT: z
+      .enum(["local", "docker", "aws-prod", "aws-dev"])
+      .default("local"),
   },
   runtimeEnv: {
     DEPLOYMENT_ENVIRONMENT: process.env.DEPLOYMENT_ENVIRONMENT,

@@ -4,7 +4,7 @@ import cors from "cors";
 import express from "express";
 import morgan from "morgan";
 
-import { db } from "@repo/db";
+import { db } from "@repo/db-user";
 
 export const createServer = (): Express => {
   const app = express();

@@ -17,7 +17,7 @@
     "format": "prettier --check . --ignore-path ../../.gitignore"
   },
   "dependencies": {
-    "@repo/db": "workspace:*",
+    "@repo/db-user": "workspace:*",
     "@repo/service-discovery": "workspace:*",
     "@t3-oss/env-core": "^0.11.1",
     "body-parser": "^1.20.2",

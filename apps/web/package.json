@@ -14,7 +14,6 @@
     "with-env": "dotenv -e ../../.env --"
   },
   "dependencies": {
-    "@repo/db": "workspace:*",
     "@repo/service-discovery": "workspace:*",
     "@repo/ui": "workspace:*",
     "@repo/validators": "workspace:*",
