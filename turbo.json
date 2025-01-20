@@ -45,7 +45,15 @@
       "interactive": true
     }
   },
-  "globalEnv": ["POSTGRES_URL", "DEPLOYMENT_ENVIRONMENT", "PORT"],
+  "globalEnv": [
+    "POSTGRES_URL",
+    "DEPLOYMENT_ENVIRONMENT",
+    "PORT",
+    "RABBITMQ_URL",
+    "RABBITMQ_QUEUE",
+    "RABBITMQ_USERNAME",
+    "RABBITMQ_PASSWORD"
+  ],
   "globalPassThroughEnv": [
     "NODE_ENV",
     "CI",
