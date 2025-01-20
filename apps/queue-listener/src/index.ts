@@ -1,8 +1,9 @@
 import "dotenv/config";
 
+import { MessageRouter } from "@repo/queue-processor";
+
 import { env } from "./env";
-import { MessageRouter } from "./router";
-import { RabbitMQListener, SQSListener } from "./utils/listener";
+import { RabbitMQListener } from "./utils/listener";
 
 async function main() {
   // Initialize and start listeners
@@ -23,14 +24,6 @@ async function main() {
     await rabbitListener.listen(MessageRouter);
     process.on("SIGTERM", async () => {
       await rabbitListener.stop();
-      process.exit(0);
-    });
-  } else {
-    const sqsQueueUrl = env.SQS_QUEUE_URL!;
-    const sqsListener = new SQSListener(sqsQueueUrl);
-    await sqsListener.listen(MessageRouter);
-    process.on("SIGTERM", async () => {
-      await sqsListener.stop();
       process.exit(0);
     });
   }

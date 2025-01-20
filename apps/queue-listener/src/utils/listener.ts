@@ -1,77 +1,10 @@
-import {
-  DeleteMessageCommand,
-  ReceiveMessageCommand,
-  SQSClient,
-} from "@aws-sdk/client-sqs";
 import amqp from "amqplib";
 
-import { QueueMessage } from "../types/message";
+import { QueueMessage } from "@repo/queue-processor";
 
 interface QueueListener {
   listen(callback: (message: QueueMessage) => Promise<void>): Promise<void>;
   stop(): Promise<void>;
-}
-
-export class SQSListener implements QueueListener {
-  private client: SQSClient;
-  private queueUrl: string;
-  private interval: NodeJS.Timeout | null = null;
-  private isRunning = false;
-
-  constructor(queueUrl: string, region = "us-east-1") {
-    this.client = new SQSClient({ region });
-    this.queueUrl = queueUrl;
-  }
-
-  async listen(
-    callback: (message: QueueMessage) => Promise<void>,
-  ): Promise<void> {
-    this.isRunning = true;
-
-    const pollMessages = async () => {
-      if (!this.isRunning) return;
-
-      const command = new ReceiveMessageCommand({
-        QueueUrl: this.queueUrl,
-        MaxNumberOfMessages: 10,
-        WaitTimeSeconds: 10,
-      });
-
-      try {
-        const response = await this.client.send(command);
-        if (response.Messages) {
-          for (const message of response.Messages) {
-            const queueMessage: QueueMessage = {
-              id: message.MessageId!,
-              body: message.Body!,
-              timestamp: Date.now(),
-            };
-
-            await callback(queueMessage);
-
-            // Delete message after successful processing
-            await this.client.send(
-              new DeleteMessageCommand({
-                QueueUrl: this.queueUrl,
-                ReceiptHandle: message.ReceiptHandle,
-              }),
-            );
-          }
-        }
-      } catch (error) {
-        console.error("Error processing SQS messages:", error);
-      }
-    };
-
-    this.interval = setInterval(pollMessages, 10000);
-  }
-
-  async stop(): Promise<void> {
-    this.isRunning = false;
-    if (this.interval) {
-      clearInterval(this.interval);
-    }
-  }
 }
 
 export class RabbitMQListener implements QueueListener {

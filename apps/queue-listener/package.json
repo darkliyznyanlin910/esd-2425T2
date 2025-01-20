@@ -17,11 +17,10 @@
     "format": "prettier --check . --ignore-path ../../.gitignore"
   },
   "dependencies": {
-    "@aws-sdk/client-sqs": "^3.731.1",
+    "@repo/queue-processor": "workspace:*",
     "@repo/service-discovery": "workspace:*",
     "@t3-oss/env-core": "^0.11.1",
     "amqplib": "^0.10.5",
-    "aws-lambda": "^1.0.7",
     "dotenv": "^16.4.6",
     "dotenv-cli": "^7.4.4",
     "tsx": "^4.7.1",
@@ -32,7 +31,6 @@
     "@repo/prettier-config": "workspace:*",
     "@repo/tsconfig": "workspace:*",
     "@types/amqplib": "^0.10.6",
-    "@types/aws-lambda": "^8.10.147",
     "@types/node": "^20.17.7",
     "eslint": "catalog:",
     "typescript": "catalog:"
