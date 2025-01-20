@@ -1,6 +1,7 @@
 import { env } from "./env";
 
 export const AWS_DOMAIN = "johnnyknl.com";
+export const AWS_NAMESPACE = "esd-itsa";
 export const SERVICES = ["api", "web"] as const;
 export type Service = (typeof SERVICES)[number];
 
@@ -19,8 +20,8 @@ export const getServiceBaseUrl = (service: Service) => {
       return `http://localhost:8000/microservice/${service}`;
     }
   } else if (env.DEPLOYMENT_ENVIRONMENT === "aws-prod") {
-    return `https://${service}.production.esd-itsa.${AWS_DOMAIN}`;
+    return `https://${service}.production.${AWS_NAMESPACE}.${AWS_DOMAIN}`;
   } else if (env.DEPLOYMENT_ENVIRONMENT === "aws-dev") {
-    return `https://${service}.development.esd-itsa.${AWS_DOMAIN}`;
+    return `https://${service}.development.${AWS_NAMESPACE}.${AWS_DOMAIN}`;
   }
 };

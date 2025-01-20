@@ -32,11 +32,14 @@ docker compose up -d
 
 #### Prequisite
 
-Add in these repository secrets
+1. Add in these repository secrets
 
 - `AWS_ACCESS_KEY_ID`
 - `AWS_SECRET_ACCESS_KEY`
 - `AWS_REGION`
+
+2. Setup required ECR repositories
+3. Setup required environment keys in AWS Secret Manager
 
 #### Usage
 
