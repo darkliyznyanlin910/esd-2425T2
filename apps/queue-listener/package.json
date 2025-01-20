@@ -1,5 +1,5 @@
 {
-  "name": "@repo/api",
+  "name": "@repo/queue-listener",
   "version": "0.0.0",
   "private": true,
   "exports": {
@@ -17,16 +17,13 @@
     "format": "prettier --check . --ignore-path ../../.gitignore"
   },
   "dependencies": {
+    "@aws-sdk/client-sqs": "^3.731.1",
     "@repo/service-discovery": "workspace:*",
-    "@repo/db": "workspace:*",
     "@t3-oss/env-core": "^0.11.1",
-    "body-parser": "^1.20.2",
-    "cors": "^2.8.5",
+    "amqplib": "^0.10.5",
+    "aws-lambda": "^1.0.7",
     "dotenv": "^16.4.6",
     "dotenv-cli": "^7.4.4",
-    "express": "^4.18.3",
-    "morgan": "^1.10.0",
-    "supertest": "^6.3.3",
     "tsx": "^4.7.1",
     "zod": "catalog:"
   },
@@ -34,12 +31,9 @@
     "@repo/eslint-config": "workspace:*",
     "@repo/prettier-config": "workspace:*",
     "@repo/tsconfig": "workspace:*",
-    "@types/body-parser": "^1.19.5",
-    "@types/cors": "^2.8.17",
-    "@types/express": "^4.17.21",
-    "@types/morgan": "^1.9.9",
+    "@types/amqplib": "^0.10.6",
+    "@types/aws-lambda": "^8.10.147",
     "@types/node": "^20.17.7",
-    "@types/supertest": "^6.0.2",
     "eslint": "catalog:",
     "typescript": "catalog:"
   },

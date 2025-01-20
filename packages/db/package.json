@@ -8,13 +8,10 @@
       "types": "./dist/index.d.ts",
       "default": "./src/index.ts"
     },
+    "./env": "./env.ts",
     "./client": {
-      "types": "./dist/client.d.ts",
-      "default": "./src/client.ts"
-    },
-    "./schema": {
-      "types": "./dist/schema.d.ts",
-      "default": "./src/schema.ts"
+      "types": "./src/generated/client/index.d.ts",
+      "default": "./src/generated/client/index.js"
     }
   },
   "license": "MIT",
@@ -24,25 +21,27 @@
     "dev": "tsc",
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
-    "push": "pnpm with-env drizzle-kit push",
-    "studio": "pnpm with-env drizzle-kit studio",
+    "push": "pnpm with-env prisma db push",
+    "pull": "pnpm with-env prisma db pull",
+    "studio": "pnpm with-env prisma studio",
+    "sync": "pnpm with-env prisma generate",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false",
-    "with-env": "dotenv -e ../../.env --"
+    "with-env": "dotenv -e ../../.env --",
+    "postinstall": "pnpm sync"
   },
   "dependencies": {
-    "@vercel/postgres": "^0.10.0",
-    "drizzle-orm": "^0.36.4",
-    "drizzle-zod": "^0.5.1",
+    "@prisma/client": "^6.2.1",
+    "@t3-oss/env-nextjs": "^0.11.1",
+    "dotenv-cli": "^7.4.4",
     "zod": "catalog:"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
     "@repo/prettier-config": "workspace:*",
     "@repo/tsconfig": "workspace:*",
-    "dotenv-cli": "^7.4.4",
-    "drizzle-kit": "^0.28.1",
     "eslint": "catalog:",
     "prettier": "catalog:",
+    "prisma": "^6.2.1",
     "typescript": "catalog:"
   },
   "prettier": "@repo/prettier-config"

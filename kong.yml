@@ -3,7 +3,7 @@ _transform: true
 
 services:
   - name: api-service
-    url: http://api:3001 # Assuming your API runs on port 3000
+    url: http://api:3001 # Assuming your API runs on port 3001
     routes:
       - name: api-route
         paths:

@@ -1,15 +1,11 @@
 import { createEnv } from "@t3-oss/env-core";
-import { z } from "zod";
 
+import { env as dbEnv } from "@repo/db/env";
 import { env as serviceDiscoveryEnv } from "@repo/service-discovery/env";
 
 export const env = createEnv({
-  extends: [serviceDiscoveryEnv],
-  server: {
-    POSTGRES_URL: z.string(),
-  },
-  runtimeEnv: {
-    POSTGRES_URL: process.env.POSTGRES_URL,
-  },
+  extends: [serviceDiscoveryEnv, dbEnv],
+  server: {},
+  runtimeEnv: {},
   skipValidation: process.env.npm_lifecycle_event === "lint",
 });
