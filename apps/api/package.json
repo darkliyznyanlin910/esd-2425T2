@@ -10,7 +10,9 @@
     "start": "pnpm with-env tsx src/index.ts",
     "dev": "pnpm with-env tsx watch src/index.ts",
     "lint": "tsc --noEmit && eslint \"src/**/*.ts*\" --max-warnings 0",
-    "test": "jest --detectOpenHandles",
+    "test": "playwright test",
+    "test:ui": "playwright test --ui",
+    "test:debug": "playwright test --debug",
     "typecheck": "tsc --noEmit",
     "with-env": "dotenv -e ../../.env --",
     "clean": "git clean -xdf .cache .next .turbo node_modules dist",
@@ -31,6 +33,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@playwright/test": "^1.49.1",
     "@repo/eslint-config": "workspace:*",
     "@repo/prettier-config": "workspace:*",
     "@repo/tsconfig": "workspace:*",
