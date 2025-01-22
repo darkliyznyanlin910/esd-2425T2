@@ -17,7 +17,7 @@ module "web_app" {
     },
     {
       name  = "DEPLOYMENT_ENVIRONMENT"
-      value = local.environment_variables["DEPLOYMENT_ENVIRONMENT"]
+      value = terraform.workspace == "production" ? "aws-prod" : "aws-dev"
     }
   ]
   domain_name = format("web.esd-itsa.%s.johnnyknl.com", terraform.workspace)
@@ -47,7 +47,7 @@ module "api_app" {
     },
     {
       name  = "DEPLOYMENT_ENVIRONMENT"
-      value = local.environment_variables["DEPLOYMENT_ENVIRONMENT"]
+      value = terraform.workspace == "production" ? "aws-prod" : "aws-dev"
     }
   ]
   domain_name = format("api.esd-itsa.%s.johnnyknl.com", terraform.workspace)

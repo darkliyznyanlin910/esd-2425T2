@@ -29,7 +29,6 @@ resource "aws_sqs_queue_policy" "queue_policy" {
 }
 
 resource "aws_lambda_event_source_mapping" "event_source_mapping" {
-  count             = var.lambda_function_arn != null ? 1 : 0
   event_source_arn  = aws_sqs_queue.queue.arn
   function_name     = var.lambda_function_arn
   batch_size        = 1

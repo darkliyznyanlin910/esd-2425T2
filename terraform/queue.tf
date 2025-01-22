@@ -20,5 +20,5 @@ module "message_queue" {
   source = "./modules/sqs"
   
   queue_name = "message-queue"
-  lambda_function_arn = module.queue_processor.arn
+  lambda_function_arn = module.queue_processor.function_arn
 }
