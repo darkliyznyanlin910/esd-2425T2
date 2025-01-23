@@ -72,7 +72,7 @@ jobs:
           secrets=$(aws secretsmanager get-secret-value --secret-id $SECRET_PATH --query SecretString --output text)
 
           # Convert JSON to env file format
-          echo "$secrets" | jq -r 'to_entries | .[] | "\(.key)=\"\(.value)\""' > .env
+          echo "$secrets" | jq -r 'to_entries | .[] | "\(.key)=\"\(.value)\""' > service-env/.env
 
       - name: Build and push images
         id: build-publish
@@ -126,7 +126,7 @@ jobs:
           secrets=$(aws secretsmanager get-secret-value --secret-id $SECRET_PATH --query SecretString --output text)
 
           # Convert JSON to env file format
-          echo "$secrets" | jq -r 'to_entries | .[] | "\(.key)=\"\(.value)\""' > .env
+          echo "$secrets" | jq -r 'to_entries | .[] | "\(.key)=\"\(.value)\""' > service-env/.env
 
       - name: Deploy to AWS
         run: |

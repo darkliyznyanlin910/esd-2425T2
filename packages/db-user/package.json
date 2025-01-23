@@ -26,7 +26,7 @@
     "studio": "pnpm with-env prisma studio",
     "sync": "pnpm with-env prisma generate",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false",
-    "with-env": "dotenv -e ../../.env --",
+    "with-env": "dotenv -e ../../service-env/.env --",
     "postinstall": "pnpm sync"
   },
   "dependencies": {
