@@ -12,7 +12,7 @@
     "lint": "tsc --noEmit && eslint \"src/**/*.ts*\" --max-warnings 0",
     "test": "jest --detectOpenHandles",
     "typecheck": "tsc --noEmit",
-    "with-env": "dotenv -e ../../.env --",
+    "with-env": "dotenv -e ../../service-env/.env --",
     "clean": "git clean -xdf .cache .next .turbo node_modules dist",
     "format": "prettier --check . --ignore-path ../../.gitignore"
   },
