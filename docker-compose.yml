@@ -22,18 +22,6 @@ services:
     networks:
       - kong-net
 
-  queue-listener:
-    build:
-      context: .
-      dockerfile: apps/queue-listener/Dockerfile
-    environment:
-      - NODE_ENV=production
-      - DEPLOYMENT_ENVIRONMENT=docker
-    env_file:
-      - .env
-    networks:
-      - kong-net
-
   kong:
     image: kong:3.5
     environment:
@@ -43,20 +31,6 @@ services:
       - "8000:8000"
     volumes:
       - ./kong.yml:/usr/local/kong/declarative/kong.yml
-    networks:
-      - kong-net
-
-  rabbitmq:
-    image: rabbitmq:management
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-      - "15692:15692"
-    environment:
-      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USERNAME}
-      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
-    env_file:
-      - .env
     networks:
       - kong-net
 

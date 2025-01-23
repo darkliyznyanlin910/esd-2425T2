@@ -21,7 +21,7 @@ export const getServiceBaseUrl = (service: Service) => {
     }
   } else if (env.DEPLOYMENT_ENVIRONMENT === "aws-prod") {
     return `https://${service}.production.${AWS_NAMESPACE}.${AWS_DOMAIN}`;
-  } else if (env.DEPLOYMENT_ENVIRONMENT === "aws-dev") {
+  } else {
     return `https://${service}.development.${AWS_NAMESPACE}.${AWS_DOMAIN}`;
   }
 };
