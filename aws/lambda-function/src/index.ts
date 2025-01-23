@@ -1,22 +1,12 @@
 import { SQSHandler, SQSRecord } from "aws-lambda";
 
-import { MessageRouter, QueueMessage } from "@repo/queue-processor";
-
 export const handler: SQSHandler = async (event) => {
   try {
     console.info(`Processing ${event.Records.length} messages`);
 
     const processPromises = event.Records.map(async (record: SQSRecord) => {
       try {
-        const queueMessage: QueueMessage = {
-          id: record.messageId,
-          body: record.body,
-          timestamp: Date.now(),
-        };
-
-        // Add your message processing logic here
-        await MessageRouter(queueMessage);
-
+        console.log("record", record);
         return {
           messageId: record.messageId,
           status: "success",
