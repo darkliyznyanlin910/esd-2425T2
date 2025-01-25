@@ -14,6 +14,8 @@ pnpm install
 
 ## Usage
 
+### Running the application
+
 1. Running the development server (with module hot reloading)
 
 ```bash
@@ -24,6 +26,12 @@ pnpm run dev
 
 ```bash
 docker compose up -d
+```
+
+### Initializing new app / packages
+
+```bash
+turbo gen
 ```
 
 ## Github Actions
