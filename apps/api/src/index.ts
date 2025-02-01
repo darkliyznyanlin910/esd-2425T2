@@ -1,10 +1,11 @@
-import "dotenv/config";
+import { serve } from "@hono/node-server";
 
-import { createServer } from "./server";
+import { app } from "./app";
 
 const port = process.env.PORT ?? 3001;
-const server = createServer();
+console.log(`Server is running on http://localhost:${port}`);
 
-server.listen(port, () => {
-  console.log(`api running on ${port}`);
+serve({
+  fetch: app.fetch,
+  port: Number(port),
 });
