@@ -14,7 +14,8 @@
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false",
-    "with-env": "dotenv -e ../../service-env/.env --"
+    "with-env": "dotenv -e ../../service-env/.env --",
+    "test": "vitest"
   },
   "devDependencies": {
     "@playwright/test": "^1.49.1",
