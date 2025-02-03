@@ -6,7 +6,6 @@
   "exports": {
     "./type": "./src/type.ts"
   },
-  "license": "MIT",
   "scripts": {
     "build": "tsc",
     "clean": "git clean -xdf .cache .turbo dist node_modules",

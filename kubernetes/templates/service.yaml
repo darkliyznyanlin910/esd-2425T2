@@ -1,0 +1,25 @@
+{{- range $key, $service := .Values }}
+{{- if and (kindIs "map" $service) (hasKey $service "service") }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "my-app.fullname" $ }}-{{ $service.name }}
+  labels:
+    {{- include "my-app.labels" $ | nindent 4 }}
+    app: {{ $service.name }}
+spec:
+  type: {{ $service.service.type }}
+  ports:
+    - port: {{ $service.service.port }}
+      targetPort: {{ $service.service.targetPort }}
+      {{- if and (eq $service.service.type "NodePort") (hasKey $service.service "nodePort") }}
+      nodePort: {{ $service.service.nodePort }}
+      {{- end }}
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "my-app.labels" $ | nindent 4 }}
+    app: {{ $service.name }}
+{{- end }}
+{{- end }} 
