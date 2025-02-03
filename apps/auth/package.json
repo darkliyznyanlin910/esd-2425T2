@@ -1,10 +1,12 @@
 {
-  "name": "@repo/api",
+  "name": "@repo/auth",
   "private": true,
   "version": "0.1.0",
   "type": "module",
   "exports": {
-    "./type": "./src/type.ts"
+    "./type": "./src/type.ts",
+    "./env": "./src/env.ts",
+    "./client": "./src/client.ts"
   },
   "scripts": {
     "build": "tsc",
@@ -28,6 +30,9 @@
   "dependencies": {
     "@hono/node-server": "^1.13.8",
     "@hono/zod-validator": "^0.4.2",
+    "@repo/db-user": "workspace:*",
+    "@repo/service-discovery": "workspace:*",
+    "better-auth": "^1.1.15",
     "dotenv-cli": "catalog:",
     "hono": "^4.6.20",
     "tsx": "^4.19.2",

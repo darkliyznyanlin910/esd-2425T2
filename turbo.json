@@ -51,7 +51,8 @@
     "RABBITMQ_URL",
     "RABBITMQ_QUEUE",
     "RABBITMQ_USERNAME",
-    "RABBITMQ_PASSWORD"
+    "RABBITMQ_PASSWORD",
+    "BETTER_AUTH_SECRET"
   ],
   "globalPassThroughEnv": [
     "NODE_ENV",
