@@ -1,0 +1,34 @@
+{{- range $service := list "web" "api" }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "my-app.fullname" $ }}-{{ $service }}
+  labels:
+    {{- include "my-app.labels" $ | nindent 4 }}
+    app: {{ $service }}
+spec:
+  replicas: {{ index $.Values $service "replicaCount" }}
+  selector:
+    matchLabels:
+      {{- include "my-app.labels" $ | nindent 6 }}
+      app: {{ $service }}
+  template:
+    metadata:
+      labels:
+        {{- include "my-app.labels" $ | nindent 8 }}
+        app: {{ $service }}
+    spec:
+      containers:
+        - name: {{ $service }}
+          image: "{{ index $.Values $service "image" "repository" }}:{{ index $.Values $service "image" "tag" }}"
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: {{ include "my-app.fullname" $ }}-config
+          env:
+            {{- range $env := index $.Values $service "env" }}
+            - name: {{ $env.name }}
+              value: {{ $env.value | quote }}
+            {{- end }}
+{{- end }} 

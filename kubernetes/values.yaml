@@ -1,0 +1,35 @@
+global:
+  environment: local
+
+web:
+  name: web
+  replicaCount: 1
+  image:
+    repository: web
+    tag: latest
+  service:
+    type: NodePort
+    port: 80
+    targetPort: 3000
+    nodePort: 5000
+  env:
+    - name: NODE_ENV
+      value: production
+    - name: DEPLOYMENT_ENVIRONMENT
+      value: kubernetes
+
+api:
+  name: api
+  replicaCount: 1
+  image:
+    repository: api
+    tag: latest
+  service:
+    type: ClusterIP
+    port: 80
+    targetPort: 3000
+  env:
+    - name: NODE_ENV
+      value: production
+    - name: DEPLOYMENT_ENVIRONMENT
+      value: kubernetes
