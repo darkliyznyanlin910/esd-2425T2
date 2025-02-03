@@ -1,0 +1,12 @@
+{
+  "extends": "@repo/tsconfig/internal-package.json",
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "baseUrl": "./",
+    "paths": {
+      "db-user": ["../db-user/src"] 
+    }
+  },
+  "include": ["*.ts", "src"],
+  "exclude": ["node_modules"]
+}

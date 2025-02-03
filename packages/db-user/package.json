@@ -27,7 +27,8 @@
     "sync": "pnpm with-env prisma generate",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false",
     "with-env": "dotenv -e ../../service-env/.env --",
-    "postinstall": "pnpm sync"
+    "postinstall": "pnpm sync",
+    "migrate": "pnpm with-env prisma migrate"
   },
   "dependencies": {
     "@prisma/client": "^6.2.1",
