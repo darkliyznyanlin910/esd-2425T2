@@ -8,14 +8,10 @@ import { Toaster } from "@repo/ui/toast";
 
 import "~/app/globals.css";
 
-import { env } from "~/env";
+import { getServiceBaseUrl } from "@repo/service-discovery";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(
-    env.VERCEL_ENV === "production"
-      ? "https://turbo.t3.gg"
-      : "http://localhost:3000",
-  ),
+  metadataBase: new URL(getServiceBaseUrl("web")),
   title: "Create T3 Turbo",
   description: "Simple monorepo with shared backend for web & mobile apps",
   openGraph: {

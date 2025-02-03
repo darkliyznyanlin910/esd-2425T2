@@ -14,25 +14,24 @@
       "default": "./src/generated/client/index.js"
     }
   },
-  "license": "MIT",
   "scripts": {
     "build": "tsc",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
     "dev": "tsc",
-    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "format": "prettier --check . --ignore-path ../../.gitignore --ignore-path .prettierignore",
     "lint": "eslint",
     "push": "pnpm with-env prisma db push",
     "pull": "pnpm with-env prisma db pull",
     "studio": "pnpm with-env prisma studio",
     "sync": "pnpm with-env prisma generate",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false",
-    "with-env": "dotenv -e ../../.env --",
+    "with-env": "dotenv -e ../../service-env/.env --",
     "postinstall": "pnpm sync"
   },
   "dependencies": {
     "@prisma/client": "^6.2.1",
     "@t3-oss/env-nextjs": "^0.11.1",
-    "dotenv-cli": "^7.4.4",
+    "dotenv-cli": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {

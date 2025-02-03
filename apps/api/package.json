@@ -1,50 +1,37 @@
 {
   "name": "@repo/api",
-  "version": "0.0.0",
   "private": true,
+  "version": "0.1.0",
+  "type": "module",
   "exports": {
-    "./env": "./src/env.ts"
+    "./type": "./src/type.ts"
   },
   "scripts": {
     "build": "tsc",
-    "start": "pnpm with-env tsx src/index.ts",
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
     "dev": "pnpm with-env tsx watch src/index.ts",
-    "lint": "tsc --noEmit && eslint \"src/**/*.ts*\" --max-warnings 0",
-    "test": "playwright test",
-    "test:ui": "playwright test --ui",
-    "test:debug": "playwright test --debug",
-    "typecheck": "tsc --noEmit",
-    "with-env": "dotenv -e ../../.env --",
-    "clean": "git clean -xdf .cache .next .turbo node_modules dist",
-    "format": "prettier --check . --ignore-path ../../.gitignore"
-  },
-  "dependencies": {
-    "@repo/db-user": "workspace:*",
-    "@repo/service-discovery": "workspace:*",
-    "@t3-oss/env-core": "^0.11.1",
-    "body-parser": "^1.20.2",
-    "cors": "^2.8.5",
-    "dotenv": "^16.4.6",
-    "dotenv-cli": "^7.4.4",
-    "express": "^4.18.3",
-    "morgan": "^1.10.0",
-    "supertest": "^6.3.3",
-    "tsx": "^4.7.1",
-    "zod": "catalog:"
+    "start": "pnpm with-env tsx src/index.ts",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false",
+    "with-env": "dotenv -e ../../service-env/.env --"
   },
   "devDependencies": {
     "@playwright/test": "^1.49.1",
     "@repo/eslint-config": "workspace:*",
     "@repo/prettier-config": "workspace:*",
     "@repo/tsconfig": "workspace:*",
-    "@types/body-parser": "^1.19.5",
-    "@types/cors": "^2.8.17",
-    "@types/express": "^4.17.21",
-    "@types/morgan": "^1.9.9",
-    "@types/node": "^20.17.7",
-    "@types/supertest": "^6.0.2",
     "eslint": "catalog:",
+    "prettier": "catalog:",
     "typescript": "catalog:"
   },
-  "prettier": "@repo/prettier-config"
+  "prettier": "@repo/prettier-config",
+  "dependencies": {
+    "@hono/node-server": "^1.13.8",
+    "@hono/zod-validator": "^0.4.2",
+    "dotenv-cli": "catalog:",
+    "hono": "^4.6.20",
+    "tsx": "^4.19.2",
+    "zod": "catalog:"
+  }
 }

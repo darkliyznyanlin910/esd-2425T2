@@ -1,0 +1,41 @@
+{
+  "name": "@repo/auth",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "exports": {
+    "./type": "./src/type.ts",
+    "./env": "./src/env.ts",
+    "./client": "./src/client.ts"
+  },
+  "scripts": {
+    "build": "tsc",
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "dev": "pnpm with-env tsx watch src/index.ts",
+    "start": "pnpm with-env tsx src/index.ts",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false",
+    "with-env": "dotenv -e ../../service-env/.env --"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "@repo/prettier-config": "workspace:*",
+    "@repo/tsconfig": "workspace:*",
+    "eslint": "catalog:",
+    "prettier": "catalog:",
+    "typescript": "catalog:"
+  },
+  "prettier": "@repo/prettier-config",
+  "dependencies": {
+    "@hono/node-server": "^1.13.8",
+    "@hono/zod-validator": "^0.4.2",
+    "@repo/db-user": "workspace:*",
+    "@repo/service-discovery": "workspace:*",
+    "better-auth": "^1.1.15",
+    "dotenv-cli": "catalog:",
+    "hono": "^4.6.20",
+    "tsx": "^4.19.2",
+    "zod": "catalog:"
+  }
+}

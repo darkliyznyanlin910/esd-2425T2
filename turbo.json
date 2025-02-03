@@ -10,9 +10,8 @@
       "outputs": [".cache/tsbuildinfo.json", "dist/**"]
     },
     "dev": {
-      "dependsOn": ["^dev"],
       "cache": false,
-      "persistent": false
+      "persistent": true
     },
     "format": {
       "outputs": [".cache/.prettiercache"],
@@ -52,7 +51,8 @@
     "RABBITMQ_URL",
     "RABBITMQ_QUEUE",
     "RABBITMQ_USERNAME",
-    "RABBITMQ_PASSWORD"
+    "RABBITMQ_PASSWORD",
+    "BETTER_AUTH_SECRET"
   ],
   "globalPassThroughEnv": [
     "NODE_ENV",
