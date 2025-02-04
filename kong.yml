@@ -2,14 +2,6 @@ _format_version: "3.0"
 _transform: true
 
 services:
-  - name: api-service
-    url: http://api:3001 # Assuming your API runs on port 3001
-    routes:
-      - name: api-route
-        paths:
-          - /microservice/api
-        strip_path: true # Removes /microservice/api before forwarding
-
   - name: web-service
     url: http://web:3000 # Assuming web runs on port 3000
     routes:
@@ -17,3 +9,18 @@ services:
         paths:
           - /
         strip_path: false
+  - name: api-service
+    url: http://api:3001 # Assuming your API runs on port 3001
+    routes:
+      - name: api-route
+        paths:
+          - /microservice/api
+        strip_path: true # Removes /microservice/api before forwarding
+  - name: auth-service
+    url: http://auth:3002 # Assuming your API runs on port 3002
+    routes:
+      - name: auth-route
+        paths:
+          - /microservice/auth
+        strip_path: true # Removes /microservice/auth before forwarding
+
