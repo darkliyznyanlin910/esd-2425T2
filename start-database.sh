@@ -46,10 +46,16 @@ if [ "$DB_PASSWORD" = "password" ]; then
   sed -i -e "s#:password@#:$DB_PASSWORD@#" service-env/.env
 fi
 
+if [ ! -d "data/$DB_CONTAINER_NAME" ]; then
+  mkdir -p "data/$DB_CONTAINER_NAME"
+  echo "Created data directory for database persistence"
+fi
+
 docker run -d \
   --name $DB_CONTAINER_NAME \
   -e POSTGRES_USER="postgres" \
   -e POSTGRES_PASSWORD="$DB_PASSWORD" \
   -e POSTGRES_DB=esd \
   -p "$DB_PORT":5432 \
+  -v "$(pwd)/data/$DB_CONTAINER_NAME:/var/lib/postgresql/data" \
   docker.io/postgres && echo "Database container '$DB_CONTAINER_NAME' was successfully created"
