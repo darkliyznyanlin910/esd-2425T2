@@ -28,9 +28,12 @@
   "dependencies": {
     "@hono/node-server": "^1.13.8",
     "@hono/zod-validator": "^0.4.2",
+    "@scalar/hono-api-reference": "^0.5.170",
     "dotenv-cli": "catalog:",
     "hono": "^4.6.20",
+    "hono-openapi": "^0.4.4",
     "tsx": "^4.19.2",
-    "zod": "catalog:"
+    "zod": "catalog:",
+    "zod-openapi": "^4.2.3"
   }
 }
