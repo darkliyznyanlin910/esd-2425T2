@@ -33,3 +33,19 @@ api:
       value: production
     - name: DEPLOYMENT_ENVIRONMENT
       value: kubernetes
+
+auth:
+  name: auth
+  replicaCount: 1
+  image:
+    repository: auth
+    tag: latest
+  service:
+    type: ClusterIP
+    port: 80
+    targetPort: 3000
+  env:
+    - name: NODE_ENV
+      value: production
+    - name: DEPLOYMENT_ENVIRONMENT
+      value: kubernetes

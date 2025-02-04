@@ -22,19 +22,19 @@ case "$1" in
 
         # Install/upgrade Helm chart
         echo "⚙️ Deploying services..."
-        helm upgrade --install esd-itsa ./kubernetes --create-namespace --namespace esd-itsa
+        helm upgrade --install esd ./kubernetes --create-namespace --namespace esd
 
         # Wait for pods to be ready
         echo "⏳ Waiting for pods to be ready..."
-        kubectl wait --namespace esd-itsa --for=condition=ready pod --all --timeout=90s
+        kubectl wait --namespace esd --for=condition=ready pod --all --timeout=90s
 
         echo "✅ Deployment complete!"
-        echo "🔗 Services deployed in namespace esd-itsa:"
-        kubectl get services -n esd-itsa
+        echo "🔗 Services deployed in namespace esd:"
+        kubectl get services -n esd
         
         # Set up port forwarding for web service
         echo "🔌 Setting up port forwarding for web service to localhost:5000..."
-        kubectl port-forward -n esd-itsa svc/esd-itsa-web 5000:80 &
+        kubectl port-forward -n esd svc/esd-web 5000:80 &
         echo "🌐 Web service available at http://localhost:5000"
         ;;
 
@@ -43,11 +43,11 @@ case "$1" in
 
         # Uninstall Helm release
         echo "🗑️ Removing Helm release..."
-        helm uninstall esd-itsa -n esd-itsa
+        helm uninstall esd -n esd
 
         # Delete namespace
         echo "🧹 Cleaning up namespace..."
-        kubectl delete namespace esd-itsa
+        kubectl delete namespace esd
 
         echo "✅ Cleanup complete!"
         ;;

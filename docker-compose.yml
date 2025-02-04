@@ -1,4 +1,4 @@
-name: esd-itsa
+name: esd
 
 services:
   web:
@@ -16,6 +16,17 @@ services:
     build:
       context: .
       dockerfile: apps/api/Dockerfile
+    environment:
+      - NODE_ENV=production
+      - DEPLOYMENT_ENVIRONMENT=docker
+    env_file:
+      - service-env/.env
+    networks:
+      - kong-net
+  auth:
+    build:
+      context: .
+      dockerfile: apps/auth/Dockerfile
     environment:
       - NODE_ENV=production
       - DEPLOYMENT_ENVIRONMENT=docker

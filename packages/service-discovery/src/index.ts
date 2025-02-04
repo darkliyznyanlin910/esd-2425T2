@@ -1,7 +1,7 @@
 import { env } from "./env";
 
 export const AWS_DOMAIN = "johnnyknl.com";
-export const AWS_NAMESPACE = "esd-itsa";
+export const AWS_NAMESPACE = "esd";
 export const SERVICES = ["api", "web", "auth"] as const;
 export type Service = (typeof SERVICES)[number];
 
@@ -20,9 +20,8 @@ export const getServiceBaseUrl = (service: Service) => {
     } else {
       return `http://localhost:8000/microservice/${service}`;
     }
-  } else if (env.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT === "aws-prod") {
-    return `https://${service}.production.${AWS_NAMESPACE}.${AWS_DOMAIN}`;
   } else {
-    return `https://${service}.development.${AWS_NAMESPACE}.${AWS_DOMAIN}`;
+    // kubernetes
+    return `http://my-app-${service}:80`;
   }
 };
