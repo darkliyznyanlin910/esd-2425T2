@@ -8,10 +8,9 @@ web:
     repository: web
     tag: latest
   service:
-    type: NodePort
+    type: ClusterIP
     port: 80
     targetPort: 3000
-    nodePort: 5000
   env:
     - name: NODE_ENV
       value: production

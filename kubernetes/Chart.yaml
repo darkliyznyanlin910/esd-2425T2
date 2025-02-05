@@ -1,4 +1,4 @@
 apiVersion: v2
-name: my-app
+name: esd
 description: A Helm chart for web and API services
 version: 0.1.0
