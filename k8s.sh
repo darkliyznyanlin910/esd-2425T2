@@ -31,9 +31,9 @@ case "$1" in
 
         # Build Docker images
         echo "📦 Building Docker images..."
-        # docker build -t web:latest -f apps/web/Dockerfile . || { echo "❌ Failed to build web image"; exit 1; }
-        # docker build -t api:latest -f apps/api/Dockerfile . || { echo "❌ Failed to build api image"; exit 1; }
-        # docker build -t auth:latest -f apps/auth/Dockerfile . || { echo "❌ Failed to build auth image"; exit 1; }
+        docker build -t web:latest -f apps/web/Dockerfile . || { echo "❌ Failed to build web image"; exit 1; }
+        docker build -t api:latest -f apps/api/Dockerfile . || { echo "❌ Failed to build api image"; exit 1; }
+        docker build -t auth:latest -f apps/auth/Dockerfile . || { echo "❌ Failed to build auth image"; exit 1; }
 
         # Install dependencies
         echo "📦 Installing Helm dependencies..."
