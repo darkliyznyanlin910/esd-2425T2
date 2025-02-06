@@ -24,23 +24,45 @@ case "$1" in
             kubectl create namespace $NAMESPACE
         fi
 
+        # Add Kong Helm repository
+        echo "📦 Adding Kong Helm repository..."
+        helm repo add kong https://charts.konghq.com
+        helm repo update
+
         # Build Docker images
         echo "📦 Building Docker images..."
-        docker build -t web:latest -f apps/web/Dockerfile . || { echo "❌ Failed to build web image"; exit 1; }
-        docker build -t api:latest -f apps/api/Dockerfile . || { echo "❌ Failed to build api image"; exit 1; }
-        docker build -t auth:latest -f apps/auth/Dockerfile . || { echo "❌ Failed to build auth image"; exit 1; }
+        # docker build -t web:latest -f apps/web/Dockerfile . || { echo "❌ Failed to build web image"; exit 1; }
+        # docker build -t api:latest -f apps/api/Dockerfile . || { echo "❌ Failed to build api image"; exit 1; }
+        # docker build -t auth:latest -f apps/auth/Dockerfile . || { echo "❌ Failed to build auth image"; exit 1; }
+
+        # Install dependencies
+        echo "📦 Installing Helm dependencies..."
+        helm dependency build ./kubernetes
 
         # Install/upgrade Helm chart
         echo "⚙️ Deploying services..."
         helm upgrade --install esd ./kubernetes \
             --namespace $NAMESPACE \
             --create-namespace \
-            --atomic \
-            --timeout 5m || { echo "❌ Helm deployment failed"; exit 1; }
+            --set kong.ingressController.enabled=true \
+            --set kong.proxy.type=NodePort \
+            --timeout 5m \
+            --debug|| { echo "❌ Helm deployment failed"; exit 1; }
 
         # Wait for pods to be ready
         echo "⏳ Waiting for pods to be ready..."
-        kubectl wait --namespace $NAMESPACE --for=condition=ready pod --all --timeout=90s || { echo "❌ Pods failed to become ready"; exit 1; }
+        kubectl wait --namespace $NAMESPACE --for=condition=ready pod --all --timeout=300s || {
+            echo "❌ Pods failed to become ready. Checking pod status..."
+            kubectl get pods -n $NAMESPACE
+            echo "\nChecking pod logs..."
+            for pod in $(kubectl get pods -n $NAMESPACE -o jsonpath='{.items[*].metadata.name}'); do
+                echo "\n📝 Logs for $pod:"
+                kubectl logs -n $NAMESPACE $pod --tail=50 || true
+            done
+            echo "\n📊 Pod descriptions:"
+            kubectl describe pods -n $NAMESPACE
+            exit 1
+        }
 
         echo "✅ Deployment complete!"
         echo "🔗 Services deployed in namespace $NAMESPACE:"

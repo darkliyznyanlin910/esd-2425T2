@@ -1,4 +1,4 @@
-{{- range $service := list "web" "api" }}
+{{- range $service := list "web" "api" "auth" }}
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -18,11 +18,13 @@ spec:
       labels:
         {{- include "my-app.labels" $ | nindent 8 }}
         app: {{ $service }}
+      annotations:
+        konghq.com/protocol: "http"
     spec:
       containers:
         - name: {{ $service }}
           image: "{{ index $.Values $service "image" "repository" }}:{{ index $.Values $service "image" "tag" }}"
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           envFrom:
             - configMapRef:
                 name: {{ include "my-app.fullname" $ }}-config
@@ -31,4 +33,11 @@ spec:
             - name: {{ $env.name }}
               value: {{ $env.value | quote }}
             {{- end }}
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "200m"
 {{- end }} 

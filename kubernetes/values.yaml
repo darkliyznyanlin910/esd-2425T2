@@ -1,6 +1,19 @@
 global:
   environment: local
 
+kong:
+  proxy:
+    type: NodePort
+    http:
+      nodePort: 31000
+    enabled: true
+  ingressController:
+    enabled: true
+  env:
+    database: "off"
+  dblessConfig:
+    configMap: esd-kong-config
+
 web:
   name: web
   replicaCount: 1
