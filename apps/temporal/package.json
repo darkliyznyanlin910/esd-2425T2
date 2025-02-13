@@ -9,7 +9,7 @@
   "scripts": {
     "build": "tsc",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
-    "dev": "pnpm with-env tsx watch src/index.ts",
+    "dev": "pnpm with-env tsx src/index.ts --watch",
     "start": "pnpm with-env tsx src/index.ts",
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
@@ -30,6 +30,7 @@
     "@repo/temporal-common": "workspace:*",
     "@repo/temporal-workflows": "workspace:*",
     "@temporalio/worker": "^1.11.7",
-    "dotenv-cli": "^8.0.0"
+    "dotenv-cli": "^8.0.0",
+    "tsx": "^4.19.2"
   }
 }
