@@ -1,5 +1,5 @@
 {
-  "name": "@repo/temporal",
+  "name": "@repo/temporal-runner",
   "private": true,
   "version": "0.1.0",
   "type": "module",
@@ -9,10 +9,12 @@
   "scripts": {
     "build": "tsc",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
-    "dev": "tsc",
+    "dev": "pnpm with-env tsx watch src/index.ts",
+    "start": "pnpm with-env tsx src/index.ts",
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
-    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false",
+    "with-env": "dotenv -e ../../service-env/.env --"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
@@ -24,9 +26,10 @@
   },
   "prettier": "@repo/prettier-config",
   "dependencies": {
-    "@temporalio/activity": "^1.11.6",
-    "@temporalio/client": "^1.11.6",
-    "@temporalio/worker": "^1.11.6",
-    "@temporalio/workflow": "^1.11.6"
+    "@repo/temporal-activities": "workspace:*",
+    "@repo/temporal-common": "workspace:*",
+    "@repo/temporal-workflows": "workspace:*",
+    "@temporalio/worker": "^1.11.7",
+    "dotenv-cli": "^8.0.0"
   }
 }
