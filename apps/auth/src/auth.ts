@@ -1,11 +1,13 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
-import { openAPI } from "better-auth/plugins";
+import { admin, openAPI } from "better-auth/plugins";
+import { createMiddleware } from "hono/factory";
 
 import { db } from "@repo/db-user";
 import { getServiceBaseUrl, SERVICES } from "@repo/service-discovery";
 
 import { env } from "./env";
+import { HonoExtension } from "./type";
 
 export const auth = betterAuth({
   emailAndPassword: {
@@ -22,6 +24,35 @@ export const auth = betterAuth({
       enabled: true,
     },
   },
-  plugins: [openAPI()],
+  plugins: [
+    openAPI({
+      path: "/docs",
+    }),
+    admin(),
+  ],
   trustedOrigins: SERVICES.map((service) => getServiceBaseUrl(service)),
 });
+
+export const authMiddleware = (allowedRoles: string[] = []) =>
+  createMiddleware<HonoExtension>(async (c, next) => {
+    const session = await auth.api.getSession({
+      headers: c.req.raw.headers,
+    });
+
+    if (!session) {
+      c.set("user", null);
+      c.set("session", null);
+      return c.json({ error: "Unauthorized" }, 401);
+    }
+
+    if (
+      allowedRoles.length > 0 &&
+      !allowedRoles.includes(session.user.role ?? "")
+    ) {
+      return c.json({ error: "Unauthorized" }, 401);
+    }
+
+    c.set("user", session.user);
+    c.set("session", session.session);
+    return next();
+  });
