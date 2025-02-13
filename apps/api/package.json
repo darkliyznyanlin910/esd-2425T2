@@ -7,7 +7,7 @@
     "./type": "./src/type.ts"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "pnpm esbuild src/lambda.ts --bundle --sourcemap --platform=node --target=es2020 --outfile=dist/lambda.js",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
     "dev": "pnpm with-env tsx watch src/index.ts",
     "start": "pnpm with-env tsx src/index.ts",
@@ -28,10 +28,11 @@
   "dependencies": {
     "@hono/node-server": "^1.13.8",
     "@hono/zod-validator": "^0.4.2",
+    "@repo/auth": "workspace:*",
+    "@repo/service-discovery": "workspace:*",
     "@scalar/hono-api-reference": "^0.5.170",
     "dotenv-cli": "catalog:",
     "hono": "^4.6.20",
-    "hono-openapi": "^0.4.4",
     "tsx": "^4.19.2",
     "zod": "catalog:",
     "zod-openapi": "^4.2.3"
