@@ -11,7 +11,7 @@
     },
     "dev": {
       "cache": false,
-      "persistent": true
+      "persistent": false
     },
     "format": {
       "outputs": [".cache/.prettiercache"],
@@ -52,7 +52,9 @@
     "RABBITMQ_QUEUE",
     "RABBITMQ_USERNAME",
     "RABBITMQ_PASSWORD",
-    "BETTER_AUTH_SECRET"
+    "BETTER_AUTH_SECRET",
+    "TEMPORAL_NAMESPACE",
+    "TEMPORAL_SERVER"
   ],
   "globalPassThroughEnv": [
     "NODE_ENV",

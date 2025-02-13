@@ -17,7 +17,7 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
         name: "location",
         message:
           "Where do you want to create the package? (You can skip the `@repo/` prefix)",
-        choices: ["packages", "apps"],
+        choices: ["packages", "apps", "temporal"],
       },
       {
         type: "input",
