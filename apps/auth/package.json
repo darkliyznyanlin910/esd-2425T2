@@ -6,7 +6,8 @@
   "exports": {
     "./type": "./src/type.ts",
     "./env": "./src/env.ts",
-    "./client": "./src/client.ts"
+    "./client": "./src/client.ts",
+    "./auth": "./src/auth.ts"
   },
   "scripts": {
     "build": "tsc",
@@ -29,6 +30,7 @@
   "prettier": "@repo/prettier-config",
   "dependencies": {
     "@hono/node-server": "^1.13.8",
+    "@hono/zod-openapi": "^0.18.4",
     "@hono/zod-validator": "^0.4.2",
     "@repo/db-user": "workspace:*",
     "@repo/service-discovery": "workspace:*",
