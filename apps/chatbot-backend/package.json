@@ -1,0 +1,44 @@
+{
+  "name": "@repo/chatbot-backend",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "exports": {
+    "./type": "./src/type.ts"
+  },
+  "scripts": {
+    "build": "pnpm esbuild src/lambda.ts --bundle --sourcemap --platform=node --target=es2020 --outfile=dist/lambda.js",
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "dev": "pnpm with-env tsx watch src/index.ts",
+    "start": "pnpm with-env tsx src/index.ts",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false",
+    "with-env": "dotenv -e ../../service-env/.env --"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "@repo/prettier-config": "workspace:*",
+    "@repo/tsconfig": "workspace:*",
+    "eslint": "catalog:",
+    "prettier": "catalog:",
+    "typescript": "catalog:"
+  },
+  "prettier": "@repo/prettier-config",
+  "dependencies": {
+    "@ai-sdk/openai": "^1.1.10",
+    "@hono/node-server": "^1.13.8",
+    "@hono/zod-validator": "^0.4.2",
+    "@repo/auth": "workspace:*",
+    "@repo/chatbot-common": "workspace:^",
+    "@repo/chatbot-ui": "workspace:*",
+    "@repo/service-discovery": "workspace:*",
+    "@scalar/hono-api-reference": "^0.5.170",
+    "ai": "^4.1.37",
+    "dotenv-cli": "catalog:",
+    "hono": "^4.6.20",
+    "tsx": "^4.19.2",
+    "zod": "catalog:",
+    "zod-openapi": "^4.2.3"
+  }
+}

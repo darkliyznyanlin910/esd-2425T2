@@ -20,7 +20,7 @@
     "dev": "tsc",
     "format": "prettier --check . --ignore-path ../../.gitignore --ignore-path .prettierignore",
     "lint": "eslint",
-    "push": "pnpm with-env prisma db push",
+    "db:push": "pnpm with-env prisma db push",
     "pull": "pnpm with-env prisma db pull",
     "studio": "pnpm with-env prisma studio",
     "sync": "pnpm with-env prisma generate",
