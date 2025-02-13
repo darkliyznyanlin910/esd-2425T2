@@ -2,13 +2,14 @@ import { env } from "./env";
 
 export const AWS_DOMAIN = "johnnyknl.com";
 export const AWS_NAMESPACE = "esd";
-export const SERVICES = ["api", "web", "auth"] as const;
+export const SERVICES = ["api", "web", "auth", "chatbot"] as const;
 export type Service = (typeof SERVICES)[number];
 
 export const LOCAL_SERVICE_MAP: Record<Service, string> = {
   web: "http://localhost:3000",
   api: "http://localhost:3001",
   auth: "http://localhost:3002",
+  chatbot: "http://localhost:3003",
 };
 
 export const getServiceBaseUrl = (service: Service) => {

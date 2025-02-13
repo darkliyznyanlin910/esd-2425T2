@@ -1,15 +1,15 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
+import { apiReference } from "@scalar/hono-api-reference";
 import { cors } from "hono/cors";
 
+import type { HonoExtension } from "@repo/auth/type";
 import { getServiceBaseUrl, SERVICES } from "@repo/service-discovery";
 
-import { auth } from "./auth";
-import { HonoExtension } from "./type";
+import { chatRouter } from "./chatRouter";
 
 const app = new OpenAPIHono<HonoExtension>();
 
 app.use(
-  "/auth/**", // or replace with "*" to enable cors for all routes
   cors({
     origin: SERVICES.map((service) => getServiceBaseUrl(service)),
     allowHeaders: ["Content-Type", "Authorization"],
@@ -21,9 +21,23 @@ app.use(
 );
 
 const routes = app
+  .doc("/openapi", {
+    openapi: "3.0.0",
+    info: {
+      title: "Template API",
+      version: "1.0.0",
+      description: "Template API",
+    },
+  })
   .get("/", (c) => c.json({ ok: true }))
-  .on(["POST", "GET"], "/auth/**", async (c) => {
-    return auth.handler(c.req.raw);
-  });
+  .get(
+    "/docs",
+    apiReference({
+      theme: "saturn",
+      spec: { url: `${getServiceBaseUrl("chatbot")}/openapi` },
+    }),
+  )
+  // .use(authMiddleware())
+  .route("/chat", chatRouter);
 
 export { app, routes };

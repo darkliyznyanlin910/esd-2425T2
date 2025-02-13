@@ -31,7 +31,7 @@
     "//#clean": {
       "cache": false
     },
-    "push": {
+    "db:push": {
       "cache": false,
       "interactive": true
     },
@@ -48,13 +48,10 @@
     "POSTGRES_URL",
     "DEPLOYMENT_ENVIRONMENT",
     "PORT",
-    "RABBITMQ_URL",
-    "RABBITMQ_QUEUE",
-    "RABBITMQ_USERNAME",
-    "RABBITMQ_PASSWORD",
     "BETTER_AUTH_SECRET",
     "TEMPORAL_NAMESPACE",
-    "TEMPORAL_SERVER"
+    "TEMPORAL_SERVER",
+    "OPENAI_API_KEY"
   ],
   "globalPassThroughEnv": [
     "NODE_ENV",

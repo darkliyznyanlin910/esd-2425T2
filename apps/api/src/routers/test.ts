@@ -21,7 +21,7 @@ const testRouter = new OpenAPIHono().openapi(
       },
     },
   }),
-  async (c) => {
+  (c) => {
     return c.json({ message: "Hello, world!" });
   },
 );

@@ -1,0 +1,41 @@
+{
+  "name": "@repo/chatbot-ui",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.tsx",
+    "./tools": "./src/tools.ts"
+  },
+  "scripts": {
+    "build": "tsc",
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "dev": "tsc",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "@repo/prettier-config": "workspace:*",
+    "@repo/service-discovery": "workspace:*",
+    "@repo/tsconfig": "workspace:*",
+    "@types/react": "catalog:react18",
+    "eslint": "catalog:",
+    "prettier": "catalog:",
+    "react": "catalog:react18",
+    "typescript": "catalog:"
+  },
+  "prettier": "@repo/prettier-config",
+  "dependencies": {
+    "@ai-sdk/react": "^1.1.13",
+    "@repo/chatbot-common": "workspace:^",
+    "@repo/ui": "workspace:*",
+    "@t3-oss/env-core": "^0.11.1",
+    "zod": "catalog:"
+  },
+  "peerDependencies": {
+    "react": "catalog:react18",
+    "zod": "catalog:"
+  }
+}

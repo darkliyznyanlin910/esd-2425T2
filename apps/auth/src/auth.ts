@@ -6,8 +6,8 @@ import { createMiddleware } from "hono/factory";
 import { db } from "@repo/db-user";
 import { getServiceBaseUrl, SERVICES } from "@repo/service-discovery";
 
+import type { HonoExtension } from "./type";
 import { env } from "./env";
-import { HonoExtension } from "./type";
 
 export const auth = betterAuth({
   emailAndPassword: {
