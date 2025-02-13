@@ -11,7 +11,7 @@ async function run() {
   const connection = await NativeConnection.connect(getConnectionOptions());
   try {
     const worker = await Worker.create({
-      workflowsPath: new URL("../../../temporal/workflows/", import.meta.url)
+      workflowsPath: new URL("../../../temporal/workflows/src", import.meta.url)
         .pathname,
       activities,
       connection,
