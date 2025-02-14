@@ -37,7 +37,7 @@ const routes = app
       spec: { url: `${getServiceBaseUrl("notification")}/openapi` },
     }),
   )
-  // .use(authMiddleware(["driver"]))
+  .use(authMiddleware(["driver"]))
   .route("/driver", driverRouter);
 
 export { app, routes };
