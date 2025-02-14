@@ -20,7 +20,7 @@ export type OrderState =
   | "Failed";
 
 export interface OrderStatus {
-  productId: number;
+  productId: string;
   state: OrderState;
   deliveredAt?: Date;
 }
@@ -49,7 +49,7 @@ const { chargeCustomer, refundOrder, sendPushNotification } = proxyActivities<
   },
 });
 
-export async function order(productId: number): Promise<void> {
+export async function order(productId: string): Promise<void> {
   const product = getProductById(productId);
   if (!product) {
     throw ApplicationFailure.create({
