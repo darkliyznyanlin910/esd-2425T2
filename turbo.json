@@ -45,7 +45,7 @@
     }
   },
   "globalEnv": [
-    "POSTGRES_URL",
+    "AUTH_POSTGRES_URL",
     "DEPLOYMENT_ENVIRONMENT",
     "PORT",
     "BETTER_AUTH_SECRET",
