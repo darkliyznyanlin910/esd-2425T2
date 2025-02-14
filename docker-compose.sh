@@ -8,8 +8,6 @@ elif [ "$2" = "databases" ]; then
 elif [ "$2" = "localstack" ]; then
   COMPOSE_FILE="docker-compose-localstack.yml"
   ENV_FILE=""
-  echo "Compose file: $COMPOSE_FILE"
-  echo "Environment file: $ENV_FILE"
 else
   echo "Usage: $0 (up|down|clean) [temporal|databases|localstack]"
   exit 1
