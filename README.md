@@ -34,6 +34,33 @@ docker compose up -d
 turbo gen
 ```
 
+### Initializing Localstack
+1. Install LocalStack https://www.localstack.cloud/
+2. Modify AWS Config and AWS Credentials
+
+- Add LocalStack credentials to `~/.aws/credentials`
+
+```bash
+[localstack]
+aws_access_key_id=anything
+aws_secret_access_key=anything
+```
+
+- Add LocalStack config to `~/.aws/config`
+
+```bash
+[profile localstack]
+output = json
+endpoint_url = http://localhost:4566
+region = ap-southeast-1
+```
+
+3. Run docker command
+
+```bash
+./docker-compose.sh up
+```
+
 ## Github Actions
 
 ### AWS
