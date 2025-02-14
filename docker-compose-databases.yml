@@ -1,0 +1,13 @@
+name: esd-databases
+
+services:
+  auth_database:
+    image: postgres:15-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: auth_database
+    volumes:
+      - ./data/auth_data:/var/lib/postgresql/data

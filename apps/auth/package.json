@@ -32,7 +32,7 @@
     "@hono/node-server": "^1.13.8",
     "@hono/zod-openapi": "^0.18.4",
     "@hono/zod-validator": "^0.4.2",
-    "@repo/db-user": "workspace:*",
+    "@repo/db-auth": "workspace:*",
     "@repo/service-discovery": "workspace:*",
     "better-auth": "^1.1.15",
     "dotenv-cli": "catalog:",

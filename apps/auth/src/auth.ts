@@ -3,7 +3,7 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import { admin, openAPI } from "better-auth/plugins";
 import { createMiddleware } from "hono/factory";
 
-import { db } from "@repo/db-user";
+import { db } from "@repo/db-auth";
 import { getServiceBaseUrl, SERVICES } from "@repo/service-discovery";
 
 import type { HonoExtension } from "./type";
