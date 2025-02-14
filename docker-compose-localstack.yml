@@ -12,7 +12,7 @@ services:
       - PERSISTENCE=1
       - SNAPSHOT_SAVE_STRATEGY=ON_SHUTDOWN
     volumes:
-      - "${LOCALSTACK_VOLUME_DIR:-./volume}:/var/lib/localstack"
+      - "${LOCALSTACK_VOLUME_DIR:-./data/localstack}:/var/lib/localstack"
       - "/var/run/docker.sock:/var/run/docker.sock"
 
 networks:
