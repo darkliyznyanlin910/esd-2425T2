@@ -75,6 +75,12 @@ importers:
       '@repo/service-discovery':
         specifier: workspace:*
         version: link:../../packages/service-discovery
+      '@repo/temporal-common':
+        specifier: workspace:*
+        version: link:../../temporal/common
+      '@repo/temporal-workflows':
+        specifier: workspace:*
+        version: link:../../temporal/workflows
       '@scalar/hono-api-reference':
         specifier: ^0.5.170
         version: 0.5.170(hono@4.6.20)

@@ -1,6 +1,3 @@
-export * from "./temporal-client";
-export * from "./temporal-connection";
-
 export const taskQueue = "durable-delivery";
 
 export interface Image {
@@ -11,7 +8,7 @@ export interface Image {
 }
 
 export interface Product {
-  id: number;
+  id: string;
   name: string;
   description: string;
   image: Image;
@@ -26,7 +23,7 @@ export interface Order {
 
 export const products = [
   {
-    id: 1,
+    id: "1",
     name: "Swordfish",
     description: "Cabbage, carrot, well plated",
     image: {
@@ -38,7 +35,7 @@ export const products = [
     cents: 3500,
   },
   {
-    id: 2,
+    id: "2",
     name: "Burrata",
     description: "Fig, peach, cherry tomato",
     image: {
@@ -50,7 +47,7 @@ export const products = [
     cents: 2000,
   },
   {
-    id: 3,
+    id: "3",
     name: "Potato",
     description: "Hasselback potatoes, bell pepper salad",
     image: {
@@ -62,7 +59,7 @@ export const products = [
     cents: 1500,
   },
   {
-    id: 4,
+    id: "4",
     name: "Poke",
     description: "Salmon, cucumber, seaweed, edamame",
     image: {
@@ -75,8 +72,8 @@ export const products = [
   },
 ];
 
-export function getProductById(id: number): Product | undefined {
-  return products.find((product) => product.id === id);
+export function getProductById(id: string): Product | undefined {
+  return products.find((product) => product.id == id);
 }
 
 export function errorMessage(error: unknown): string | undefined {

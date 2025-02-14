@@ -30,6 +30,8 @@
     "@hono/zod-validator": "^0.4.2",
     "@repo/auth": "workspace:*",
     "@repo/service-discovery": "workspace:*",
+    "@repo/temporal-common": "workspace:*",
+    "@repo/temporal-workflows": "workspace:*",
     "@scalar/hono-api-reference": "^0.5.170",
     "dotenv-cli": "catalog:",
     "hono": "^4.6.20",

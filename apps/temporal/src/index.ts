@@ -1,11 +1,11 @@
 import { NativeConnection, Worker } from "@temporalio/worker";
 
 import * as activities from "@repo/temporal-activities";
+import { taskQueue } from "@repo/temporal-common";
 import {
   getConnectionOptions,
   namespace,
-  taskQueue,
-} from "@repo/temporal-common";
+} from "@repo/temporal-common/temporal-connection";
 
 async function run() {
   const connection = await NativeConnection.connect(getConnectionOptions());
