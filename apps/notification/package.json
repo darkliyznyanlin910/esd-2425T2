@@ -1,16 +1,13 @@
 {
-  "name": "@repo/auth",
+  "name": "@repo/notification-backend",
   "private": true,
   "version": "0.1.0",
   "type": "module",
   "exports": {
-    "./type": "./src/type.ts",
-    "./env": "./src/env.ts",
-    "./client": "./src/client.ts",
-    "./auth": "./src/auth.ts"
+    "./type": "./src/type.ts"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "pnpm esbuild src/lambda.ts --bundle --sourcemap --platform=node --target=es2020 --outfile=dist/lambda.js",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
     "dev": "pnpm with-env tsx watch src/index.ts",
     "start": "pnpm with-env tsx src/index.ts",
@@ -30,15 +27,16 @@
   "prettier": "@repo/prettier-config",
   "dependencies": {
     "@hono/node-server": "^1.13.8",
-    "@hono/zod-openapi": "^0.18.4",
     "@hono/zod-validator": "^0.4.2",
-    "@repo/db-auth": "workspace:*",
+    "@repo/auth": "workspace:*",
     "@repo/service-discovery": "workspace:*",
-    "better-auth": "^1.1.15",
+    "@repo/temporal-common": "workspace:*",
+    "@repo/temporal-workflows": "workspace:*",
+    "@scalar/hono-api-reference": "^0.5.170",
     "dotenv-cli": "catalog:",
     "hono": "^4.6.20",
-    "socket.io": "^4.8.1",
     "tsx": "^4.19.2",
-    "zod": "catalog:"
+    "zod": "catalog:",
+    "zod-openapi": "^4.2.3"
   }
 }
