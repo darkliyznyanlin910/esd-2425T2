@@ -3,7 +3,7 @@ import { z } from "zod";
 
 import { taskQueue } from "@repo/temporal-common";
 import { connectToTemporal } from "@repo/temporal-common/temporal-client";
-import { getStatusQuery, order } from "@repo/temporal-workflows";
+import { order } from "@repo/temporal-workflows";
 
 const temporalClient = await connectToTemporal();
 
