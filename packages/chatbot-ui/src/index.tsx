@@ -8,7 +8,7 @@ import { MessageInput } from "@repo/ui/chat/message-input";
 import { MessageList } from "@repo/ui/chat/message-list";
 import { PromptSuggestions } from "@repo/ui/chat/prompt-suggestions";
 
-import { tools } from "./tools";
+import { toolFunctionMap } from "./tools";
 
 export function CustomChat() {
   const {
@@ -16,7 +16,6 @@ export function CustomChat() {
     input,
     handleInputChange,
     handleSubmit,
-    addToolResult,
     isLoading,
     append,
     stop,
@@ -24,18 +23,14 @@ export function CustomChat() {
     api: `${getServiceBaseUrl("chatbot")}/chat`,
     maxSteps: 5,
     async onToolCall({ toolCall }) {
-      const tool = tools[toolCall.toolName as keyof typeof tools] as
-        | (typeof tools)[keyof typeof tools]
-        | undefined;
+      const tool =
+        toolFunctionMap[toolCall.toolName as keyof typeof toolFunctionMap];
       if (!tool) {
         throw new Error(`Tool ${toolCall.toolName} not found`);
       }
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      const result = await tool.execute(toolCall.args as any);
-      addToolResult({
-        toolCallId: toolCall.toolCallId,
-        result,
-      });
+      const result = await tool(toolCall.args as any);
+      return result;
     },
   });
 
