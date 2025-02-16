@@ -1,0 +1,91 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36" version="26.0.11">
+  <diagram name="Page-1" id="kmNskkRU3qmXra1z-Iw5">
+    <mxGraphModel dx="1080" dy="720" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="M7SAqmjCEimq1zTltQYp-24" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="M7SAqmjCEimq1zTltQYp-1" target="M7SAqmjCEimq1zTltQYp-23">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="M7SAqmjCEimq1zTltQYp-1" value="&lt;u&gt;Customer UI&lt;/u&gt;&lt;div&gt;- Submit Order Application&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="38" y="105.75" width="178" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="M7SAqmjCEimq1zTltQYp-3" value="Temporal Manager" style="rounded=0;whiteSpace=wrap;html=1;fillColor=light-dark(#FFF4C3,var(--ge-dark-color, #121212));strokeColor=light-dark(#FFD966,#FFFFFF);" vertex="1" parent="1">
+          <mxGeometry x="242.5" y="238" width="222" height="77" as="geometry" />
+        </mxCell>
+        <mxCell id="M7SAqmjCEimq1zTltQYp-5" value="Tracking of Delivery" style="rounded=0;whiteSpace=wrap;html=1;fillColor=light-dark(#FFF4C3,var(--ge-dark-color, #121212));strokeColor=light-dark(#FFD966,#FFFFFF);" vertex="1" parent="1">
+          <mxGeometry x="94" y="406" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="M7SAqmjCEimq1zTltQYp-6" value="Driver Assignment" style="rounded=0;whiteSpace=wrap;html=1;fillColor=light-dark(#FFF4C3,var(--ge-dark-color, #121212));strokeColor=light-dark(#FFD966,#FFFFFF);" vertex="1" parent="1">
+          <mxGeometry x="276" y="402" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="M7SAqmjCEimq1zTltQYp-20" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="M7SAqmjCEimq1zTltQYp-7">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="541" y="610" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="521" y="610" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="M7SAqmjCEimq1zTltQYp-7" value="Notification" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=light-dark(#FFD966,#FFFFFF);fillColor=light-dark(#FFF4C3,var(--ge-dark-color, #121212));" vertex="1" parent="1">
+          <mxGeometry x="461" y="406" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="M7SAqmjCEimq1zTltQYp-8" value="1. Send Order Application&lt;div&gt;4. Application successfully submitted&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="133" y="63" width="239" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="M7SAqmjCEimq1zTltQYp-9" value="" style="endArrow=classic;startArrow=classic;html=1;rounded=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="1" source="M7SAqmjCEimq1zTltQYp-5" target="M7SAqmjCEimq1zTltQYp-7">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="21" y="346" as="sourcePoint" />
+            <mxPoint x="491" y="361" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="154" y="360" />
+              <mxPoint x="521" y="360" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="M7SAqmjCEimq1zTltQYp-10" value="2. Create an order record&lt;div&gt;3. Successfully created order response&lt;/div&gt;&lt;div&gt;5. Trigger temporal manager&amp;nbsp;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="426" y="107.75" width="247" height="58" as="geometry" />
+        </mxCell>
+        <mxCell id="M7SAqmjCEimq1zTltQYp-11" value="6. Attempts to assign driver to order&lt;div&gt;7. No available driver to assign&lt;br&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="248.5" y="490" width="174" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="M7SAqmjCEimq1zTltQYp-12" value="" style="endArrow=classic;html=1;rounded=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="353" y="356" as="sourcePoint" />
+            <mxPoint x="353.0000000000002" y="314" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="M7SAqmjCEimq1zTltQYp-16" value="" style="endArrow=classic;startArrow=classic;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="356.0000000000002" y="238" as="sourcePoint" />
+            <mxPoint x="356" y="167.28932188134524" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="M7SAqmjCEimq1zTltQYp-18" value="8. Notifies admin about driver assignment failure" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="516" y="490" width="87" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="M7SAqmjCEimq1zTltQYp-30" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="M7SAqmjCEimq1zTltQYp-19" target="M7SAqmjCEimq1zTltQYp-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="M7SAqmjCEimq1zTltQYp-19" value="&lt;u&gt;Admin UI&lt;/u&gt;&lt;div&gt;- Receives Notification&lt;/div&gt;&lt;div&gt;- Initiate manual driver assignment&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="542" y="580" width="216" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="M7SAqmjCEimq1zTltQYp-23" value="Create Order" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=light-dark(#FFD966,#FFFFFF);fillColor=light-dark(#FFF4C3,var(--ge-dark-color, #121212));" vertex="1" parent="1">
+          <mxGeometry x="293.5" y="105.75" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="M7SAqmjCEimq1zTltQYp-26" value="9. Admin manually assigns a driver to the order" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="262.5" y="527" width="147" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="M7SAqmjCEimq1zTltQYp-27" value="10. Driver is notified about the assignment" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="526" y="360" width="87" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="M7SAqmjCEimq1zTltQYp-28" value="11. Record order status as Driver assigned" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="89" y="480" width="130" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="M7SAqmjCEimq1zTltQYp-29" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.643;entryY=0.05;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="M7SAqmjCEimq1zTltQYp-3" target="M7SAqmjCEimq1zTltQYp-6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
