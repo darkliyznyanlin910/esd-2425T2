@@ -1,46 +1,77 @@
+import { tool } from "ai";
 import { z } from "zod";
 
 import type { AiSdkToolSet } from "@repo/chatbot-common";
 
-export const tools = {
-  getOrders: {
+const orderIdSchema = z.object({ orderId: z.string() });
+
+type ToolReturnTypes = {
+  getOrders: string[];
+  getOrderDetails: { orderId: string; status: string };
+  getDriverDetails: {
+    orderId: string;
+    driverName: string;
+    driverPhone: string;
+  };
+  getTrackingDetails: Array<{
+    orderId: string;
+    status: string;
+  }>;
+};
+
+export const backendTools = {
+  getOrders: tool({
     description: "show the orders to the user",
     parameters: z.object({}),
-    execute: async ({}: {}) => {
-      const orders: string[] = [];
-      return orders;
-    },
-  },
-  getOrderDetails: {
+  }),
+  getOrderDetails: tool({
     description: "show the order details to the user",
-    parameters: z.object({ orderId: z.string() }),
-    execute: async ({ orderId }: { orderId: string }) => {
-      return orderId;
-    },
-  },
-  getDriverDetails: {
+    parameters: orderIdSchema,
+  }),
+  getDriverDetails: tool({
     description: "show the driver details of an order to the user",
-    parameters: z.object({ orderId: z.string() }),
-    execute: async ({}: { orderId: string }) => {
-      const driverDetails: Record<string, string> = {
-        name: "John Doe",
-        phone: "+1234567890",
-        email: "john.doe@example.com",
-        address: "123 Main St, Anytown, USA",
-        city: "Anytown",
-        state: "CA",
-        zip: "12345",
-      };
-      return driverDetails;
-    },
-  },
-  getTrackingDetails: {
+    parameters: orderIdSchema,
+  }),
+  getTrackingDetails: tool({
     description:
       "show the tracking status change history of an order to the user",
-    parameters: z.object({ orderId: z.string() }),
-    execute: async ({}: { orderId: string }) => {
-      const trackingDetails: string[] = [];
-      return trackingDetails;
-    },
-  },
+    parameters: orderIdSchema,
+  }),
 } satisfies AiSdkToolSet;
+
+export type ToolFunctionMap = {
+  [K in keyof typeof backendTools]: (
+    params: z.infer<(typeof backendTools)[K]["parameters"]>,
+  ) => Promise<ToolReturnTypes[K]>;
+};
+
+export const toolFunctionMap: ToolFunctionMap = {
+  getOrders: async () => {
+    return [] as string[];
+  },
+  getOrderDetails: async ({ orderId }) => {
+    return {
+      orderId,
+      status: "pending",
+    };
+  },
+  getDriverDetails: async ({ orderId }) => {
+    return {
+      orderId,
+      driverName: "John Doe",
+      driverPhone: "1234567890",
+    };
+  },
+  getTrackingDetails: async ({ orderId }) => {
+    return [
+      {
+        orderId,
+        status: "pending",
+      },
+      {
+        orderId,
+        status: "pending",
+      },
+    ];
+  },
+};

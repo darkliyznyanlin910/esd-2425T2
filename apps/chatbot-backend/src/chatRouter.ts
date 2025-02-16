@@ -4,7 +4,7 @@ import { stream } from "hono/streaming";
 import { z } from "zod";
 
 import type { AiSdkMessages } from "@repo/chatbot-common";
-import { tools } from "@repo/chatbot-ui/tools";
+import { backendTools } from "@repo/chatbot-ui/tools";
 
 import { model } from "./ai";
 
@@ -44,7 +44,7 @@ const chatRouter = new OpenAPIHono().openapi(
     const result = streamText({
       model,
       messages,
-      tools,
+      tools: backendTools,
     });
 
     c.header("X-Vercel-AI-Data-Stream", "v1");
