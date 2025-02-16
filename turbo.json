@@ -46,6 +46,8 @@
   },
   "globalEnv": [
     "AUTH_POSTGRES_URL",
+    "DRIVER_POSTGRES_URL",
+    "ORDER_POSTGRES_URL",
     "DEPLOYMENT_ENVIRONMENT",
     "PORT",
     "BETTER_AUTH_SECRET",
