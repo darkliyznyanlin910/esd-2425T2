@@ -1,12 +1,6 @@
 import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
 import { z } from "zod";
 
-import { taskQueue } from "@repo/temporal-common";
-import { connectToTemporal } from "@repo/temporal-common/temporal-client";
-import { order } from "@repo/temporal-workflows";
-
-const temporalClient = await connectToTemporal();
-
 const testRouter = new OpenAPIHono()
   .openapi(
     createRoute({
@@ -60,11 +54,7 @@ const testRouter = new OpenAPIHono()
     }),
     async (c) => {
       const input = c.req.valid("param");
-      await temporalClient.workflow.start(order, {
-        workflowId: input.orderId,
-        args: [input.productId],
-        taskQueue,
-      });
+
       return c.json({ message: "Hello, world!" });
     },
   );

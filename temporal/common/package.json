@@ -17,6 +17,7 @@
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "devDependencies": {
+    "@repo/db-order": "workspace:*",
     "@repo/eslint-config": "workspace:*",
     "@repo/prettier-config": "workspace:*",
     "@repo/service-discovery": "workspace:*",
