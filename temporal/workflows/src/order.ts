@@ -5,128 +5,90 @@ import {
   defineSignal,
   proxyActivities,
   setHandler,
-  sleep,
 } from "@temporalio/workflow";
 
-import type * as activities from "@repo/temporal-activities";
-import { errorMessage, getProductById, Product } from "@repo/temporal-common";
+import * as activities from "@repo/temporal-activities";
+import { Order, OrderStatus } from "@repo/temporal-common";
 
-export type OrderState =
-  | "Charging card"
-  | "Paid"
-  | "Picked up"
-  | "Delivered"
-  | "Refunding"
-  | "Failed";
-
-export interface OrderStatus {
-  productId: string;
-  state: OrderState;
-  deliveredAt?: Date;
-}
-
-export interface OrderStatusWithOrderId extends OrderStatus {
-  orderId: string;
-}
-
-export interface OrderStatusWithOrderIdDao {
-  orderId: string;
-  productId: number;
-  state: OrderState;
-  deliveredAt?: string;
-}
-
+export const driverFoundSignal = defineSignal<[string]>("driverFound");
 export const pickedUpSignal = defineSignal("pickedUp");
 export const deliveredSignal = defineSignal("delivered");
-export const getStatusQuery = defineQuery<OrderStatus>("getStatus");
+export const getStatusQuery = defineQuery<Promise<OrderStatus>>("getStatus");
 
-const { chargeCustomer, refundOrder, sendPushNotification } = proxyActivities<
-  typeof activities
->({
+const {
+  updateOrderStatus,
+  getOrderStatus,
+  sendOrderToDrivers,
+  notifyAdmin,
+  assignOrderToDriver,
+  generateInvoice,
+  sendInvoiceToCustomer,
+} = proxyActivities<typeof activities>({
   startToCloseTimeout: "1m",
   retry: {
-    maximumInterval: "5s", // Just for demo purposes. Usually this should be larger.
+    maximumInterval: "1m",
   },
 });
 
-export async function order(productId: string): Promise<void> {
-  const product = getProductById(productId);
-  if (!product) {
-    throw ApplicationFailure.create({
-      message: `Product ${productId} not found`,
-    });
+export async function order(
+  order: Order,
+  manualAssignDriverId?: string,
+): Promise<void> {
+  if (order.orderStatus == "processing") {
+    await updateOrderStatus(order.id, "findingDriver");
   }
 
-  let state: OrderState = "Charging card";
-  let deliveredAt: Date;
+  let orderStatus: OrderStatus = "findingDriver";
 
-  // setup Signal and Query handlers
-  setHandler(pickedUpSignal, () => {
-    if (state === "Paid") {
-      state = "Picked up";
+  if (manualAssignDriverId) {
+    await updateOrderStatus(order.id, "driverFound");
+    await assignOrderToDriver(order, manualAssignDriverId);
+    orderStatus = "driverFound";
+  }
+
+  setHandler(getStatusQuery, async () => {
+    const status = await getOrderStatus(order.id);
+    orderStatus = status;
+    return status;
+  });
+
+  setHandler(driverFoundSignal, async (driverId) => {
+    await updateOrderStatus(order.id, "driverFound");
+    await assignOrderToDriver(order, driverId);
+    orderStatus = "driverFound";
+  });
+
+  setHandler(pickedUpSignal, async () => {
+    if (orderStatus == "driverFound") {
+      await updateOrderStatus(order.id, "pickedUp");
+      orderStatus = "pickedUp";
     }
   });
 
-  setHandler(deliveredSignal, () => {
-    if (state === "Picked up") {
-      state = "Delivered";
-      deliveredAt = new Date();
+  setHandler(deliveredSignal, async () => {
+    if (orderStatus == "pickedUp") {
+      await updateOrderStatus(order.id, "delivered");
+      const invoice = await generateInvoice(order);
+      await sendInvoiceToCustomer(invoice);
+      orderStatus = "delivered";
     }
   });
 
-  setHandler(getStatusQuery, () => {
-    return { state, deliveredAt, productId };
-  });
-
-  // business logic
   try {
-    await chargeCustomer(product);
-  } catch (err) {
-    const message = `Failed to charge customer for ${product.name}. Error: ${errorMessage(err)}`;
-    await sendPushNotification(message);
-    throw ApplicationFailure.create({ message });
+    await sendOrderToDrivers(order);
+  } catch (error) {
+    await updateOrderStatus(order.id, "delayed");
+    throw new ApplicationFailure("Failed to send order to drivers", "DELAYED");
   }
-
-  state = "Paid";
 
   const notPickedUpInTime = !(await condition(
-    () => state === "Picked up",
+    () => orderStatus === "pickedUp",
     "1 min",
   ));
+
   if (notPickedUpInTime) {
-    state = "Refunding";
-    await refundAndNotify(
-      product,
-      "⚠️ No drivers were available to pick up your order. Your payment has been refunded.",
-    );
-    throw ApplicationFailure.create({ message: "Not picked up in time" });
+    await updateOrderStatus(order.id, "delayed");
+    await notifyAdmin(order);
+    throw new ApplicationFailure("Order not picked up in time", "DELAYED");
   }
-
-  await sendPushNotification("🚗 Order picked up");
-
-  const notDeliveredInTime = !(await condition(
-    () => state === "Delivered",
-    "1 min",
-  ));
-  if (notDeliveredInTime) {
-    state = "Refunding";
-    await refundAndNotify(
-      product,
-      "⚠️ Your driver was unable to deliver your order. Your payment has been refunded.",
-    );
-    throw ApplicationFailure.create({ message: "Not delivered in time" });
-  }
-
-  await sendPushNotification("✅ Order delivered!");
-
-  await sleep("1 min"); // this could also be hours or even months
-
-  await sendPushNotification(
-    `✍️ Rate your meal. How was the ${product.name.toLowerCase()}?`,
-  );
-}
-
-async function refundAndNotify(product: Product, message: string) {
-  await refundOrder(product);
-  await sendPushNotification(message);
 }
