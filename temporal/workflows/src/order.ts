@@ -10,16 +10,14 @@ import {
 import * as activities from "@repo/temporal-activities";
 import { Order, OrderStatus } from "@repo/temporal-common";
 
-export const PICKUP_TIMEOUT = "10 min";
+export const PICKUP_TIMEOUT = "15s";
 
 export const driverFoundSignal = defineSignal<[string]>("driverFound");
 export const pickedUpSignal = defineSignal("pickedUp");
 export const deliveredSignal = defineSignal("delivered");
-export const getStatusQuery = defineQuery<Promise<OrderStatus>>("getStatus");
 
 const {
   updateOrderStatus,
-  getOrderStatus,
   sendOrderToDrivers,
   notifyAdmin,
   assignOrderToDriver,
@@ -48,12 +46,6 @@ export async function order(
     await assignOrderToDriver(order, manualAssignDriverId);
     orderStatus = "driverFound";
   }
-
-  setHandler(getStatusQuery, async () => {
-    const status = await getOrderStatus(order.id);
-    orderStatus = status;
-    return status;
-  });
 
   setHandler(driverFoundSignal, async (driverId) => {
     if (orderStatus == "findingDriver") {

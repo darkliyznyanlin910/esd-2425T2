@@ -1,14 +1,17 @@
 import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
+import { bearerAuth } from "hono/bearer-auth";
 import { z } from "zod";
 
 import { OrderSchema } from "@repo/db-order/zod";
 
 import { ioServer } from "..";
+import { env } from "../env";
 
 const driverRouter = new OpenAPIHono()
   .openapi(
     createRoute({
       method: "post",
+      middleware: [bearerAuth({ token: env.INTERNAL_COMMUNICATION_SECRET })],
       request: {
         body: {
           content: {
@@ -45,6 +48,7 @@ const driverRouter = new OpenAPIHono()
     createRoute({
       method: "post",
       path: "/invalidate",
+      middleware: [bearerAuth({ token: env.INTERNAL_COMMUNICATION_SECRET })],
       request: {
         body: {
           content: {

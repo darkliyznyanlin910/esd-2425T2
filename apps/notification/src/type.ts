@@ -1,6 +1,6 @@
 import { hc } from "hono/client";
 
-import type { Order } from "@repo/db-order/client";
+import type { Order } from "@repo/db-order/zod";
 import { getServiceBaseUrl } from "@repo/service-discovery";
 
 import type { routes } from "./app";

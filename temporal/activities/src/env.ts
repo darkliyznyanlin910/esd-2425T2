@@ -1,7 +1,10 @@
 import { createEnv } from "@t3-oss/env-core";
 import { z } from "zod";
 
+import { env as serviceDiscoveryEnv } from "@repo/service-discovery/env";
+
 export const env = createEnv({
+  extends: [serviceDiscoveryEnv],
   server: {
     INTERNAL_COMMUNICATION_SECRET: z.string(),
   },

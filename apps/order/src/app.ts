@@ -34,10 +34,9 @@ const routes = app
     "/docs",
     apiReference({
       theme: "saturn",
-      spec: { url: `${getServiceBaseUrl("api")}/openapi` },
+      spec: { url: `${getServiceBaseUrl("order")}/openapi` },
     }),
   )
-  .use(authMiddleware())
   .route("/order", orderRouter);
 
 export { app, routes };

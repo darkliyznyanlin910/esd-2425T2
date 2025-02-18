@@ -8,6 +8,7 @@ export const SERVICES = [
   "auth",
   "chatbot",
   "notification",
+  "order",
 ] as const;
 export type Service = (typeof SERVICES)[number];
 
@@ -17,6 +18,7 @@ export const LOCAL_SERVICE_MAP: Record<Service, string> = {
   auth: "http://localhost:3002",
   chatbot: "http://localhost:3003",
   notification: "http://localhost:3004",
+  order: "http://localhost:3005",
 };
 
 export const getServiceBaseUrl = (service: Service) => {
