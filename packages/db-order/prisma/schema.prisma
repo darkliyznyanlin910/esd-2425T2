@@ -10,16 +10,26 @@ datasource db {
 }
 
 model Order {
-  id              String                @id @default(uuid())
-  userId          String
-  displayId       String
-  orderStatus     String
-  addressLine1    String
-  addressLine2    String?
-  city            String
-  state           String?
-  zipCode         String
-  country         String
+  id          String @id @default(uuid())
+  userId      String
+  displayId   String
+  orderStatus String
+
+  // From
+  fromAddressLine1 String
+  fromAddressLine2 String?
+  fromCity         String
+  fromState        String?
+  fromZipCode      String
+  fromCountry      String
+  // To
+  toAddressLine1   String
+  toAddressLine2   String?
+  toCity           String
+  toState          String?
+  toZipCode        String
+  toCountry        String
+
   createdAt       DateTime              @default(now())
   updatedAt       DateTime              @updatedAt
   trackingRecords OrderTrackingRecord[]

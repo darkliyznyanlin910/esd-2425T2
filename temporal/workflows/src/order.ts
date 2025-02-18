@@ -10,6 +10,8 @@ import {
 import * as activities from "@repo/temporal-activities";
 import { Order, OrderStatus } from "@repo/temporal-common";
 
+export const PICKUP_TIMEOUT = "10 min";
+
 export const driverFoundSignal = defineSignal<[string]>("driverFound");
 export const pickedUpSignal = defineSignal("pickedUp");
 export const deliveredSignal = defineSignal("delivered");
@@ -53,9 +55,11 @@ export async function order(
   });
 
   setHandler(driverFoundSignal, async (driverId) => {
-    await updateOrderStatus(order.id, "driverFound");
-    await assignOrderToDriver(order, driverId);
-    orderStatus = "driverFound";
+    if (orderStatus == "findingDriver") {
+      await updateOrderStatus(order.id, "driverFound");
+      await assignOrderToDriver(order, driverId);
+      orderStatus = "driverFound";
+    }
   });
 
   setHandler(pickedUpSignal, async () => {
@@ -68,8 +72,6 @@ export async function order(
   setHandler(deliveredSignal, async () => {
     if (orderStatus == "pickedUp") {
       await updateOrderStatus(order.id, "delivered");
-      const invoice = await generateInvoice(order);
-      await sendInvoiceToCustomer(invoice);
       orderStatus = "delivered";
     }
   });
@@ -78,17 +80,27 @@ export async function order(
     await sendOrderToDrivers(order);
   } catch (error) {
     await updateOrderStatus(order.id, "delayed");
-    throw new ApplicationFailure("Failed to send order to drivers", "DELAYED");
+    throw ApplicationFailure.create({
+      message: "Failed to send order to drivers",
+      type: "DELAYED",
+    });
   }
 
   const notPickedUpInTime = !(await condition(
     () => orderStatus === "pickedUp",
-    "1 min",
+    PICKUP_TIMEOUT,
   ));
 
   if (notPickedUpInTime) {
     await updateOrderStatus(order.id, "delayed");
     await notifyAdmin(order);
-    throw new ApplicationFailure("Order not picked up in time", "DELAYED");
+    throw ApplicationFailure.create({
+      message: "Order not picked up in time",
+      type: "DELAYED",
+      nonRetryable: true,
+    });
   }
+
+  const invoice = await generateInvoice(order);
+  await sendInvoiceToCustomer(invoice);
 }
