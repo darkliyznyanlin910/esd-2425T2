@@ -5,8 +5,20 @@ generator client {
 }
 
 generator zod {
-  provider = "zod-prisma-types"
-  output   = "../src/generated/zod"
+  provider                         = "zod-prisma-types"
+  output                           = "../src/generated/zod"
+  createInputTypes                 = false
+  createModelTypes                 = true
+  addInputTypeValidation           = false
+  addIncludeType                   = false
+  addSelectType                    = false
+  validateWhereUniqueInput         = false
+  createOptionalDefaultValuesTypes = false
+  createRelationValuesTypes        = false
+  createPartialTypes               = false
+  useDefaultValidators             = false
+  coerceDate                       = true
+  writeNullishInModelTypes         = true
 }
 
 datasource db {
@@ -18,7 +30,7 @@ model Order {
   id          String @id @default(uuid())
   userId      String
   displayId   String
-  orderStatus String
+  orderStatus String @default("processing")
 
   // From
   fromAddressLine1 String
