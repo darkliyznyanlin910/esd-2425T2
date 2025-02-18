@@ -1,7 +1,6 @@
 import {
   ApplicationFailure,
   condition,
-  defineQuery,
   defineSignal,
   proxyActivities,
   setHandler,
@@ -10,7 +9,8 @@ import {
 import * as activities from "@repo/temporal-activities";
 import { Order, OrderStatus } from "@repo/temporal-common";
 
-export const PICKUP_TIMEOUT = "15s";
+export const PICKUP_TIMEOUT = "10 min";
+export const DELIVERY_TIMEOUT = "2 days";
 
 export const driverFoundSignal = defineSignal<[string]>("driverFound");
 export const pickedUpSignal = defineSignal("pickedUp");
@@ -90,6 +90,21 @@ export async function order(
     await notifyAdmin(order);
     throw ApplicationFailure.create({
       message: "Order not picked up in time",
+      type: "DELAYED",
+      nonRetryable: true,
+    });
+  }
+
+  const notDeliveredInTime = !(await condition(
+    () => orderStatus === "delivered",
+    DELIVERY_TIMEOUT,
+  ));
+
+  if (notDeliveredInTime) {
+    await updateOrderStatus(order.id, "delayed");
+    await notifyAdmin(order);
+    throw ApplicationFailure.create({
+      message: "Order not delivered in time",
       type: "DELAYED",
       nonRetryable: true,
     });

@@ -238,6 +238,64 @@ importers:
         specifier: 'catalog:'
         version: 5.7.3
 
+  apps/driver:
+    dependencies:
+      '@hono/node-server':
+        specifier: ^1.13.8
+        version: 1.13.8(hono@4.7.1)
+      '@hono/zod-validator':
+        specifier: ^0.4.2
+        version: 0.4.3(hono@4.7.1)(zod@3.24.1)
+      '@repo/auth':
+        specifier: workspace:*
+        version: link:../auth
+      '@repo/service-discovery':
+        specifier: workspace:*
+        version: link:../../packages/service-discovery
+      '@repo/temporal-common':
+        specifier: workspace:*
+        version: link:../../temporal/common
+      '@repo/temporal-workflows':
+        specifier: workspace:*
+        version: link:../../temporal/workflows
+      '@scalar/hono-api-reference':
+        specifier: ^0.5.170
+        version: 0.5.174(hono@4.7.1)
+      dotenv-cli:
+        specifier: 'catalog:'
+        version: 7.4.4
+      hono:
+        specifier: ^4.6.20
+        version: 4.7.1
+      tsx:
+        specifier: ^4.19.2
+        version: 4.19.2
+      zod:
+        specifier: 'catalog:'
+        version: 3.24.1
+      zod-openapi:
+        specifier: ^4.2.3
+        version: 4.2.3(zod@3.24.1)
+    devDependencies:
+      '@repo/eslint-config':
+        specifier: workspace:*
+        version: link:../../tooling/eslint
+      '@repo/prettier-config':
+        specifier: workspace:*
+        version: link:../../tooling/prettier
+      '@repo/tsconfig':
+        specifier: workspace:*
+        version: link:../../tooling/typescript
+      eslint:
+        specifier: 'catalog:'
+        version: 9.20.1(jiti@1.21.7)
+      prettier:
+        specifier: 'catalog:'
+        version: 3.5.1
+      typescript:
+        specifier: 'catalog:'
+        version: 5.7.3
+
   apps/notification:
     dependencies:
       '@hono/node-server':
