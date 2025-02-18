@@ -50,10 +50,6 @@ ioServer.sockets.on("connection", function (socket) {
       }
     }
   });
-  socket.on("driverTakeOrder", (orderId: string) => {
-    console.log("driverTakeOrder", orderId);
-    ioServer.emit("invalidateOrder", orderId);
-  });
 });
 
 export { ioServer };

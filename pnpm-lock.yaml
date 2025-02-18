@@ -249,15 +249,12 @@ importers:
       '@repo/auth':
         specifier: workspace:*
         version: link:../auth
+      '@repo/db-order':
+        specifier: workspace:*
+        version: link:../../packages/db-order
       '@repo/service-discovery':
         specifier: workspace:*
         version: link:../../packages/service-discovery
-      '@repo/temporal-common':
-        specifier: workspace:*
-        version: link:../../temporal/common
-      '@repo/temporal-workflows':
-        specifier: workspace:*
-        version: link:../../temporal/workflows
       '@scalar/hono-api-reference':
         specifier: ^0.5.170
         version: 0.5.170(hono@4.6.20)
@@ -431,7 +428,7 @@ importers:
     dependencies:
       ai:
         specifier: ^4.1.37
-        version: 4.1.37(react@18.3.1)(zod@3.24.1)
+        version: 4.1.37(react@18.3.1)(zod@3.24.2)
     devDependencies:
       '@repo/eslint-config':
         specifier: workspace:*
@@ -586,6 +583,9 @@ importers:
       zod:
         specifier: 'catalog:'
         version: 3.24.1
+      zod-prisma-types:
+        specifier: ^3.2.4
+        version: 3.2.4(@prisma/client@6.2.1(prisma@6.2.1))(prisma@6.2.1)
     devDependencies:
       '@repo/eslint-config':
         specifier: workspace:*
@@ -746,15 +746,21 @@ importers:
 
   temporal/activities:
     dependencies:
+      '@repo/notification-backend':
+        specifier: workspace:^
+        version: link:../../apps/notification
       '@repo/temporal-common':
         specifier: workspace:*
         version: link:../common
+      '@t3-oss/env-core':
+        specifier: ^0.11.1
+        version: 0.11.1(typescript@5.6.3)(zod@3.24.2)
       '@temporalio/activity':
         specifier: ^1.11.7
         version: 1.11.7
-      hono:
-        specifier: ^4.6.20
-        version: 4.6.20
+      zod:
+        specifier: ^3.24.2
+        version: 3.24.2
     devDependencies:
       '@repo/eslint-config':
         specifier: workspace:*
@@ -1464,6 +1470,9 @@ packages:
   '@prisma/debug@6.2.1':
     resolution: {integrity: sha512-0KItvt39CmQxWkEw6oW+RQMD6RZ43SJWgEUnzxN8VC9ixMysa7MzZCZf22LCK5DSooiLNf8vM3LHZm/I/Ni7bQ==}
 
+  '@prisma/debug@6.3.1':
+    resolution: {integrity: sha512-RrEBkd+HLZx+ydfmYT0jUj7wjLiS95wfTOSQ+8FQbvb6vHh5AeKfEPt/XUQ5+Buljj8hltEfOslEW57/wQIVeA==}
+
   '@prisma/engines-version@6.2.0-14.4123509d24aa4dede1e864b46351bf2790323b69':
     resolution: {integrity: sha512-7tw1qs/9GWSX6qbZs4He09TOTg1ff3gYsB3ubaVNN0Pp1zLm9NC5C5MZShtkz7TyQjx7blhpknB7HwEhlG+PrQ==}
 
@@ -1472,6 +1481,9 @@ packages:
 
   '@prisma/fetch-engine@6.2.1':
     resolution: {integrity: sha512-OO7O9d6Mrx2F9i+Gu1LW+DGXXyUFkP7OE5aj9iBfA/2jjDXEJjqa9X0ZmM9NZNo8Uo7ql6zKm6yjDcbAcRrw1A==}
+
+  '@prisma/generator-helper@6.3.1':
+    resolution: {integrity: sha512-hX2fxjMksyAWAS0OcDi7GVmRUqsZ35ZY3Zla1EfO+uDYW6BY+om8kuKHyKkIvvRcUlTmL+xccl+nJwNToqP/aA==}
 
   '@prisma/get-platform@6.2.1':
     resolution: {integrity: sha512-zp53yvroPl5m5/gXYLz7tGCNG33bhG+JYCm74ohxOq1pPnrL47VQYFfF3RbTZ7TzGWCrR3EtoiYMywUBw7UK6Q==}
@@ -2509,6 +2521,9 @@ packages:
   clsx@2.0.0:
     resolution: {integrity: sha512-rQ1+kcj+ttHG0MKVGBUXwayCCF1oh39BF5COIpRzuCEv8Mwjv0XucrI2ExNTOn9IlLifGClWQcU9BrZORvtw6Q==}
     engines: {node: '>=6'}
+
+  code-block-writer@12.0.0:
+    resolution: {integrity: sha512-q4dMFMlXtKR3XNBHyMHt/3pwYNA69EDk00lloMOaaUMKPUXBw6lpXtbu3MMVG6/uOihGnRDOlkyqsONEUj60+w==}
 
   color-convert@1.9.3:
     resolution: {integrity: sha512-QfAUtd+vFdAtFQcC8CCyYt1fYWxSqAiK2cSD6zDB8N3cpsEBAvRxp9zOGg6G/SHHJYAT88/az/IuDGALsNVbGg==}
@@ -4983,6 +4998,13 @@ packages:
     peerDependencies:
       zod: ^3.21.4
 
+  zod-prisma-types@3.2.4:
+    resolution: {integrity: sha512-S4spVBMJAmecLv+aLyRhXK26qW9nWwcsOf1H1fRcEmiI8DPbftZ99u0fhqHlymuTpmMcUpuKxcNNOIqNY0ScSQ==}
+    hasBin: true
+    peerDependencies:
+      '@prisma/client': ^4.x.x || ^5.x.x || ^6.x.x
+      prisma: ^4.x.x || ^5.x.x || ^6.x.x
+
   zod-to-json-schema@3.24.1:
     resolution: {integrity: sha512-3h08nf3Vw3Wl3PK+q3ow/lIil81IT2Oa7YpQyUUDsEWbXveMesdfK1xBd2RhCkynwZndAxixji/7SYJJowr62w==}
     peerDependencies:
@@ -4990,6 +5012,9 @@ packages:
 
   zod@3.24.1:
     resolution: {integrity: sha512-muH7gBL9sI1nciMZV67X5fTKKBLtwpZ5VBp1vsOQzj1MhrBZ4wlVCm3gedKZWLp0Oyel8sIGfeiz54Su+OVT+A==}
+
+  zod@3.24.2:
+    resolution: {integrity: sha512-lY7CDW43ECgW9u1TcT3IoXHflywfVqDYze4waEz812jR/bZ8FHDsl7pFQoSZTz5N+2NqRXs8GBwnAwo3ZNxqhQ==}
 
   zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
@@ -5011,6 +5036,15 @@ snapshots:
     optionalDependencies:
       zod: 3.24.1
 
+  '@ai-sdk/provider-utils@2.1.7(zod@3.24.2)':
+    dependencies:
+      '@ai-sdk/provider': 1.0.7
+      eventsource-parser: 3.0.0
+      nanoid: 3.3.8
+      secure-json-parse: 2.7.0
+    optionalDependencies:
+      zod: 3.24.2
+
   '@ai-sdk/provider@1.0.7':
     dependencies:
       json-schema: 0.4.0
@@ -5025,6 +5059,16 @@ snapshots:
       react: 18.3.1
       zod: 3.24.1
 
+  '@ai-sdk/react@1.1.13(react@18.3.1)(zod@3.24.2)':
+    dependencies:
+      '@ai-sdk/provider-utils': 2.1.7(zod@3.24.2)
+      '@ai-sdk/ui-utils': 1.1.13(zod@3.24.2)
+      swr: 2.3.2(react@18.3.1)
+      throttleit: 2.1.0
+    optionalDependencies:
+      react: 18.3.1
+      zod: 3.24.2
+
   '@ai-sdk/ui-utils@1.1.13(zod@3.24.1)':
     dependencies:
       '@ai-sdk/provider': 1.0.7
@@ -5032,6 +5076,14 @@ snapshots:
       zod-to-json-schema: 3.24.1(zod@3.24.1)
     optionalDependencies:
       zod: 3.24.1
+
+  '@ai-sdk/ui-utils@1.1.13(zod@3.24.2)':
+    dependencies:
+      '@ai-sdk/provider': 1.0.7
+      '@ai-sdk/provider-utils': 2.1.7(zod@3.24.2)
+      zod-to-json-schema: 3.24.1(zod@3.24.2)
+    optionalDependencies:
+      zod: 3.24.2
 
   '@alloc/quick-lru@5.2.0': {}
 
@@ -5442,6 +5494,8 @@ snapshots:
 
   '@prisma/debug@6.2.1': {}
 
+  '@prisma/debug@6.3.1': {}
+
   '@prisma/engines-version@6.2.0-14.4123509d24aa4dede1e864b46351bf2790323b69': {}
 
   '@prisma/engines@6.2.1':
@@ -5456,6 +5510,10 @@ snapshots:
       '@prisma/debug': 6.2.1
       '@prisma/engines-version': 6.2.0-14.4123509d24aa4dede1e864b46351bf2790323b69
       '@prisma/get-platform': 6.2.1
+
+  '@prisma/generator-helper@6.3.1':
+    dependencies:
+      '@prisma/debug': 6.3.1
 
   '@prisma/get-platform@6.2.1':
     dependencies:
@@ -5859,6 +5917,12 @@ snapshots:
   '@t3-oss/env-core@0.11.1(typescript@5.6.3)(zod@3.24.1)':
     dependencies:
       zod: 3.24.1
+    optionalDependencies:
+      typescript: 5.6.3
+
+  '@t3-oss/env-core@0.11.1(typescript@5.6.3)(zod@3.24.2)':
+    dependencies:
+      zod: 3.24.2
     optionalDependencies:
       typescript: 5.6.3
 
@@ -6279,6 +6343,18 @@ snapshots:
       react: 18.3.1
       zod: 3.24.1
 
+  ai@4.1.37(react@18.3.1)(zod@3.24.2):
+    dependencies:
+      '@ai-sdk/provider': 1.0.7
+      '@ai-sdk/provider-utils': 2.1.7(zod@3.24.2)
+      '@ai-sdk/react': 1.1.13(react@18.3.1)(zod@3.24.2)
+      '@ai-sdk/ui-utils': 1.1.13(zod@3.24.2)
+      '@opentelemetry/api': 1.9.0
+      jsondiffpatch: 0.6.0
+    optionalDependencies:
+      react: 18.3.1
+      zod: 3.24.2
+
   ajv-formats@2.1.1(ajv@8.17.1):
     optionalDependencies:
       ajv: 8.17.1
@@ -6612,6 +6688,8 @@ snapshots:
   clone@1.0.4: {}
 
   clsx@2.0.0: {}
+
+  code-block-writer@12.0.0: {}
 
   color-convert@1.9.3:
     dependencies:
@@ -9684,10 +9762,25 @@ snapshots:
     dependencies:
       zod: 3.24.1
 
+  zod-prisma-types@3.2.4(@prisma/client@6.2.1(prisma@6.2.1))(prisma@6.2.1):
+    dependencies:
+      '@prisma/client': 6.2.1(prisma@6.2.1)
+      '@prisma/generator-helper': 6.3.1
+      code-block-writer: 12.0.0
+      lodash: 4.17.21
+      prisma: 6.2.1
+      zod: 3.24.1
+
   zod-to-json-schema@3.24.1(zod@3.24.1):
     dependencies:
       zod: 3.24.1
 
+  zod-to-json-schema@3.24.1(zod@3.24.2):
+    dependencies:
+      zod: 3.24.2
+
   zod@3.24.1: {}
+
+  zod@3.24.2: {}
 
   zwitch@2.0.4: {}

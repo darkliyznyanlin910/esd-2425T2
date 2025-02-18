@@ -24,8 +24,10 @@
   },
   "prettier": "@repo/prettier-config",
   "dependencies": {
+    "@repo/notification-backend": "workspace:^",
     "@repo/temporal-common": "workspace:*",
+    "@t3-oss/env-core": "^0.11.1",
     "@temporalio/activity": "^1.11.7",
-    "hono": "^4.6.20"
+    "zod": "^3.24.2"
   }
 }

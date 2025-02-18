@@ -1,6 +1,9 @@
-import { log } from "@temporalio/activity";
+import { ApplicationFailure, log } from "@temporalio/activity";
 
+import { HonoClient as NotificationClient } from "@repo/notification-backend/type";
 import { Invoice, Order, OrderStatus } from "@repo/temporal-common";
+
+import { env } from "./env";
 
 export async function updateOrderStatus(
   orderId: Order["id"],
@@ -17,9 +20,25 @@ export async function getOrderStatus(
 }
 
 export async function sendOrderToDrivers(order: Order): Promise<void> {
-  log.info("Sending order to drivers", {
-    order: JSON.stringify(order, null, 2),
-  });
+  const res = await NotificationClient.driver.send.$post(
+    {
+      json: order,
+    },
+    {
+      init: {
+        headers: {
+          Authorization: `Bearer ${env.INTERNAL_COMMUNICATION_SECRET}`,
+        },
+      },
+    },
+  );
+  if (!res.ok) {
+    throw ApplicationFailure.create({
+      nonRetryable: true,
+      message: "Failed to send order to drivers",
+    });
+  }
+  log.info("Sent order to drivers", { res });
 }
 
 export async function notifyAdmin(order: Order): Promise<void> {
@@ -34,6 +53,28 @@ export async function assignOrderToDriver(
     order: JSON.stringify(order, null, 2),
     driverId,
   });
+}
+
+export async function invalidateOrder(order: Order): Promise<void> {
+  const res = await NotificationClient.driver.invalidate.$post(
+    {
+      json: order,
+    },
+    {
+      init: {
+        headers: {
+          Authorization: `Bearer ${env.INTERNAL_COMMUNICATION_SECRET}`,
+        },
+      },
+    },
+  );
+  if (!res.ok) {
+    throw ApplicationFailure.create({
+      nonRetryable: true,
+      message: "Failed to invalidate order",
+    });
+  }
+  log.info("Invalidated order", { res });
 }
 
 export async function generateInvoice(order: Order): Promise<Invoice> {
