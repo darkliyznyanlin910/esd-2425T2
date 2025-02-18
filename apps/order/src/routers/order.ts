@@ -1,5 +1,4 @@
 import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
-import { z } from "zod";
 
 import { HonoExtension } from "@repo/auth/type";
 import { db } from "@repo/db-order";
@@ -37,9 +36,7 @@ const orderRouter = new OpenAPIHono<HonoExtension>().openapi(
       200: {
         content: {
           "application/json": {
-            schema: z.object({
-              message: z.string(),
-            }),
+            schema: OrderSchema,
           },
         },
         description: "Test response",
@@ -70,7 +67,7 @@ const orderRouter = new OpenAPIHono<HonoExtension>().openapi(
       },
     });
 
-    return c.json({ message: "Hello, world!" });
+    return c.json(order);
   },
 );
 
