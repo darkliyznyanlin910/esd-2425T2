@@ -1,27 +1,18 @@
-import { z } from "zod";
+import { hc } from "hono/client";
+
+import type { Order } from "@repo/db-order/client";
+import { getServiceBaseUrl } from "@repo/service-discovery";
 
 import type { routes } from "./app";
 
-export type AppType = typeof routes;
-
-export const orderInfoSchema = z.object({
-  orderId: z.string(),
-  from: z.string(),
-  to: z.string(),
-  price: z.number(),
-  deliverBy: z.string(),
-});
-
-export type OrderInfo = z.infer<typeof orderInfoSchema>;
+export const HonoClient = hc<typeof routes>(getServiceBaseUrl("notification"));
 
 export interface ServerToClientEvents {
-  broadcastOrder: (orderInfo: OrderInfo) => void;
+  broadcastOrder: (order: Order) => void;
   invalidateOrder: (orderId: string) => void;
 }
 
-export interface ClientToServerEvents {
-  driverTakeOrder: (orderId: string) => void;
-}
+export interface ClientToServerEvents {}
 
 export interface InterServerEvents {
   ping: () => void;

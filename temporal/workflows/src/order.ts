@@ -25,6 +25,7 @@ const {
   assignOrderToDriver,
   generateInvoice,
   sendInvoiceToCustomer,
+  invalidateOrder,
 } = proxyActivities<typeof activities>({
   startToCloseTimeout: "1m",
   retry: {
@@ -58,6 +59,7 @@ export async function order(
     if (orderStatus == "findingDriver") {
       await updateOrderStatus(order.id, "driverFound");
       await assignOrderToDriver(order, driverId);
+      await invalidateOrder(order);
       orderStatus = "driverFound";
     }
   });

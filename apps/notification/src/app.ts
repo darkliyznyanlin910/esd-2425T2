@@ -1,10 +1,11 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { apiReference } from "@scalar/hono-api-reference";
+import { bearerAuth } from "hono/bearer-auth";
 import { cors } from "hono/cors";
 
-import { authMiddleware } from "@repo/auth/auth";
 import { getServiceBaseUrl, SERVICES } from "@repo/service-discovery";
 
+import { env } from "./env";
 import { driverRouter } from "./routers/driver";
 
 const app = new OpenAPIHono();
@@ -37,7 +38,7 @@ const routes = app
       spec: { url: `${getServiceBaseUrl("notification")}/openapi` },
     }),
   )
-  .use(authMiddleware(["driver"]))
+  .use("/driver/*", bearerAuth({ token: env.INTERNAL_COMMUNICATION_SECRET }))
   .route("/driver", driverRouter);
 
 export { app, routes };

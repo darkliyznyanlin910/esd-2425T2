@@ -1,43 +1,70 @@
 import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
 import { z } from "zod";
 
-import { ioServer } from "..";
-import { orderInfoSchema } from "../type";
+import { OrderSchema } from "@repo/db-order/zod";
 
-const driverRouter = new OpenAPIHono().openapi(
-  createRoute({
-    method: "post",
-    request: {
-      body: {
-        content: {
-          "application/json": {
-            schema: orderInfoSchema,
+import { ioServer } from "..";
+
+const driverRouter = new OpenAPIHono()
+  .openapi(
+    createRoute({
+      method: "post",
+      request: {
+        body: {
+          content: {
+            "application/json": {
+              schema: OrderSchema,
+            },
           },
         },
       },
+      path: "/send",
+      responses: {
+        200: {
+          content: {
+            "application/json": {
+              schema: z.object({
+                success: z.boolean(),
+              }),
+            },
+          },
+          description: "Success",
+        },
+        403: {
+          description: "Unauthorized",
+        },
+      },
+    }),
+    (c) => {
+      const input = c.req.valid("json");
+      ioServer.emit("broadcastOrder", input);
+      return c.json({ success: true });
     },
-    path: "/send",
-    responses: {
-      200: {
-        content: {
-          "application/json": {
-            schema: z.object({
-              message: z.string(),
-            }),
+  )
+  .openapi(
+    createRoute({
+      method: "post",
+      path: "/invalidate",
+      request: {
+        body: {
+          content: {
+            "application/json": {
+              schema: OrderSchema,
+            },
           },
         },
-        description: "Test response",
       },
-      401: {
-        description: "Unauthorized",
+      responses: {
+        200: {
+          description: "Success",
+        },
       },
+    }),
+    async (c) => {
+      const input = c.req.valid("json");
+      ioServer.emit("invalidateOrder", input.id);
+      return c.json({ success: true });
     },
-  }),
-  (c) => {
-    const input = c.req.valid("json");
-    ioServer.emit("broadcastOrder", input);
-    return c.json({ message: "Hello, world!" });
-  },
-);
+  );
 
 export { driverRouter };
