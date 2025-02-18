@@ -33,3 +33,14 @@ services:
       POSTGRES_DB: driver_database
     volumes:
       - ./data/driver_data:/var/lib/postgresql/data
+      
+  invoice_database:
+    image: postgres:15-alpine
+    ports:
+      - "5435:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: invoice_database
+    volumes:
+      - ./data/invoice_data:/var/lib/postgresql/data
