@@ -33,8 +33,18 @@ export const auth = betterAuth({
   trustedOrigins: SERVICES.map((service) => getServiceBaseUrl(service)),
 });
 
-export const authMiddleware = (allowedRoles: string[] = []) =>
+export const ROLES = ["client", "driver", "admin"] as const;
+
+export type Role = (typeof ROLES)[number];
+
+export const authMiddleware = (
+  allowedRoles: (Role | undefined)[] = [],
+  optional = false,
+) =>
   createMiddleware<HonoExtension>(async (c, next) => {
+    if (optional) {
+      return next();
+    }
     const session = await auth.api.getSession({
       headers: c.req.raw.headers,
     });
@@ -47,7 +57,7 @@ export const authMiddleware = (allowedRoles: string[] = []) =>
 
     if (
       allowedRoles.length > 0 &&
-      !allowedRoles.includes(session.user.role ?? "")
+      !allowedRoles.includes(session.user.role as Role)
     ) {
       return c.json({ error: "Unauthorized" }, 401);
     }

@@ -3,6 +3,7 @@ import { apiReference } from "@scalar/hono-api-reference";
 import { cors } from "hono/cors";
 
 import type { HonoExtension } from "@repo/auth/type";
+import { authMiddleware } from "@repo/auth/auth";
 import { getServiceBaseUrl, SERVICES } from "@repo/service-discovery";
 
 import { chatRouter } from "./chatRouter";
@@ -37,7 +38,7 @@ const routes = app
       spec: { url: `${getServiceBaseUrl("chatbot")}/openapi` },
     }),
   )
-  // .use(authMiddleware())
+  .use(authMiddleware(["client"]))
   .route("/chat", chatRouter);
 
 export { app, routes };

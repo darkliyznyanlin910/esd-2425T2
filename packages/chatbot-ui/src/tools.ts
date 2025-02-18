@@ -1,4 +1,3 @@
-import { tool } from "ai";
 import { z } from "zod";
 
 import type { AiSdkToolSet } from "@repo/chatbot-common";
@@ -20,23 +19,23 @@ type ToolReturnTypes = {
 };
 
 export const backendTools = {
-  getOrders: tool({
+  getOrders: {
     description: "show the orders to the user",
     parameters: z.object({}),
-  }),
-  getOrderDetails: tool({
+  },
+  getOrderDetails: {
     description: "show the order details to the user",
     parameters: orderIdSchema,
-  }),
-  getDriverDetails: tool({
+  },
+  getDriverDetails: {
     description: "show the driver details of an order to the user",
     parameters: orderIdSchema,
-  }),
-  getTrackingDetails: tool({
+  },
+  getTrackingDetails: {
     description:
       "show the tracking status change history of an order to the user",
     parameters: orderIdSchema,
-  }),
+  },
 } satisfies AiSdkToolSet;
 
 export type ToolFunctionMap = {

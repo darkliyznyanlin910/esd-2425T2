@@ -1,6 +1,7 @@
 import { ApplicationFailure, log } from "@temporalio/activity";
 
 import { HonoClient as NotificationClient } from "@repo/notification-backend/type";
+import { getServiceBaseUrl } from "@repo/service-discovery";
 import { Invoice, Order, OrderStatus } from "@repo/temporal-common";
 
 import { env } from "./env";
@@ -9,14 +10,40 @@ export async function updateOrderStatus(
   orderId: Order["id"],
   status: OrderStatus,
 ): Promise<void> {
-  log.info("Updating order status", { orderId, status });
+  const res = await fetch(`${getServiceBaseUrl("order")}/order/${orderId}`, {
+    method: "POST",
+    body: JSON.stringify({ orderStatus: status }),
+    headers: {
+      Authorization: `Bearer ${env.INTERNAL_COMMUNICATION_SECRET}`,
+    },
+  });
+  if (!res.ok) {
+    throw ApplicationFailure.create({
+      nonRetryable: true,
+      message: "Failed to update order status",
+    });
+  }
+  const data = await res.json();
+  log.info("Updated order status", { data });
 }
 
 export async function getOrderStatus(
   orderId: Order["id"],
 ): Promise<OrderStatus> {
-  log.info("Getting order status", { orderId });
-  return "processing";
+  const res = await fetch(`${getServiceBaseUrl("order")}/order/${orderId}`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${env.INTERNAL_COMMUNICATION_SECRET}`,
+    },
+  });
+  if (!res.ok) {
+    throw ApplicationFailure.create({
+      nonRetryable: true,
+      message: "Failed to get order status",
+    });
+  }
+  const data = (await res.json()) as Order;
+  return data.orderStatus as OrderStatus;
 }
 
 export async function sendOrderToDrivers(order: Order): Promise<void> {
