@@ -16,7 +16,7 @@ if [ "$1" = "up" ]; then
   if [ -z "$ENV_FILE" ]; then
     docker compose -f $COMPOSE_FILE up -d
   else
-    docker compose -f $COMPOSE_FILE --env-file $ENV_FILE -d
+    docker compose -f $COMPOSE_FILE --env-file $ENV_FILE up -d 
   fi
   if [ "$2" = "databases" ]; then
     pnpm run db:push
