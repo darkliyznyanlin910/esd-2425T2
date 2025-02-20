@@ -46,7 +46,7 @@ export type ToolFunctionMap = {
 
 export const toolFunctionMap: ToolFunctionMap = {
   getOrders: async () => {
-    return [] as string[];
+    return ["123", "456", "789"] as string[];
   },
   getOrderDetails: async ({ orderId }) => {
     return {
