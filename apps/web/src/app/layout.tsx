@@ -6,7 +6,7 @@ import { cn } from "@repo/ui";
 import { ThemeProvider, ThemeToggle } from "@repo/ui/theme";
 import { Toaster } from "@repo/ui/toast";
 
-import "~/app/globals.css";
+import "~/styles/globals.css";
 
 import { getServiceBaseUrl } from "@repo/service-discovery";
 

@@ -109,9 +109,8 @@ export async function generateInvoice(order: Order): Promise<Invoice> {
     id: "1",
     orderId: order.id,
     customerId: order.userId,
-    amount: 100,
-    status: "pending",
-    invoiceUrl: "https://example.com/invoice",
+    status: "PENDING",
+    path: "https://example.com/invoice",
     createdAt: new Date(),
     updatedAt: new Date(),
   };

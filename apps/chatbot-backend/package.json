@@ -7,7 +7,7 @@
     "./type": "./src/type.ts"
   },
   "scripts": {
-    "build": "pnpm esbuild src/lambda.ts --bundle --sourcemap --platform=node --target=es2020 --outfile=dist/lambda.js",
+    "build": "tsc",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
     "dev": "pnpm with-env tsx watch src/index.ts",
     "start": "pnpm with-env tsx src/index.ts",

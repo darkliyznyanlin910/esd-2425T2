@@ -7,14 +7,14 @@ RUN apk add --no-cache python3 make g++ gcc
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN npm install -g pnpm
-RUN npm install -g turbo
+RUN pnpm install -g turbo
 
 WORKDIR /repo
 
 COPY . .
 RUN pnpm install
 
-WORKDIR /repo/apps/web
+WORKDIR /repo/apps/api
 RUN pnpm build 
 
 EXPOSE 3000

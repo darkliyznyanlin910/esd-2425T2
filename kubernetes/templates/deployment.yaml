@@ -24,7 +24,7 @@ spec:
       containers:
         - name: {{ $service }}
           image: "{{ index $.Values $service "image" "repository" }}:{{ index $.Values $service "image" "tag" }}"
-          imagePullPolicy: Always
+          imagePullPolicy: Never
           envFrom:
             - configMapRef:
                 name: {{ include "my-app.fullname" $ }}-config
