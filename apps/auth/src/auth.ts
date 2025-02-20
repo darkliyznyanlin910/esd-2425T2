@@ -42,9 +42,10 @@ export const authMiddleware = (
   optional = false,
 ) =>
   createMiddleware<HonoExtension>(async (c, next) => {
-    if (optional) {
+    if (optional && !c.req.header("Authorization")) {
       return next();
     }
+
     const session = await auth.api.getSession({
       headers: c.req.raw.headers,
     });
