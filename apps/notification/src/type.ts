@@ -7,17 +7,7 @@ import type { routes } from "./app";
 
 export const HonoClient = hc<typeof routes>(getServiceBaseUrl("notification"));
 
-export interface ServerToClientEvents {
+export interface EventHandlers {
   broadcastOrder: (order: Order) => void;
   invalidateOrder: (orderId: string) => void;
-}
-
-export interface ClientToServerEvents {}
-
-export interface InterServerEvents {
-  ping: () => void;
-}
-
-export interface SocketData {
-  userId: string;
 }
