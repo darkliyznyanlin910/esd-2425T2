@@ -1,9 +1,0 @@
-apiVersion: v2
-name: esd
-description: A Helm chart for web and API services
-version: 0.1.0
-
-dependencies:
-  - name: kong
-    version: "2.35.1"
-    repository: https://charts.konghq.com

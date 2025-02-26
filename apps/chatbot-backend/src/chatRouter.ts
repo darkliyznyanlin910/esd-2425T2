@@ -39,7 +39,6 @@ const chatRouter = new OpenAPIHono().openapi(
   }),
   (c) => {
     const body = c.req.valid("json");
-    console.log(body);
     const messages = JSON.parse(JSON.stringify(body.messages)) as AiSdkMessages;
     const result = streamText({
       model,

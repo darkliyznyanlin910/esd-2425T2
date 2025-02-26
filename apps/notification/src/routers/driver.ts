@@ -1,11 +1,16 @@
 import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
+import { Context } from "hono";
 import { bearerAuth } from "hono/bearer-auth";
+import { streamSSE } from "hono/streaming";
 import { z } from "zod";
 
+import { authMiddleware } from "@repo/auth/auth";
 import { OrderSchema } from "@repo/db-order/zod";
 
-import { ioServer } from "..";
+import { emitter } from "../app";
 import { env } from "../env";
+import { useSSE } from "../middlewares";
+import { EventHandlers } from "../type";
 
 const driverRouter = new OpenAPIHono()
   .openapi(
@@ -40,7 +45,7 @@ const driverRouter = new OpenAPIHono()
     }),
     (c) => {
       const input = c.req.valid("json");
-      ioServer.emit("broadcastOrder", input);
+      emitter.emit("broadcastOrder", input);
       return c.json({ success: true });
     },
   )
@@ -66,8 +71,53 @@ const driverRouter = new OpenAPIHono()
     }),
     async (c) => {
       const input = c.req.valid("json");
-      ioServer.emit("invalidateOrder", input.id);
+      emitter.emit("invalidateOrder", input.id);
       return c.json({ success: true });
+    },
+  )
+  .openapi(
+    createRoute({
+      method: "get",
+      path: "/sse",
+      middleware: [useSSE, authMiddleware(["driver"])],
+      responses: {
+        200: {
+          description: "Success",
+        },
+      },
+    }),
+    async (c) => {
+      let isAborted = false;
+      return streamSSE(c as unknown as Context, async (stream) => {
+        const eventHandler =
+          (eventName: keyof EventHandlers) =>
+          async (data: Parameters<EventHandlers[keyof EventHandlers]>[0]) => {
+            await stream.writeSSE({
+              data: typeof data === "string" ? data : JSON.stringify(data),
+              event: eventName,
+            });
+          };
+
+        stream.onAbort(() => {
+          emitter.removeListener(
+            "broadcastOrder",
+            eventHandler("broadcastOrder"),
+          );
+          emitter.removeListener(
+            "invalidateOrder",
+            eventHandler("invalidateOrder"),
+          );
+          console.log("Connection aborted");
+          isAborted = true;
+        });
+
+        emitter.on("broadcastOrder", eventHandler("broadcastOrder"));
+        emitter.on("invalidateOrder", eventHandler("invalidateOrder"));
+
+        while (!isAborted) {
+          await stream.sleep(500);
+        }
+      });
     },
   );
 
