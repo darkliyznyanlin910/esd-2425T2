@@ -1,9 +1,11 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { apiReference } from "@scalar/hono-api-reference";
 import { cors } from "hono/cors";
+import { TypedEmitter } from "tiny-typed-emitter";
 
 import { getServiceBaseUrl, SERVICES } from "@repo/service-discovery";
 
+import type { EventHandlers } from "./type";
 import { driverRouter } from "./routers/driver";
 
 const app = new OpenAPIHono();
@@ -18,6 +20,8 @@ app.use(
     credentials: true,
   }),
 );
+
+export const emitter = new TypedEmitter<EventHandlers>();
 
 const routes = app
   .doc("/openapi", {
