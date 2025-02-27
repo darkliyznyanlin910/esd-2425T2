@@ -14,9 +14,9 @@ WORKDIR /repo
 COPY . .
 RUN pnpm install
 
-WORKDIR /repo/apps/web
+WORKDIR /repo/apps/customer-frontend
 RUN pnpm build 
 
-EXPOSE 3000
+EXPOSE 3007
 
 CMD ["pnpm", "start"]

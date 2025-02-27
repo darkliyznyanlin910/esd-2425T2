@@ -12,6 +12,18 @@ services:
       - service-env/.env
     networks:
       - kong-net
+
+  customer-frontend:
+    build:
+      context: .
+      dockerfile: apps/customer-frontend/Dockerfile
+    environment:
+      - NODE_ENV=production
+      - DEPLOYMENT_ENVIRONMENT=docker
+    env_file:
+      - service-env/.env
+    networks:
+      - kong-net
   api:
     build:
       context: .

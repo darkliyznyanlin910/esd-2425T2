@@ -1,7 +1,7 @@
 import { getServiceBaseUrl } from "@repo/service-discovery";
 
 export const getBaseUrl = () => {
-  return getServiceBaseUrl("web");
+  return getServiceBaseUrl("customer-frontend");
 };
 
 export const getApiBaseUrl = () => {

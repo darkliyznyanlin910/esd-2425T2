@@ -11,7 +11,7 @@ import "~/styles/globals.css";
 import { getServiceBaseUrl } from "@repo/service-discovery";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(getServiceBaseUrl("web")),
+  metadataBase: new URL(getServiceBaseUrl("customer-frontend")),
   title: "Create T3 Turbo",
   description: "Simple monorepo with shared backend for web & mobile apps",
   openGraph: {
