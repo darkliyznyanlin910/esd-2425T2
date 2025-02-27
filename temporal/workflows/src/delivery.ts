@@ -31,7 +31,7 @@ const {
   },
 });
 
-export async function order(
+export async function delivery(
   order: Order,
   manualAssignDriverId?: string,
 ): Promise<void> {
