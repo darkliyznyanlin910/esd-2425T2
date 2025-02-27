@@ -17,6 +17,6 @@ RUN pnpm install
 WORKDIR /repo/apps/api
 RUN pnpm build 
 
-EXPOSE 3000
+EXPOSE 3001
 
 CMD ["pnpm", "start"]
