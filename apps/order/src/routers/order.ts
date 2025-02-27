@@ -8,7 +8,7 @@ import { db } from "@repo/db-order";
 import { OrderSchema } from "@repo/db-order/zod";
 import { taskQueue } from "@repo/temporal-common";
 import { connectToTemporal } from "@repo/temporal-common/temporal-client";
-import { order } from "@repo/temporal-workflows";
+import { delivery } from "@repo/temporal-workflows";
 
 import { env } from "../env";
 import { generateDisplayId } from "../utils";
@@ -100,7 +100,7 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
         },
       });
 
-      await temporalClient.workflow.start(order, {
+      await temporalClient.workflow.start(delivery, {
         workflowId: createdOrder.id,
         args: [createdOrder],
         taskQueue,
