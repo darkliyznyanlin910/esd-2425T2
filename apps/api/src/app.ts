@@ -3,7 +3,6 @@ import { apiReference } from "@scalar/hono-api-reference";
 import { cors } from "hono/cors";
 
 import { authMiddleware } from "@repo/auth/auth";
-import { getServiceBaseUrl, SERVICES } from "@repo/service-discovery";
 
 import { testRouter } from "./routers/test";
 
@@ -11,7 +10,7 @@ const app = new OpenAPIHono();
 
 app.use(
   cors({
-    origin: SERVICES.map((service) => getServiceBaseUrl(service)),
+    origin: "*",
     allowHeaders: ["Content-Type", "Authorization"],
     allowMethods: ["POST", "GET", "OPTIONS"],
     exposeHeaders: ["Content-Length"],
