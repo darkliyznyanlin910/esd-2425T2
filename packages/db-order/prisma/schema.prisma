@@ -30,7 +30,7 @@ model Order {
   id          String @id @default(uuid())
   userId      String
   displayId   String
-  orderStatus String @default("processing")
+  orderStatus String @default("paymentPending")
 
   // From
   fromAddressLine1 String

@@ -6,7 +6,7 @@ import { authMiddleware } from "@repo/auth/auth";
 import { HonoExtension } from "@repo/auth/type";
 import { db } from "@repo/db-order";
 import { OrderSchema } from "@repo/db-order/zod";
-import { taskQueue } from "@repo/temporal-common";
+import { paymentInformationSchema, taskQueue } from "@repo/temporal-common";
 import { connectToTemporal } from "@repo/temporal-common/temporal-client";
 import { delivery } from "@repo/temporal-workflows";
 
@@ -24,6 +24,7 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
         bearerAuth({ token: env.INTERNAL_COMMUNICATION_SECRET }),
         authMiddleware(["client"], true),
       ] as const,
+      description: "Create order",
       request: {
         body: {
           content: {
@@ -100,19 +101,121 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
         },
       });
 
+      return c.json(createdOrder);
+    },
+  )
+  .openapi(
+    createRoute({
+      method: "get",
+      path: "/:id/process",
+      description: "[Internal] Start Delivery Process",
+      middleware: [
+        bearerAuth({ token: env.INTERNAL_COMMUNICATION_SECRET }),
+      ] as const,
+      request: {
+        params: z.object({
+          id: z.string(),
+        }),
+      },
+      responses: {
+        200: {
+          description: "Process order",
+        },
+        401: {
+          description: "Unauthorized",
+        },
+        404: {
+          description: "Order not found",
+        },
+      },
+    }),
+    async (c) => {
+      const { id } = c.req.valid("param");
+
+      const order = await db.order.findUnique({
+        where: {
+          id,
+        },
+      });
+
+      if (!order) {
+        return c.json({ error: "Order not found" }, 404);
+      }
+
+      if (order.orderStatus == "paymentPending") {
+        return c.json(
+          { error: "Order is still in payment pending state" },
+          400,
+        );
+      }
+
       await temporalClient.workflow.start(delivery, {
-        workflowId: createdOrder.id,
-        args: [createdOrder],
+        workflowId: order.id,
+        args: [order],
         taskQueue,
       });
 
-      return c.json(createdOrder);
+      return c.json({ message: "Order processed" });
+    },
+  )
+  .openapi(
+    createRoute({
+      method: "get",
+      path: "/:id/payment",
+      description: "Get Payment Information",
+      middleware: [
+        bearerAuth({ token: env.INTERNAL_COMMUNICATION_SECRET }),
+        authMiddleware(["client"], true),
+      ] as const,
+      request: {
+        params: z.object({
+          id: z.string(),
+        }),
+      },
+      responses: {
+        200: {
+          description: "Payment Information",
+          content: {
+            "application/json": {
+              schema: paymentInformationSchema,
+            },
+          },
+        },
+        401: {
+          description: "Unauthorized",
+        },
+        404: {
+          description: "Order not found",
+        },
+      },
+    }),
+    async (c) => {
+      const { id } = c.req.valid("param");
+
+      const order = await db.order.findUnique({
+        where: {
+          id,
+        },
+      });
+
+      if (!order) {
+        return c.json({ error: "Order not found" }, 404);
+      }
+
+      await temporalClient.workflow.start(delivery, {
+        workflowId: order.id,
+        args: [order],
+        taskQueue,
+      });
+
+      return c.json({ message: "Order processed" });
     },
   )
   .openapi(
     createRoute({
       method: "post",
       path: "/:id",
+      description: "[Internal] Update order status",
       middleware: [
         bearerAuth({ token: env.INTERNAL_COMMUNICATION_SECRET }),
       ] as const,
@@ -164,6 +267,7 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
     createRoute({
       method: "get",
       path: "/:id",
+      description: "Get order by id",
       middleware: [
         bearerAuth({ token: env.INTERNAL_COMMUNICATION_SECRET }),
         authMiddleware(["client", "admin"], true),
@@ -218,6 +322,7 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
     createRoute({
       method: "get",
       path: "/",
+      description: "Get all orders",
       middleware: [
         bearerAuth({ token: env.INTERNAL_COMMUNICATION_SECRET }),
         authMiddleware(["client", "admin"], true),

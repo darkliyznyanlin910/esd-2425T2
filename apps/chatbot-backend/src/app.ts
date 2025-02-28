@@ -4,7 +4,7 @@ import { cors } from "hono/cors";
 
 import type { HonoExtension } from "@repo/auth/type";
 import { authMiddleware } from "@repo/auth/auth";
-import { getServiceBaseUrl, SERVICES } from "@repo/service-discovery";
+import { getServiceBaseUrl } from "@repo/service-discovery";
 
 import { chatRouter } from "./chatRouter";
 
@@ -12,7 +12,7 @@ const app = new OpenAPIHono<HonoExtension>();
 
 app.use(
   cors({
-    origin: SERVICES.map((service) => getServiceBaseUrl(service)),
+    origin: "*",
     allowHeaders: ["Content-Type", "Authorization"],
     allowMethods: ["POST", "GET", "OPTIONS"],
     exposeHeaders: ["Content-Length"],
