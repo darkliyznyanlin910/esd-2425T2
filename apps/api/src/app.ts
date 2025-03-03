@@ -5,6 +5,7 @@ import { cors } from "hono/cors";
 import { authMiddleware } from "@repo/auth/auth";
 
 import { testRouter } from "./routers/test";
+import { getServiceBaseUrl } from "@repo/service-discovery";
 
 const app = new OpenAPIHono();
 
