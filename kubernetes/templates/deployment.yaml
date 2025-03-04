@@ -1,4 +1,4 @@
-{{- range $service := list "web" "api" "auth" }}
+{{- range $service := list "api" }}
 ---
 apiVersion: apps/v1
 kind: Deployment
