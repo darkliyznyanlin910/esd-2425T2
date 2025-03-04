@@ -34,7 +34,7 @@ temporal:
 #   env:
 #     - name: NODE_ENV
 #       value: production
-#     - name: DEPLOYMENT_ENVIRONMENT
+#     - name: NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT
 #       value: kubernetes
 
 api:
@@ -51,7 +51,7 @@ api:
   env:
     - name: NODE_ENV
       value: production
-    - name: DEPLOYMENT_ENVIRONMENT
+    - name: NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT
       value: kubernetes
 # auth:
 #   name: esd-auth
@@ -67,5 +67,5 @@ api:
 #   env:
 #     - name: NODE_ENV
 #       value: production
-#     - name: DEPLOYMENT_ENVIRONMENT
+#     - name: NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT
 #       value: kubernetes
