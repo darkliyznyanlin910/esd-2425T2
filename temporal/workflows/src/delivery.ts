@@ -74,9 +74,11 @@ export async function delivery(
     await sendOrderToDrivers(order);
   } catch (error) {
     await updateOrderStatus(order.id, "delayed");
+    await notifyAdmin(order);
     throw ApplicationFailure.create({
       message: "Failed to send order to drivers",
       type: "DELAYED",
+      nonRetryable: true,
     });
   }
 
@@ -109,7 +111,4 @@ export async function delivery(
       nonRetryable: true,
     });
   }
-
-  const invoice = await generateInvoice(order);
-  await sendInvoiceToCustomer(invoice);
 }
