@@ -14,22 +14,28 @@ kong:
   dblessConfig:
     configMap: esd-kong-config
 
-web:
-  name: esd-web
-  replicaCount: 1
-  image:
-    repository: esd-web
-    tag: latest
-    pullPolicy: IfNotPresent
-  service:
-    type: ClusterIP
-    port: 80
-    targetPort: 3000
-  env:
-    - name: NODE_ENV
-      value: production
-    - name: DEPLOYMENT_ENVIRONMENT
-      value: kubernetes
+# Add the missing temporal postgres credentials
+temporal:
+  postgres:
+    user: "temporal"
+    password: "temporal"
+
+# web:
+#   name: esd-web
+#   replicaCount: 1
+#   image:
+#     repository: esd-web
+#     tag: latest
+#     pullPolicy: Never
+#   service:
+#     type: ClusterIP
+#     port: 80
+#     targetPort: 3000
+#   env:
+#     - name: NODE_ENV
+#       value: production
+#     - name: DEPLOYMENT_ENVIRONMENT
+#       value: kubernetes
 
 api:
   name: esd-api
@@ -37,7 +43,7 @@ api:
   image:
     repository: esd-api
     tag: latest
-    pullPolicy: IfNotPresent
+    pullPolicy: Never
   service:
     type: ClusterIP
     port: 80
@@ -47,20 +53,19 @@ api:
       value: production
     - name: DEPLOYMENT_ENVIRONMENT
       value: kubernetes
-
-auth:
-  name: esd-auth
-  replicaCount: 1
-  image:
-    repository: esd-auth
-    tag: latest
-    pullPolicy: IfNotPresent
-  service:
-    type: ClusterIP
-    port: 80
-    targetPort: 3002
-  env:
-    - name: NODE_ENV
-      value: production
-    - name: DEPLOYMENT_ENVIRONMENT
-      value: kubernetes
+# auth:
+#   name: esd-auth
+#   replicaCount: 1
+#   image:
+#     repository: esd-auth
+#     tag: latest
+#     pullPolicy: Never
+#   service:
+#     type: ClusterIP
+#     port: 80
+#     targetPort: 3002
+#   env:
+#     - name: NODE_ENV
+#       value: production
+#     - name: DEPLOYMENT_ENVIRONMENT
+#       value: kubernetes
