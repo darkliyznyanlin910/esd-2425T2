@@ -22,7 +22,7 @@ export const LOCAL_SERVICE_MAP: Record<Service, string> = {
   notification: "http://localhost:3004",
   order: "http://localhost:3005",
   driver: "http://localhost:3006",
-  "customer-frontend": "http://localhost:3007",
+  "customer-frontend": "http://localhost:4000",
 };
 
 export const KUBERNETES_SERVICE_MAP: Record<Service, string> = {

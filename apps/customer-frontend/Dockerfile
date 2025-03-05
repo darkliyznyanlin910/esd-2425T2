@@ -17,6 +17,6 @@ RUN pnpm install
 WORKDIR /repo/apps/customer-frontend
 RUN pnpm build 
 
-EXPOSE 3007
+EXPOSE 4000
 
 CMD ["pnpm", "start"]
