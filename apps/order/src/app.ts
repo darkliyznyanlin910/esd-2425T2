@@ -2,8 +2,7 @@ import { OpenAPIHono } from "@hono/zod-openapi";
 import { apiReference } from "@scalar/hono-api-reference";
 import { cors } from "hono/cors";
 
-import { authMiddleware } from "@repo/auth/auth";
-import { getServiceBaseUrl, SERVICES } from "@repo/service-discovery";
+import { getServiceBaseUrl } from "@repo/service-discovery";
 
 import { orderRouter } from "./routers/order";
 
@@ -11,7 +10,7 @@ const app = new OpenAPIHono();
 
 app.use(
   cors({
-    origin: SERVICES.map((service) => getServiceBaseUrl(service)),
+    origin: "*",
     allowHeaders: ["Content-Type", "Authorization"],
     allowMethods: ["POST", "GET", "OPTIONS"],
     exposeHeaders: ["Content-Length"],
@@ -24,9 +23,9 @@ const routes = app
   .doc("/openapi", {
     openapi: "3.0.0",
     info: {
-      title: "Template API",
+      title: "ESD Order API",
       version: "1.0.0",
-      description: "Template API",
+      description: "ESD Order API",
     },
   })
   .get("/", (c) => c.json({ ok: true }))

@@ -9,7 +9,8 @@ export const env = createEnv({
   },
   clientPrefix: "NEXT_PUBLIC_",
   runtimeEnv: {
-    DEPLOYMENT_ENVIRONMENT: process.env.DEPLOYMENT_ENVIRONMENT,
+    NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT:
+      process.env.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT,
   },
   skipValidation: process.env.npm_lifecycle_event === "lint",
 });

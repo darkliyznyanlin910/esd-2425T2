@@ -1,0 +1,43 @@
+server:
+  replicaCount: 1
+
+  config:
+    numHistoryShards: 1
+    persistence:
+      defaultStore: default
+      visibilityStore: visibility
+
+  metrics:
+    enabled: false
+
+persistence:
+  enabled: true
+  schema:
+    enabled: true
+
+  default:
+    driver: "sql"
+    sql:
+      user: ${POSTGRES_USER}
+      password: ${POSTGRES_PWD}
+      pluginName: "postgres"
+      databaseName: "temporal"
+      connectAddr: "postgresql:5432"
+
+  visibility:
+    driver: "opensearch"
+    opensearch:
+      url: http://opensearch:9200
+      version: v2
+      logLevel: error
+      indices:
+        visibility: temporal_visibility_v1
+
+web:
+  enabled: true
+  service:
+    type: LoadBalancer
+    port: 8080
+  env:
+    - name: TEMPORAL_CORS_ORIGINS
+      value: http://localhost:3000
