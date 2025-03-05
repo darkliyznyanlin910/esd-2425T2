@@ -74,11 +74,11 @@ case "$ACTION" in
   install)
     install_helm
     ;;
-  all)
+  up)
     build_and_load
     install_helm
     ;;
-  clear)
+  down)
     clear_cluster $3
     ;;
   *)
@@ -87,8 +87,8 @@ case "$ACTION" in
     echo "Commands:"
     echo "  build               Build and load images to kind cluster"
     echo "  install             Install application with Helm"
-    echo "  all                 Build, load, and install"
-    echo "  clear [--all]       Clear Helm installation (with --all, delete the cluster too)"
+    echo "  up                  Build, load, and install"
+    echo "  down                Clear Helm installation (with --all, delete the cluster too)"
     echo ""
     echo "Arguments:"
     echo "  cluster-name        Kind cluster name (default: esd-test)"

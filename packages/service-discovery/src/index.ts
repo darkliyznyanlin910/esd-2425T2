@@ -23,7 +23,18 @@ export const LOCAL_SERVICE_MAP: Record<Service, string> = {
   driver: "http://localhost:3006",
 };
 
+export const KUBERNETES_SERVICE_MAP: Record<Service, string> = {
+  web: "http://localhost:8000",
+  api: "http://localhost:3001",
+  auth: "http://localhost:8000/microservice/auth",
+  chatbot: "http://localhost:8000/microservice/chatbot",
+  notification: "http://localhost:8000/microservice/notification",
+  order: "http://localhost:8000/microservice/order",
+  driver: "http://localhost:8000/microservice/driver",
+};
+
 export const getServiceBaseUrl = (service: Service) => {
+  console.log(env.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT);
   if (env.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT === "local") {
     return LOCAL_SERVICE_MAP[service];
   } else if (env.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT === "docker") {
@@ -34,6 +45,6 @@ export const getServiceBaseUrl = (service: Service) => {
     }
   } else {
     // kubernetes
-    return `http://my-app-${service}:80`;
+    return KUBERNETES_SERVICE_MAP[service];
   }
 };
