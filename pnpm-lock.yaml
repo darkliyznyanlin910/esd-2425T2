@@ -69,9 +69,6 @@ importers:
       '@hono/zod-validator':
         specifier: ^0.4.2
         version: 0.4.3(hono@4.7.1)(zod@3.24.1)
-      '@repo/auth':
-        specifier: workspace:*
-        version: link:../auth
       '@repo/service-discovery':
         specifier: workspace:*
         version: link:../../packages/service-discovery
