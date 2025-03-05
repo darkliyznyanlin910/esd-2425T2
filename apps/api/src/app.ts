@@ -2,10 +2,9 @@ import { OpenAPIHono } from "@hono/zod-openapi";
 import { apiReference } from "@scalar/hono-api-reference";
 import { cors } from "hono/cors";
 
-import { authMiddleware } from "@repo/auth/auth";
+import { getServiceBaseUrl } from "@repo/service-discovery";
 
 import { testRouter } from "./routers/test";
-import { getServiceBaseUrl } from "@repo/service-discovery";
 
 const app = new OpenAPIHono();
 
@@ -37,7 +36,6 @@ const routes = app
       spec: { url: `${getServiceBaseUrl("api")}/openapi` },
     }),
   )
-  .use(authMiddleware())
   .route("/test", testRouter);
 
 export { app, routes };
