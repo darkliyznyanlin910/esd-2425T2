@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram name="Page-1" id="SBVT8DD8Xot-n1D4VR2F">
-        <mxGraphModel dx="717" dy="490" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+        <mxGraphModel dx="836" dy="408" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -10,35 +10,35 @@
                 <mxCell id="stT4DG-q1289ncHPhN-0-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="-8u4ou603Z0xN7fmYHnL-1" target="-8u4ou603Z0xN7fmYHnL-5" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="-8u4ou603Z0xN7fmYHnL-1" value="&lt;u&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Order UI&lt;/span&gt;&lt;br&gt;&lt;/u&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;- Ask Chatbot about delivery status &amp;amp; info&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=center;" parent="1" vertex="1">
-                    <mxGeometry x="250" y="200" width="120" height="60" as="geometry"/>
+                <mxCell id="-8u4ou603Z0xN7fmYHnL-1" value="&lt;u&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Customer UI&lt;/span&gt;&lt;br&gt;&lt;/u&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;- Ask Chatbot about delivery status &amp;amp; info&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="200" y="200" width="170" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="-8u4ou603Z0xN7fmYHnL-8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="-8u4ou603Z0xN7fmYHnL-2" target="-8u4ou603Z0xN7fmYHnL-2" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="-8u4ou603Z0xN7fmYHnL-2" value="Customer Support (RAG)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
-                    <mxGeometry x="250" y="360" width="120" height="60" as="geometry"/>
+                <mxCell id="-8u4ou603Z0xN7fmYHnL-2" value="Chatbot Service" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
+                    <mxGeometry x="222" y="360" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="-8u4ou603Z0xN7fmYHnL-3" value="" style="endArrow=classic;startArrow=classic;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.955;entryY=-0.033;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="-8u4ou603Z0xN7fmYHnL-2" edge="1" target="-8u4ou603Z0xN7fmYHnL-17">
+                <mxCell id="-8u4ou603Z0xN7fmYHnL-3" value="" style="endArrow=classic;startArrow=classic;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.955;entryY=-0.033;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="-8u4ou603Z0xN7fmYHnL-2" target="-8u4ou603Z0xN7fmYHnL-17" edge="1">
                     <mxGeometry width="50" height="50" relative="1" as="geometry">
                         <mxPoint x="260" y="282" as="sourcePoint"/>
                         <mxPoint x="310" y="232" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="-8u4ou603Z0xN7fmYHnL-4" value="Order" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
-                    <mxGeometry x="470" y="100" width="120" height="60" as="geometry"/>
+                <mxCell id="-8u4ou603Z0xN7fmYHnL-4" value="Order Service" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
+                    <mxGeometry x="470" y="115" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="-8u4ou603Z0xN7fmYHnL-5" value="Driver" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
+                <mxCell id="-8u4ou603Z0xN7fmYHnL-5" value="Driver Service" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
                     <mxGeometry x="470" y="200" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="-8u4ou603Z0xN7fmYHnL-17" value="&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;1. Provide CS (RAG) with prompt&lt;/span&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
-                    <mxGeometry x="120" y="260" width="200" height="30" as="geometry"/>
+                <mxCell id="-8u4ou603Z0xN7fmYHnL-17" value="&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;1. Provide Chatbot Service &lt;br&gt;&amp;nbsp; &amp;nbsp; (RAG) with prompt&lt;/span&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
+                    <mxGeometry x="120" y="260" width="170" height="40" as="geometry"/>
                 </mxCell>
                 <mxCell id="-8u4ou603Z0xN7fmYHnL-19" value="3. Check user ID" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
-                    <mxGeometry x="600" y="100" width="110" height="30" as="geometry"/>
+                    <mxGeometry x="600" y="110" width="110" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="-8u4ou603Z0xN7fmYHnL-26" value="4. Return order record/s" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
-                    <mxGeometry x="600" y="130" width="150" height="30" as="geometry"/>
+                    <mxGeometry x="600" y="140" width="150" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="-8u4ou603Z0xN7fmYHnL-27" value="5. Check order ID" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
                     <mxGeometry x="600" y="200" width="120" height="30" as="geometry"/>
@@ -47,15 +47,15 @@
                     <mxGeometry x="600" y="230" width="130" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="-8u4ou603Z0xN7fmYHnL-31" value="&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;2. Return list of APIs to call&lt;/span&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
-                    <mxGeometry x="120" y="285" width="170" height="30" as="geometry"/>
+                    <mxGeometry x="120" y="300" width="170" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="2" value="Invoice" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+                <mxCell id="2" value="Invoice Service" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
                     <mxGeometry x="470" y="290" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="3" value="7. Check order ID&lt;div&gt;&lt;font color=&quot;#000000&quot;&gt;&lt;br&gt;&lt;/font&gt;&lt;div&gt;8. Return invoice&lt;/div&gt;&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+                <mxCell id="3" value="7. Check order ID&lt;div&gt;&lt;font color=&quot;#000000&quot;&gt;&lt;br&gt;&lt;/font&gt;&lt;div&gt;8. Return invoice&lt;/div&gt;&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
                     <mxGeometry x="605" y="290" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="-8u4ou603Z0xN7fmYHnL-1" target="2">
+                <mxCell id="6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="-8u4ou603Z0xN7fmYHnL-1" target="2" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <mxPoint x="380" y="240" as="sourcePoint"/>
                         <mxPoint x="480" y="140" as="targetPoint"/>

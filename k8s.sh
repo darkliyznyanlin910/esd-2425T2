@@ -58,6 +58,10 @@ clear_cluster() {
   # Uninstall Helm release
   helm uninstall esd-app
   
+  # Remove loaded Docker images from the cluster
+  echo "Removing Docker images from cluster..."
+  docker exec "$CLUSTER_NAME-control-plane" crictl rmi esd-api:latest 2>/dev/null || true
+  
   if [ "$2" == "--all" ]; then
     echo "Deleting cluster: $CLUSTER_NAME"
     kind delete cluster --name $CLUSTER_NAME
@@ -87,8 +91,8 @@ case "$ACTION" in
     echo "Commands:"
     echo "  build               Build and load images to kind cluster"
     echo "  install             Install application with Helm"
-    echo "  up                  Build, load, and install"
-    echo "  down                Clear Helm installation (with --all, delete the cluster too)"
+    echo "  all                 Build, load, and install"
+    echo "  clear [--all]       Clear Helm installation (with --all, delete the cluster too)"
     echo ""
     echo "Arguments:"
     echo "  cluster-name        Kind cluster name (default: esd-test)"
