@@ -4,7 +4,7 @@ import { admin, openAPI } from "better-auth/plugins";
 import { createMiddleware } from "hono/factory";
 
 import { db } from "@repo/db-auth";
-import { getServiceBaseUrl } from "@repo/service-discovery";
+import { getServiceBaseUrl, SERVICES } from "@repo/service-discovery";
 
 import type { HonoExtension } from "./type";
 import { env } from "./env";
@@ -30,6 +30,7 @@ export const auth = betterAuth({
     }),
     admin(),
   ],
+  trustedOrigins: SERVICES.map((service) => getServiceBaseUrl(service)),
 });
 
 export const ROLES = ["client", "driver", "admin"] as const;
