@@ -1,6 +1,8 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { cors } from "hono/cors";
 
+import { getServiceBaseUrl, SERVICES } from "@repo/service-discovery";
+
 import { auth } from "./auth";
 import { HonoExtension } from "./type";
 
@@ -9,7 +11,7 @@ const app = new OpenAPIHono<HonoExtension>();
 app.use(
   "/auth/**", // or replace with "*" to enable cors for all routes
   cors({
-    origin: "*",
+    origin: SERVICES.map((service) => getServiceBaseUrl(service)),
     allowHeaders: ["Content-Type", "Authorization"],
     allowMethods: ["POST", "GET", "OPTIONS"],
     exposeHeaders: ["Content-Length"],
