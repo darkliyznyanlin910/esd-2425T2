@@ -33,6 +33,7 @@ export const KUBERNETES_SERVICE_MAP: Record<Service, string> = {
   notification: "http://localhost:8000/microservice/notification",
   order: "http://localhost:8000/microservice/order",
   driver: "http://localhost:8000/microservice/driver",
+  "customer-frontend": "http://localhost:8000/microservice/customer-frontend"
 };
 
 export const getServiceBaseUrl = (service: Service) => {
