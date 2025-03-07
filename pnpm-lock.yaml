@@ -249,6 +249,9 @@ importers:
       '@repo/auth':
         specifier: workspace:*
         version: link:../auth
+      '@repo/db-driver':
+        specifier: workspace:*
+        version: link:../../packages/db-driver
       '@repo/service-discovery':
         specifier: workspace:*
         version: link:../../packages/service-discovery
