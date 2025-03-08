@@ -36,6 +36,7 @@
     "@repo/prettier-config": "workspace:*",
     "@repo/tailwind-config": "workspace:*",
     "@repo/tsconfig": "workspace:*",
+    "@types/next": "^9.0.0",
     "@types/node": "^20.17.7",
     "@types/react": "catalog:react18",
     "@types/react-dom": "catalog:react18",

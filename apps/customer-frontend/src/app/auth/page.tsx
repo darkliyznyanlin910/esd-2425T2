@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 import { authClient } from "@repo/auth/client";
 import { Button } from "@repo/ui/button";
@@ -9,7 +10,8 @@ import { Input } from "@repo/ui/input";
 import { Label } from "@repo/ui/label";
 
 export default function AuthPage() {
-  const { useSession, signIn, signUp, signOut } = authClient;
+  const router = useRouter();
+  const { useSession, signIn, signUp } = authClient;
   const { data: session } = useSession();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -25,23 +27,8 @@ export default function AuthPage() {
   };
 
   if (session) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-100">
-        <Card className="w-full max-w-md text-center shadow-lg">
-          <CardHeader>
-            <CardTitle>Welcome</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-lg font-semibold">
-              Signed in as {session.user.email}
-            </p>
-            <Button onClick={() => signOut()} className="mt-4 w-full">
-              Sign out
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
+    console.log(session);
+    router.push("/order");
   }
 
   return (
