@@ -2,15 +2,15 @@ import { OpenAPIHono } from "@hono/zod-openapi";
 import { apiReference } from "@scalar/hono-api-reference";
 import { cors } from "hono/cors";
 
-import { getServiceBaseUrl } from "@repo/service-discovery";
+import { getServiceBaseUrl, SERVICES } from "@repo/service-discovery";
 
-import { testRouter } from "./routers/test";
+import { invoiceRouter } from "./routers/invoice";
 
 const app = new OpenAPIHono();
 
 app.use(
   cors({
-    origin: "*",
+    origin: SERVICES.map((service) => getServiceBaseUrl(service)),
     allowHeaders: ["Content-Type", "Authorization"],
     allowMethods: ["POST", "GET", "OPTIONS"],
     exposeHeaders: ["Content-Length"],
@@ -24,7 +24,7 @@ const routes = app
     openapi: "3.0.0",
     servers: [
       {
-        url: getServiceBaseUrl("api"),
+        url: getServiceBaseUrl("invoice"),
       },
     ],
     info: {
@@ -38,9 +38,9 @@ const routes = app
     "/docs",
     apiReference({
       theme: "saturn",
-      spec: { url: `${getServiceBaseUrl("api")}/openapi` },
+      spec: { url: `${getServiceBaseUrl("invoice")}/openapi` },
     }),
   )
-  .route("/test", testRouter);
+  .route("/invoice", invoiceRouter);
 
 export { app, routes };
