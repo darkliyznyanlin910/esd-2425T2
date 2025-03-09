@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Archive, FilePlus, PanelRight } from "lucide-react";
+import { Archive, FilePlus } from "lucide-react";
 
 import { authClient } from "@repo/auth/client";
 import { Button } from "@repo/ui/button";
@@ -26,7 +26,6 @@ export default function OrderPage() {
   const { data: session } = useSession();
   const router = useRouter();
   const [selectedMenu, setSelectedMenu] = useState("create-order");
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
     if (!session) {
@@ -37,10 +36,6 @@ export default function OrderPage() {
   const handleSignOut = async () => {
     await signOut();
     router.push("/auth");
-  };
-
-  const toggleSidebar = () => {
-    setIsSidebarOpen((prev) => !prev);
   };
 
   const menuComponents: Record<string, JSX.Element> = {
@@ -95,9 +90,7 @@ export default function OrderPage() {
             </SidebarFooter>
           </div>
         </Sidebar>
-        <main className="flex-1 p-0">
-          {menuComponents[selectedMenu]}
-        </main>
+        <main className="flex-1 p-0">{menuComponents[selectedMenu]}</main>
       </div>
     </SidebarProvider>
   );
