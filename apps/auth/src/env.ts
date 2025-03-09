@@ -9,9 +9,11 @@ export const env = createEnv({
   server: {},
   shared: {
     BETTER_AUTH_SECRET: z.string(),
+    INTERNAL_COMMUNICATION_SECRET: z.string(),
   },
   runtimeEnv: {
     BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
+    INTERNAL_COMMUNICATION_SECRET: process.env.INTERNAL_COMMUNICATION_SECRET,
   },
   skipValidation: process.env.npm_lifecycle_event === "lint",
 });

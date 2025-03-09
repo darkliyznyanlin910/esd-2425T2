@@ -4,7 +4,8 @@
   "version": "0.1.0",
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./env": "./src/env.ts"
   },
   "scripts": {
     "build": "tsc",
@@ -24,11 +25,14 @@
   },
   "prettier": "@repo/prettier-config",
   "dependencies": {
-    "@repo/notification-backend": "workspace:^",
-    "@repo/service-discovery": "workspace:^",
+    "@repo/auth": "workspace:*",
+    "@repo/db-auth": "workspace:*",
+    "@repo/notification-backend": "workspace:*",
+    "@repo/service-discovery": "workspace:*",
     "@repo/temporal-common": "workspace:*",
     "@t3-oss/env-core": "^0.11.1",
     "@temporalio/activity": "^1.11.7",
+    "stripe": "^17.7.0",
     "zod": "catalog:"
   }
 }

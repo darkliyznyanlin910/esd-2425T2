@@ -1,7 +1,9 @@
+import { hc } from "hono/client";
+
+import { getServiceBaseUrl } from "@repo/service-discovery";
+
 import type { routes } from "./app";
 import type { auth } from "./auth";
-
-export type AppType = typeof routes;
 
 export interface HonoExtension {
   Variables: {
@@ -9,3 +11,5 @@ export interface HonoExtension {
     session: typeof auth.$Infer.Session.session | null;
   };
 }
+
+export const HonoClient = hc<typeof routes>(getServiceBaseUrl("auth"));
