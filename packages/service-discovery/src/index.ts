@@ -3,40 +3,68 @@ import { env } from "./env";
 export const AWS_DOMAIN = "johnnyknl.com";
 export const AWS_NAMESPACE = "esd";
 export const SERVICES = [
-  "api",
-  "web",
+  // Frontend
+  "web", // dummy service
+  "customer-frontend",
+  "admin-frontend",
+  "driver-frontend",
+  // Backend
+  "api", // dummy service
   "auth",
   "chatbot",
   "notification",
   "order",
   "driver",
   "invoice",
-  "customer-frontend",
 ] as const;
 export type Service = (typeof SERVICES)[number];
 
 export const LOCAL_SERVICE_MAP: Record<Service, string> = {
-  web: "http://localhost:3000",
-  api: "http://localhost:3001",
+  // Frontend
+  web: "http://localhost:3000", // dummy service
+  "admin-frontend": "http://localhost:4000",
+  "customer-frontend": "http://localhost:5000",
+  "driver-frontend": "http://localhost:6000",
+  // Backend
+  api: "http://localhost:3001", // dummy service
   auth: "http://localhost:3002",
   chatbot: "http://localhost:3003",
   notification: "http://localhost:3004",
   order: "http://localhost:3005",
   driver: "http://localhost:3006",
   invoice: "http://localhost:3007",
-  "customer-frontend": "http://localhost:4000",
 };
 
 export const KUBERNETES_SERVICE_MAP: Record<Service, string> = {
-  web: "http://localhost:8000",
-  api: "http://localhost:3001",
-  auth: "http://localhost:8000/microservice/auth",
-  chatbot: "http://localhost:8000/microservice/chatbot",
-  notification: "http://localhost:8000/microservice/notification",
-  order: "http://localhost:8000/microservice/order",
-  driver: "http://localhost:8000/microservice/driver",
-  invoice: "http://localhost:8000/microservice/invoice",
-  "customer-frontend": "http://localhost:8000/microservice/customer-frontend",
+  // Frontend
+  web: "http://localhost:3000", // dummy service
+  "admin-frontend": "http://localhost:4000",
+  "customer-frontend": "http://localhost:5000",
+  "driver-frontend": "http://localhost:6000",
+  // Backend
+  api: "http://localhost:8000/api", // dummy service
+  auth: "http://localhost:8000/auth",
+  chatbot: "http://localhost:8000/chatbot",
+  notification: "http://localhost:8000/notification",
+  order: "http://localhost:8000/order",
+  driver: "http://localhost:8000/driver",
+  invoice: "http://localhost:8000/invoice",
+};
+
+export const DOCKER_SERVICE_MAP: Record<Service, string> = {
+  // Frontend
+  web: "http://localhost:3000", // dummy service
+  "admin-frontend": "http://localhost:4000",
+  "customer-frontend": "http://localhost:5000",
+  "driver-frontend": "http://localhost:6000",
+  // Backend
+  api: "http://localhost:8000/api", // dummy service
+  auth: "http://localhost:8000/auth",
+  chatbot: "http://localhost:8000/chatbot",
+  notification: "http://localhost:8000/notification",
+  order: "http://localhost:8000/order",
+  driver: "http://localhost:8000/driver",
+  invoice: "http://localhost:8000/invoice",
 };
 
 export const getServiceBaseUrl = (service: Service) => {
@@ -44,11 +72,7 @@ export const getServiceBaseUrl = (service: Service) => {
   if (env.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT === "local") {
     return LOCAL_SERVICE_MAP[service];
   } else if (env.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT === "docker") {
-    if (service == "web") {
-      return `http://localhost:8000`;
-    } else {
-      return `http://localhost:8000/microservice/${service}`;
-    }
+    return DOCKER_SERVICE_MAP[service];
   } else {
     // kubernetes
     return KUBERNETES_SERVICE_MAP[service];
