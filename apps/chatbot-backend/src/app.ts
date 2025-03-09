@@ -38,7 +38,13 @@ const routes = app
       spec: { url: `${getServiceBaseUrl("chatbot")}/openapi` },
     }),
   )
-  .use(authMiddleware(["client"]))
+  .use(
+    authMiddleware({
+      authBased: {
+        allowedRoles: ["client"],
+      },
+    }),
+  )
   .route("/chat", chatRouter);
 
 export { app, routes };

@@ -20,8 +20,14 @@ const driverRouter = new OpenAPIHono<HonoExtension>().openapi(
     method: "post",
     path: "/:state",
     middleware: [
-      bearerAuth({ token: env.INTERNAL_COMMUNICATION_SECRET }),
-      authMiddleware(["driver"], true),
+      authMiddleware({
+        authBased: {
+          allowedRoles: ["driver"],
+        },
+        bearer: {
+          tokens: [env.INTERNAL_COMMUNICATION_SECRET],
+        },
+      }),
     ] as const,
     request: {
       body: {
