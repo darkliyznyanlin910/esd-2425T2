@@ -58,3 +58,12 @@
     --chart-5: 340 75% 55%;
   }
 }
+
+@layer components {
+  .dotted-border {
+    border: 1px dashed #121a72a6;
+    border-radius: 10px;
+    margin: 10px;
+    position: relative;
+  }
+}
