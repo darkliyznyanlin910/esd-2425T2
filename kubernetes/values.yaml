@@ -12,13 +12,15 @@ kong:
   env:
     database: "off"
   dblessConfig:
-    configMap: esd-kong-config
+    configMap: "{{ .Release.Name }}-kong-config"
 
 # Add the missing temporal postgres credentials
 temporal:
+  namespace: "default"
   postgres:
-    user: "temporal"
-    password: "temporal"
+    user: "postgres"
+    password: "postgres"
+    url: "postgresql://postgres:postgres@{{ .Release.Name }}-postgresql:5432"
 
 # web:
 #   name: esd-web

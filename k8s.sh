@@ -51,6 +51,10 @@ install_helm() {
   kubectl get svc
 }
 
+port_forward() {
+  kubectl port-forward svc/esd-app-nginx 8000:80
+}
+
 # Function to clear the cluster
 clear_cluster() {
   echo "Clearing installation from cluster: $CLUSTER_NAME"
@@ -85,6 +89,9 @@ case "$ACTION" in
   down)
     clear_cluster $3
     ;;
+  forward)
+    port_forward
+    ;;
   *)
     echo "Usage: $0 {build|install|all|clear} [cluster-name] [options]"
     echo ""
@@ -92,6 +99,7 @@ case "$ACTION" in
     echo "  build               Build and load images to kind cluster"
     echo "  install             Install application with Helm"
     echo "  all                 Build, load, and install"
+    echo "  forward             Port forward the application"
     echo "  clear [--all]       Clear Helm installation (with --all, delete the cluster too)"
     echo ""
     echo "Arguments:"

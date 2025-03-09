@@ -25,7 +25,7 @@ export const LOCAL_SERVICE_MAP: Record<Service, string> = {
 
 export const KUBERNETES_SERVICE_MAP: Record<Service, string> = {
   web: "http://localhost:8000",
-  api: "http://localhost:3001",
+  api: "http://localhost:8000/api",
   auth: "http://localhost:8000/microservice/auth",
   chatbot: "http://localhost:8000/microservice/chatbot",
   notification: "http://localhost:8000/microservice/notification",
