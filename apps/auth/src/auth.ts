@@ -37,33 +37,55 @@ export const ROLES = ["client", "driver", "admin"] as const;
 
 export type Role = (typeof ROLES)[number];
 
-export const authMiddleware = (
-  allowedRoles: (Role | undefined)[] = [],
-  optional = false,
-) =>
+export const authMiddleware = ({
+  authBased,
+  bearer,
+}:
+  | {
+      authBased: {
+        allowedRoles: Role[];
+      };
+      bearer?: {
+        tokens: string[];
+      };
+    }
+  | {
+      authBased?: {
+        allowedRoles: Role[];
+      };
+      bearer: {
+        tokens: string[];
+      };
+    }) =>
   createMiddleware<HonoExtension>(async (c, next) => {
-    if (optional && !c.req.header("Authorization")) {
+    if (authBased) {
+      const session = await auth.api.getSession({
+        headers: c.req.raw.headers,
+      });
+
+      if (!session) {
+        c.set("user", null);
+        c.set("session", null);
+        return c.json({ error: "Unauthorized" }, 401);
+      }
+
+      if (
+        authBased.allowedRoles.length > 0 &&
+        !authBased.allowedRoles.includes(session.user.role as Role)
+      ) {
+        return c.json({ error: "Unauthorized" }, 401);
+      } else {
+        c.set("user", session.user);
+        c.set("session", session.session);
+        return next();
+      }
+    }
+
+    if (bearer) {
+      const token = c.req.raw.headers.get("Authorization")?.split(" ")[1];
+      if (!token) {
+        return c.json({ error: "Unauthorized" }, 401);
+      }
       return next();
     }
-
-    const session = await auth.api.getSession({
-      headers: c.req.raw.headers,
-    });
-
-    if (!session) {
-      c.set("user", null);
-      c.set("session", null);
-      return c.json({ error: "Unauthorized" }, 401);
-    }
-
-    if (
-      allowedRoles.length > 0 &&
-      !allowedRoles.includes(session.user.role as Role)
-    ) {
-      return c.json({ error: "Unauthorized" }, 401);
-    }
-
-    c.set("user", session.user);
-    c.set("session", session.session);
-    return next();
   });

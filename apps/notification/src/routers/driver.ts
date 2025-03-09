@@ -79,7 +79,14 @@ const driverRouter = new OpenAPIHono()
     createRoute({
       method: "get",
       path: "/sse",
-      middleware: [useSSE, authMiddleware(["driver"])],
+      middleware: [
+        useSSE,
+        authMiddleware({
+          authBased: {
+            allowedRoles: ["driver"],
+          },
+        }),
+      ],
       responses: {
         200: {
           description: "Success",
