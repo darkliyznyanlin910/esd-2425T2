@@ -51,8 +51,53 @@ install_helm() {
   kubectl get svc
 }
 
+stop_forward() {
+  PID_DIR="/tmp/esd-port-forward"
+  if [ -d "$PID_DIR" ]; then
+    echo "Stopping all port forwarding processes..."
+    for PID_FILE in "$PID_DIR"/*.pid; do
+      if [ -f "$PID_FILE" ]; then
+        SERVICE=$(basename "$PID_FILE" .pid)
+        PID=$(cat "$PID_FILE")
+        echo "Stopping $SERVICE (PID: $PID)..."
+        kill $PID 2>/dev/null || true
+        rm "$PID_FILE"
+      fi
+    done
+    echo "All port forwarding stopped"
+  else
+    echo "No port forwarding found"
+  fi
+}
+
 port_forward() {
-  kubectl port-forward svc/esd-app-nginx 8000:80
+  PID_DIR="/tmp/esd-port-forward"
+  mkdir -p "$PID_DIR"
+  
+  # Default services to forward if none specified
+  if [ -z "$2" ]; then
+    SERVICES="nginx:8000:80,api:3000:80"
+  else
+    SERVICES="$2"
+  fi
+  
+  IFS=',' read -ra SERVICE_ARRAY <<< "$SERVICES"
+  
+  for SERVICE_DEF in "${SERVICE_ARRAY[@]}"; do
+    IFS=':' read -ra PARTS <<< "$SERVICE_DEF"
+    SERVICE=${PARTS[0]}
+    LOCAL_PORT=${PARTS[1]}
+    REMOTE_PORT=${PARTS[2]:-80}
+    
+    echo "Starting port forwarding for $SERVICE (localhost:$LOCAL_PORT -> port $REMOTE_PORT)..."
+    kubectl port-forward "svc/esd-app-$SERVICE" "$LOCAL_PORT:$REMOTE_PORT" &
+    PID=$!
+    echo $PID > "$PID_DIR/$SERVICE.pid"
+    echo "Port forwarding for $SERVICE started with PID: $PID"
+    echo "Access at: http://localhost:$LOCAL_PORT"
+  done
+  
+  echo "To stop all port forwarding, run: $0 stop-forward"
 }
 
 # Function to clear the cluster
@@ -88,19 +133,25 @@ case "$ACTION" in
     ;;
   down)
     clear_cluster $3
+    stop_forward
     ;;
   forward)
-    port_forward
+    port_forward "$@"
+    ;;
+  stop-forward)
+    stop_forward
     ;;
   *)
-    echo "Usage: $0 {build|install|all|clear} [cluster-name] [options]"
+    echo "Usage: $0 {build|install|up|down|forward|stop-forward} [cluster-name] [options]"
     echo ""
     echo "Commands:"
     echo "  build               Build and load images to kind cluster"
     echo "  install             Install application with Helm"
-    echo "  all                 Build, load, and install"
-    echo "  forward             Port forward the application"
-    echo "  clear [--all]       Clear Helm installation (with --all, delete the cluster too)"
+    echo "  up                  Build, load, and install"
+    echo "  down [--all]         Clear Helm installation (with --all, delete the cluster too)"
+    echo "  forward [services]   Port forward services (format: svc1:port1:targetport1,svc2:port2:targetport2)"
+    echo "                       Default: nginx:8000:80"
+    echo "  stop-forward        Stop all port forwarding"
     echo ""
     echo "Arguments:"
     echo "  cluster-name        Kind cluster name (default: esd-test)"
