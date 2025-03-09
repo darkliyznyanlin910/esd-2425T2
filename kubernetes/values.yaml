@@ -39,6 +39,17 @@ temporal:
 #     - name: NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT
 #       value: kubernetes
 
+nginx:
+  replicaCount: 1
+  image:
+    repository: nginx
+    tag: stable
+    pullPolicy: IfNotPresent
+  service:
+    type: LoadBalancer
+    port: 80
+    targetPort: 80
+
 api:
   name: esd-api
   replicaCount: 1
