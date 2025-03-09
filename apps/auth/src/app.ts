@@ -5,6 +5,7 @@ import { getServiceBaseUrl, SERVICES } from "@repo/service-discovery";
 
 import { auth } from "./auth";
 import { HonoExtension } from "./type";
+import { userRouter } from "./user";
 
 const app = new OpenAPIHono<HonoExtension>();
 
@@ -24,6 +25,7 @@ const routes = app
   .get("/", (c) => c.json({ ok: true }))
   .on(["POST", "GET"], "/auth/**", async (c) => {
     return auth.handler(c.req.raw);
-  });
+  })
+  .route("/user", userRouter);
 
 export { app, routes };

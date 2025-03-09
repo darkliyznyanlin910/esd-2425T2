@@ -29,6 +29,7 @@
   },
   "prettier": "@repo/prettier-config",
   "dependencies": {
-    "@temporalio/client": "^1.11.7"
+    "@temporalio/client": "^1.11.7",
+    "stripe": "^17.7.0"
   }
 }
