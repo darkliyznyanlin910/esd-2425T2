@@ -21,8 +21,14 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
       method: "post",
       path: "/",
       middleware: [
-        // bearerAuth({ token: env.INTERNAL_COMMUNICATION_SECRET }),
-        authMiddleware(["client"], true),
+        authMiddleware({
+          authBased: {
+            allowedRoles: ["client"],
+          },
+          bearer: {
+            tokens: [env.INTERNAL_COMMUNICATION_SECRET],
+          },
+        }),
       ] as const,
       description: "Create order",
       request: {
@@ -164,8 +170,14 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
       path: "/:id/payment",
       description: "Get Payment Information",
       middleware: [
-        bearerAuth({ token: env.INTERNAL_COMMUNICATION_SECRET }),
-        authMiddleware(["client"], true),
+        authMiddleware({
+          authBased: {
+            allowedRoles: ["client"],
+          },
+          bearer: {
+            tokens: [env.INTERNAL_COMMUNICATION_SECRET],
+          },
+        }),
       ] as const,
       request: {
         params: z.object({
@@ -269,8 +281,14 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
       path: "/:id",
       description: "Get order by id",
       middleware: [
-        bearerAuth({ token: env.INTERNAL_COMMUNICATION_SECRET }),
-        authMiddleware(["client", "admin"], true),
+        authMiddleware({
+          authBased: {
+            allowedRoles: ["client", "admin"],
+          },
+          bearer: {
+            tokens: [env.INTERNAL_COMMUNICATION_SECRET],
+          },
+        }),
       ] as const,
       request: {
         params: z.object({
@@ -324,8 +342,14 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
       path: "/",
       description: "Get all orders",
       middleware: [
-        bearerAuth({ token: env.INTERNAL_COMMUNICATION_SECRET }),
-        authMiddleware(["client", "admin"], true),
+        authMiddleware({
+          authBased: {
+            allowedRoles: ["client", "admin"],
+          },
+          bearer: {
+            tokens: [env.INTERNAL_COMMUNICATION_SECRET],
+          },
+        }),
       ] as const,
       request: {
         query: z.object({
