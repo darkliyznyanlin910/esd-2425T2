@@ -10,6 +10,7 @@ export const SERVICES = [
   "notification",
   "order",
   "driver",
+  "invoice",
 ] as const;
 export type Service = (typeof SERVICES)[number];
 
@@ -21,6 +22,7 @@ export const LOCAL_SERVICE_MAP: Record<Service, string> = {
   notification: "http://localhost:3004",
   order: "http://localhost:3005",
   driver: "http://localhost:3006",
+  invoice: "http://localhost:3007",
 };
 
 export const KUBERNETES_SERVICE_MAP: Record<Service, string> = {
@@ -31,6 +33,7 @@ export const KUBERNETES_SERVICE_MAP: Record<Service, string> = {
   notification: "http://localhost:8000/microservice/notification",
   order: "http://localhost:8000/microservice/order",
   driver: "http://localhost:8000/microservice/driver",
+  invoice: "http://localhost:8000/microservice/invoice",
 };
 
 export const getServiceBaseUrl = (service: Service) => {
