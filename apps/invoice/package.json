@@ -1,5 +1,5 @@
 {
-  "name": "@repo/driver",
+  "name": "@repo/invoice",
   "private": true,
   "version": "0.1.0",
   "type": "module",
@@ -7,10 +7,10 @@
     "./type": "./src/type.ts"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "esbuild src/index.ts --bundle --platform=node --outfile=dist/index.cjs",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
     "dev": "pnpm with-env tsx watch src/index.ts",
-    "start": "pnpm with-env tsx src/index.ts",
+    "start": "pnpm with-env node dist/index.cjs",
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false",
@@ -20,6 +20,7 @@
     "@repo/eslint-config": "workspace:*",
     "@repo/prettier-config": "workspace:*",
     "@repo/tsconfig": "workspace:*",
+    "esbuild": "^0.25.0",
     "eslint": "catalog:",
     "prettier": "catalog:",
     "typescript": "catalog:"
@@ -28,8 +29,7 @@
   "dependencies": {
     "@hono/node-server": "^1.13.8",
     "@hono/zod-validator": "^0.4.2",
-    "@repo/auth": "workspace:*",
-    "@repo/db-driver": "workspace:*",
+    "@repo/db-invoice": "workspace:*",
     "@repo/service-discovery": "workspace:*",
     "@repo/temporal-common": "workspace:*",
     "@repo/temporal-workflows": "workspace:*",

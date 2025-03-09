@@ -9,24 +9,44 @@ datasource db {
   url      = env("DRIVER_POSTGRES_URL")
 }
 
-model Driver {
-  id        String   @id @default(uuid())
-  name      String
-  phone     String
-  email     String
-  userId    String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+/// ENUM for Order Status
+enum OrderStatus {
+  PENDING
+  ASSIGNED
+  PICKED_UP
+  IN_TRANSIT
+  DELIVERED
+  FAILED
+  RETURNED
+}
 
-  assignments OrderAssignment[]
+/// ENUM for Driver Availability
+enum DriverAvailability {
+  AVAILABLE
+  ON_DELIVERY
+  OFFLINE
+}
+
+model Driver {
+  id           String               @id @default(uuid())
+  name         String
+  phone        String
+  email        String
+  userId       String               @unique
+  availability DriverAvailability   @default(AVAILABLE) // ENUM for driver availability
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+
+  assignments  OrderAssignment[]
 }
 
 model OrderAssignment {
-  id            String   @id @default(uuid())
+  id            String       @id @default(uuid())
   driverId      String
-  driver        Driver   @relation(fields: [driverId], references: [id])
+  driver        Driver       @relation(fields: [driverId], references: [id])
   orderId       String
+  status        OrderStatus  @default(PENDING) // ENUM for tracking delivery status
   paymentAmount Float
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
 }
