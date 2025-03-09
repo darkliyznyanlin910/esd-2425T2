@@ -9,18 +9,11 @@ export default function AuthPage() {
   const { data: session } = useSession();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("client"); // Default role
   const [isSignUp, setIsSignUp] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isSignUp) {
-      await authClient.admin.createUser({
-        name: "Test User",
-        email: email,
-        password: password,
-        role: "admin",
-      });
       await signUp.email({ email, password, name: "John Doe" });
     } else {
       await signIn.email({ email, password });
@@ -65,21 +58,6 @@ export default function AuthPage() {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
-
-            {isSignUp && (
-              <div>
-                <label htmlFor="role">Role</label>
-                <select
-                  id="role"
-                  value={role}
-                  onChange={(e) => setRole(e.target.value)}
-                >
-                  <option value="client">Client</option>
-                  <option value="driver">Driver</option>
-                  <option value="admin">Admin</option>
-                </select>
-              </div>
-            )}
           </div>
 
           <button type="submit">{isSignUp ? "Sign up" : "Sign in"}</button>

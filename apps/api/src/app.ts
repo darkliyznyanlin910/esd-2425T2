@@ -22,11 +22,6 @@ app.use(
 const routes = app
   .doc("/openapi", {
     openapi: "3.0.0",
-    servers: [
-      {
-        url: getServiceBaseUrl("api"),
-      },
-    ],
     info: {
       title: "Template API",
       version: "1.0.0",

@@ -2,7 +2,7 @@ import { OpenAPIHono } from "@hono/zod-openapi";
 import { apiReference } from "@scalar/hono-api-reference";
 import { cors } from "hono/cors";
 
-import { getServiceBaseUrl, SERVICES } from "@repo/service-discovery";
+import { getServiceBaseUrl } from "@repo/service-discovery";
 
 import { driverRouter } from "./routers/driver";
 
@@ -10,7 +10,7 @@ const app = new OpenAPIHono();
 
 app.use(
   cors({
-    origin: SERVICES.map((service) => getServiceBaseUrl(service)),
+    origin: "*",
     allowHeaders: ["Content-Type", "Authorization"],
     allowMethods: ["POST", "GET", "OPTIONS"],
     exposeHeaders: ["Content-Length"],
