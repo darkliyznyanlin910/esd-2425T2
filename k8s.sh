@@ -75,11 +75,7 @@ port_forward() {
   mkdir -p "$PID_DIR"
   
   # Default services to forward if none specified
-  if [ -z "$2" ]; then
-    SERVICES="nginx:8000:80,api:3000:80"
-  else
-    SERVICES="$2"
-  fi
+  SERVICES="nginx:8000:80,api:3000:80"
   
   IFS=',' read -ra SERVICE_ARRAY <<< "$SERVICES"
   
@@ -98,6 +94,51 @@ port_forward() {
   done
   
   echo "To stop all port forwarding, run: $0 stop-forward"
+}
+
+port_status() {
+  PID_DIR="/tmp/esd-port-forward"
+  
+  if [ ! -d "$PID_DIR" ]; then
+    echo "No port forwarding directory found at $PID_DIR"
+    return
+  fi
+  
+  echo "Current port forwarding status:"
+  echo "------------------------------"
+  
+  # Check if any pid files exist
+  if [ -z "$(ls -A $PID_DIR 2>/dev/null)" ]; then
+    echo "No active port forwarding found"
+    return
+  fi
+  
+  printf "%-15s %-10s %-20s %-20s\n" "SERVICE" "STATUS" "PID" "URL"
+  
+  for PID_FILE in "$PID_DIR"/*.pid; do
+    if [ -f "$PID_FILE" ]; then
+      SERVICE=$(basename "$PID_FILE" .pid)
+      PID=$(cat "$PID_FILE")
+      
+      # Check if process is running
+      if ps -p $PID > /dev/null; then
+        STATUS="RUNNING"
+        
+        # Extract port from process command
+        PORT=$(ps -p $PID -o command= | grep -oP 'localhost:\K[0-9]+' || echo "unknown")
+        URL="http://localhost:$PORT"
+      else
+        STATUS="STOPPED"
+        URL="N/A"
+      fi
+      
+      printf "%-15s %-10s %-20s %-20s\n" "$SERVICE" "$STATUS" "$PID" "$URL"
+    fi
+  done
+  
+  echo "------------------------------"
+  echo "To start port forwarding: $0 port forward"
+  echo "To stop port forwarding: $0 port stop"
 }
 
 # Function to clear the cluster
@@ -135,23 +176,32 @@ case "$ACTION" in
     clear_cluster $3
     stop_forward
     ;;
-  forward)
-    port_forward "$@"
-    ;;
-  stop-forward)
-    stop_forward
+  port)
+    case "$2" in
+      forward)
+        port_forward
+        ;;
+      stop)
+        stop_forward
+        ;;
+      status)
+        port_status
+        ;;
+      *)
+        echo "Usage: $0 port {forward|stop|status} [services]"
+        exit 1
+        ;;
+    esac
     ;;
   *)
-    echo "Usage: $0 {build|install|up|down|forward|stop-forward} [cluster-name] [options]"
+    echo "Usage: $0 {build|install|up|down|port} [cluster-name] [options]"
     echo ""
     echo "Commands:"
     echo "  build               Build and load images to kind cluster"
     echo "  install             Install application with Helm"
     echo "  up                  Build, load, and install"
-    echo "  down [--all]         Clear Helm installation (with --all, delete the cluster too)"
-    echo "  forward [services]   Port forward services (format: svc1:port1:targetport1,svc2:port2:targetport2)"
-    echo "                       Default: nginx:8000:80"
-    echo "  stop-forward        Stop all port forwarding"
+    echo "  down [--all]        Clear Helm installation (with --all, delete the cluster too)"
+    echo "  port                Port forward services"
     echo ""
     echo "Arguments:"
     echo "  cluster-name        Kind cluster name (default: esd-test)"
