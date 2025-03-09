@@ -21,7 +21,7 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
       method: "post",
       path: "/",
       middleware: [
-        bearerAuth({ token: env.INTERNAL_COMMUNICATION_SECRET }),
+        // bearerAuth({ token: env.INTERNAL_COMMUNICATION_SECRET }),
         authMiddleware(["client"], true),
       ] as const,
       description: "Create order",

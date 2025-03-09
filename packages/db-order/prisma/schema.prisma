@@ -26,17 +26,6 @@ datasource db {
   url      = env("ORDER_POSTGRES_URL")
 }
 
-enum OrderStatus {
-  PENDING
-  ASSIGNED
-  PICKED_UP
-  IN_TRANSIT
-  DELIVERED
-  FAILED
-  RETURNED
-}
-
-
 model Order {
   id          String @id @default(uuid())
   userId      String
@@ -69,7 +58,7 @@ model OrderTrackingRecord {
   id          String   @id @default(uuid())
   order       Order    @relation(fields: [orderId], references: [id])
   orderId     String
-  status      OrderStatus  @default(PENDING)
+  status      String
   description String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
