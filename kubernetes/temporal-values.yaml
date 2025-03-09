@@ -22,8 +22,7 @@ persistence:
       password: ${POSTGRES_PWD}
       pluginName: "postgres"
       databaseName: "temporal"
-      host: "{{ .Release.Name }}-postgresql"
-      port: 5432
+      connectAddr: "postgresql:5432"
 
   visibility:
     driver: "opensearch"
