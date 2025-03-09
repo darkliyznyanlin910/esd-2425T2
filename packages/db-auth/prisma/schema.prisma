@@ -4,6 +4,23 @@ generator client {
   output        = "../src/generated/client"
 }
 
+generator zod {
+  provider                         = "zod-prisma-types"
+  output                           = "../src/generated/zod"
+  createInputTypes                 = false
+  createModelTypes                 = true
+  addInputTypeValidation           = false
+  addIncludeType                   = false
+  addSelectType                    = false
+  validateWhereUniqueInput         = false
+  createOptionalDefaultValuesTypes = false
+  createRelationValuesTypes        = false
+  createPartialTypes               = false
+  useDefaultValidators             = false
+  coerceDate                       = true
+  writeNullishInModelTypes         = true
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("AUTH_POSTGRES_URL")
@@ -12,6 +29,7 @@ datasource db {
 model User {
   id               String    @id @default(uuid())
   name             String
+  stripeCustomerId String?
   email            String
   emailVerified    Boolean   @default(false)
   image            String?

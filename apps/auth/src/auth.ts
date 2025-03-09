@@ -19,6 +19,16 @@ export const auth = betterAuth({
   secret: env.BETTER_AUTH_SECRET,
   baseURL: getServiceBaseUrl("auth"),
   basePath: "/auth",
+  user: {
+    additionalFields: {
+      stripeCustomerId: {
+        type: "string",
+        required: false,
+        return: false,
+        fieldName: "stripeCustomerId",
+      },
+    },
+  },
   advanced: {
     crossSubDomainCookies: {
       enabled: true,

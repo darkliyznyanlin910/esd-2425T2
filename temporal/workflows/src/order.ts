@@ -9,31 +9,106 @@ import {
 import { z } from "zod";
 
 import * as activities from "@repo/temporal-activities";
-import { Order, paymentInformationSchema } from "@repo/temporal-common";
+import {
+  Order,
+  paymentInformationSchema,
+  StripeSessionStatus,
+} from "@repo/temporal-common";
+
+export const ORDER_DEFAULT_UNIT_AMOUNT = 5;
 
 export const getPaymentInformationQuery = defineQuery<
-  z.infer<typeof paymentInformationSchema>
+  Promise<z.infer<typeof paymentInformationSchema>>
 >("getPaymentInformation");
 
-export const paymentSucceededSignal = defineSignal("paymentSucceeded");
+export const paymentSucceededSignal =
+  defineSignal<[string]>("paymentSucceeded");
 
-export const paymentFailedSignal = defineSignal("paymentFailed");
+export const paymentFailedSignal = defineSignal<[string]>("paymentFailed");
 
-const {} = proxyActivities<typeof activities>({
+const {
+  getUser,
+  createStripeCustomer,
+  createStripeCheckoutSession,
+  getStripeCheckoutSession,
+} = proxyActivities<typeof activities>({
   startToCloseTimeout: "1m",
   retry: {
     maximumInterval: "1m",
   },
 });
 
-export async function order(order: Order, stripeCheckoutSessionId: string) {
-  setHandler(getPaymentInformationQuery, () => {
+export async function order(order: Order) {
+  console.log("Order received", order);
+
+  const user = await getUser(order.userId);
+  let stripeCustomerId = user.stripeCustomerId;
+
+  if (!stripeCustomerId) {
+    const customer = await createStripeCustomer(user.email);
+    stripeCustomerId = customer.id;
+  }
+
+  let stripeSessionStatus: StripeSessionStatus | null = null;
+
+  const session = await createStripeCheckoutSession(
+    stripeCustomerId,
+    order.id,
+    [
+      {
+        price_data: {
+          currency: "SGD",
+          unit_amount: ORDER_DEFAULT_UNIT_AMOUNT,
+          product_data: {
+            name: "Delivery Fee",
+            description: `Order ID: ${order.displayId}
+
+From: ${[order.fromAddressLine1, order.fromAddressLine2, order.fromZipCode, order.fromCity, order.fromState, order.fromCountry].filter(Boolean).join(", ")}
+
+To: ${[order.toAddressLine1, order.toAddressLine2, order.toZipCode, order.toCity, order.toState, order.toCountry].filter(Boolean).join(", ")}
+
+Created at: ${order.createdAt.toLocaleString()}`,
+          },
+        },
+      },
+    ],
+  );
+
+  stripeSessionStatus = session.status;
+
+  setHandler(getPaymentInformationQuery, async () => {
+    const temp = await getStripeCheckoutSession(session.id);
+    if (!temp.status) {
+      throw ApplicationFailure.create({
+        nonRetryable: true,
+        message: "Stripe session status is null",
+      });
+    }
+
+    const status =
+      temp.status === "open"
+        ? "open"
+        : temp.status === "complete" || temp.status === "expired"
+          ? temp.status
+          : "expired";
+
+    if (status === "open") {
+      return {
+        status,
+        sessionId: temp.id,
+        sessionUrl: temp.url || "",
+      };
+    }
+
     return {
-      status: "pending",
-      amount: 100,
-      currency: "USD",
-      paymentMethod: "credit card",
+      status,
+      sessionId: temp.id,
     };
   });
+
+  setHandler(paymentSucceededSignal, async (orderId) => {
+    console.log("Payment succeeded", orderId);
+  });
+
   console.log(order);
 }

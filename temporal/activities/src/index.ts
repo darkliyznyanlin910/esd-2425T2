@@ -1,10 +1,14 @@
 import { ApplicationFailure, log } from "@temporalio/activity";
 
+import { HonoClient as UserClient } from "@repo/auth/type";
+import { User, UserSchema } from "@repo/db-auth/zod";
 import { HonoClient as NotificationClient } from "@repo/notification-backend/type";
 import { getServiceBaseUrl } from "@repo/service-discovery";
 import { Invoice, Order, OrderStatus } from "@repo/temporal-common";
 
 import { env } from "./env";
+
+export * from "./stripe";
 
 export async function updateOrderStatus(
   orderId: Order["id"],
@@ -122,4 +126,20 @@ export async function sendInvoiceToCustomer(invoice: Invoice): Promise<void> {
   log.info("Sending invoice to customer", {
     invoice: JSON.stringify(invoice, null, 2),
   });
+}
+
+export async function getUser(userId: string): Promise<User> {
+  const res = await UserClient.user[":id"].$get({
+    param: {
+      id: userId,
+    },
+  });
+  if (!res.ok) {
+    throw ApplicationFailure.create({
+      nonRetryable: true,
+      message: "Failed to get user",
+    });
+  }
+  const data = await res.json();
+  return UserSchema.parse(data);
 }

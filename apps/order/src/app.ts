@@ -5,6 +5,7 @@ import { cors } from "hono/cors";
 import { getServiceBaseUrl } from "@repo/service-discovery";
 
 import { orderRouter } from "./routers/order";
+import { paymentRouter } from "./routers/payment";
 
 const app = new OpenAPIHono();
 
@@ -36,6 +37,7 @@ const routes = app
       spec: { url: `${getServiceBaseUrl("order")}/openapi` },
     }),
   )
+  .route("/payment", paymentRouter)
   .route("/order", orderRouter);
 
 export { app, routes };

@@ -8,7 +8,7 @@ import { db } from "@repo/db-order";
 import { OrderSchema } from "@repo/db-order/zod";
 import { paymentInformationSchema, taskQueue } from "@repo/temporal-common";
 import { connectToTemporal } from "@repo/temporal-common/temporal-client";
-import { delivery } from "@repo/temporal-workflows";
+import { delivery, order } from "@repo/temporal-workflows";
 
 import { env } from "../env";
 import { generateDisplayId } from "../utils";
@@ -107,6 +107,12 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
         },
       });
 
+      await temporalClient.workflow.start(order, {
+        workflowId: createdOrder.id,
+        args: [createdOrder],
+        taskQueue,
+      });
+
       return c.json(createdOrder);
     },
   )
@@ -153,65 +159,6 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
           { error: "Order is still in payment pending state" },
           400,
         );
-      }
-
-      await temporalClient.workflow.start(delivery, {
-        workflowId: order.id,
-        args: [order],
-        taskQueue,
-      });
-
-      return c.json({ message: "Order processed" });
-    },
-  )
-  .openapi(
-    createRoute({
-      method: "get",
-      path: "/:id/payment",
-      description: "Get Payment Information",
-      middleware: [
-        authMiddleware({
-          authBased: {
-            allowedRoles: ["client"],
-          },
-          bearer: {
-            tokens: [env.INTERNAL_COMMUNICATION_SECRET],
-          },
-        }),
-      ] as const,
-      request: {
-        params: z.object({
-          id: z.string(),
-        }),
-      },
-      responses: {
-        200: {
-          description: "Payment Information",
-          content: {
-            "application/json": {
-              schema: paymentInformationSchema,
-            },
-          },
-        },
-        401: {
-          description: "Unauthorized",
-        },
-        404: {
-          description: "Order not found",
-        },
-      },
-    }),
-    async (c) => {
-      const { id } = c.req.valid("param");
-
-      const order = await db.order.findUnique({
-        where: {
-          id,
-        },
-      });
-
-      if (!order) {
-        return c.json({ error: "Order not found" }, 404);
       }
 
       await temporalClient.workflow.start(delivery, {
