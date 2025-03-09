@@ -38,7 +38,17 @@ export const auth = betterAuth({
     openAPI({
       path: "/docs",
     }),
-    admin(),
+    admin({
+      adminRole: ["admin", "driver"],
+      defaultRole: "client",
+      schema: {
+        user: {
+          fields: {
+            banned: "disabled",
+          },
+        },
+      },
+    }),
   ],
   trustedOrigins: SERVICES.map((service) => getServiceBaseUrl(service)),
 });
