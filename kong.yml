@@ -24,3 +24,10 @@ services:
           - /microservice/auth
         strip_path: true # Removes /microservice/auth before forwarding
 
+  - name: customer-frontend-service
+    url: http://customer-frontend:4000
+    routes:
+      - name: customer-frontend-route
+        paths:
+          - /customer
+        strip_path: false

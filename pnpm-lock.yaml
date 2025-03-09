@@ -238,6 +238,100 @@ importers:
         specifier: 'catalog:'
         version: 5.7.3
 
+  apps/customer-frontend:
+    dependencies:
+      '@repo/auth':
+        specifier: workspace:*
+        version: link:../auth
+      '@repo/chatbot-ui':
+        specifier: workspace:*
+        version: link:../../packages/chatbot-ui
+      '@repo/service-discovery':
+        specifier: workspace:*
+        version: link:../../packages/service-discovery
+      '@repo/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
+      '@repo/validators':
+        specifier: workspace:*
+        version: link:../../packages/validators
+      '@t3-oss/env-nextjs':
+        specifier: ^0.11.1
+        version: 0.11.1(typescript@5.7.3)(zod@3.24.1)
+      '@tanstack/react-query':
+        specifier: 'catalog:'
+        version: 5.66.6(react@18.3.1)
+      better-auth:
+        specifier: ^1.1.15
+        version: 1.1.18
+      geist:
+        specifier: ^1.3.1
+        version: 1.3.1(next@14.2.24(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+      hono:
+        specifier: ^4.6.20
+        version: 4.7.1
+      next:
+        specifier: ^14.2.15
+        version: 14.2.24(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      react:
+        specifier: catalog:react18
+        version: 18.3.1
+      react-dom:
+        specifier: catalog:react18
+        version: 18.3.1(react@18.3.1)
+      superjson:
+        specifier: 2.2.1
+        version: 2.2.1
+      zod:
+        specifier: 'catalog:'
+        version: 3.24.1
+    devDependencies:
+      '@repo/api':
+        specifier: workspace:*
+        version: link:../api
+      '@repo/eslint-config':
+        specifier: workspace:*
+        version: link:../../tooling/eslint
+      '@repo/prettier-config':
+        specifier: workspace:*
+        version: link:../../tooling/prettier
+      '@repo/tailwind-config':
+        specifier: workspace:*
+        version: link:../../tooling/tailwind
+      '@repo/tsconfig':
+        specifier: workspace:*
+        version: link:../../tooling/typescript
+      '@types/next':
+        specifier: ^9.0.0
+        version: 9.0.0(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@types/node':
+        specifier: ^20.17.7
+        version: 20.17.19
+      '@types/react':
+        specifier: catalog:react18
+        version: 18.3.18
+      '@types/react-dom':
+        specifier: catalog:react18
+        version: 18.3.5(@types/react@18.3.18)
+      dotenv-cli:
+        specifier: 'catalog:'
+        version: 7.4.4
+      eslint:
+        specifier: 'catalog:'
+        version: 9.20.1(jiti@1.21.7)
+      jiti:
+        specifier: ^1.21.6
+        version: 1.21.7
+      prettier:
+        specifier: 'catalog:'
+        version: 3.5.1
+      tailwindcss:
+        specifier: 'catalog:'
+        version: 3.4.17(ts-node@10.9.2(@swc/core@1.10.17(@swc/helpers@0.5.5))(@types/node@20.17.19)(typescript@5.7.3))
+      typescript:
+        specifier: 'catalog:'
+        version: 5.7.3
+
   apps/driver:
     dependencies:
       '@hono/node-server':
@@ -249,9 +343,6 @@ importers:
       '@repo/auth':
         specifier: workspace:*
         version: link:../auth
-      '@repo/db-driver':
-        specifier: workspace:*
-        version: link:../../packages/db-driver
       '@repo/service-discovery':
         specifier: workspace:*
         version: link:../../packages/service-discovery
@@ -289,67 +380,6 @@ importers:
       '@repo/tsconfig':
         specifier: workspace:*
         version: link:../../tooling/typescript
-      eslint:
-        specifier: 'catalog:'
-        version: 9.20.1(jiti@1.21.7)
-      prettier:
-        specifier: 'catalog:'
-        version: 3.5.1
-      typescript:
-        specifier: 'catalog:'
-        version: 5.7.3
-
-  apps/invoice:
-    dependencies:
-      '@hono/node-server':
-        specifier: ^1.13.8
-        version: 1.13.8(hono@4.7.1)
-      '@hono/zod-validator':
-        specifier: ^0.4.2
-        version: 0.4.3(hono@4.7.1)(zod@3.24.1)
-      '@repo/db-invoice':
-        specifier: workspace:*
-        version: link:../../packages/db-invoice
-      '@repo/service-discovery':
-        specifier: workspace:*
-        version: link:../../packages/service-discovery
-      '@repo/temporal-common':
-        specifier: workspace:*
-        version: link:../../temporal/common
-      '@repo/temporal-workflows':
-        specifier: workspace:*
-        version: link:../../temporal/workflows
-      '@scalar/hono-api-reference':
-        specifier: ^0.5.170
-        version: 0.5.174(hono@4.7.1)
-      dotenv-cli:
-        specifier: 'catalog:'
-        version: 7.4.4
-      hono:
-        specifier: ^4.6.20
-        version: 4.7.1
-      tsx:
-        specifier: ^4.19.2
-        version: 4.19.2
-      zod:
-        specifier: 'catalog:'
-        version: 3.24.1
-      zod-openapi:
-        specifier: ^4.2.3
-        version: 4.2.3(zod@3.24.1)
-    devDependencies:
-      '@repo/eslint-config':
-        specifier: workspace:*
-        version: link:../../tooling/eslint
-      '@repo/prettier-config':
-        specifier: workspace:*
-        version: link:../../tooling/prettier
-      '@repo/tsconfig':
-        specifier: workspace:*
-        version: link:../../tooling/typescript
-      esbuild:
-        specifier: ^0.25.0
-        version: 0.25.0
       eslint:
         specifier: 'catalog:'
         version: 9.20.1(jiti@1.21.7)
@@ -2424,6 +2454,10 @@ packages:
 
   '@types/ms@2.1.0':
     resolution: {integrity: sha512-GsCCIZDE/p3i96vtEqx+7dBUGXrc7zeSK3wwPHIaRThS+9OhWIXRqzs4d6k1SVU8g91DrNRWxWUGhp5KXQb2VA==}
+
+  '@types/next@9.0.0':
+    resolution: {integrity: sha512-gnBXM8rP1mnCgT1uE2z8SnpFTKRWReJlhbZLZkOLq/CH1ifvTNwjIVtXvsywTy1dwVklf+y/MB0Eh6FOa94yrg==}
+    deprecated: This is a stub types definition. next provides its own type definitions, so you do not need this installed.
 
   '@types/node@20.17.19':
     resolution: {integrity: sha512-LEwC7o1ifqg/6r2gn9Dns0f1rhK+fPFDoMiceTJ6kWmVk6bgXBI/9IOWfVan4WiAavK9pIVWdX0/e3J+eEUh5A==}
@@ -6570,6 +6604,18 @@ snapshots:
   '@types/minimatch@5.1.2': {}
 
   '@types/ms@2.1.0': {}
+
+  '@types/next@9.0.0(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      next: 14.2.24(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+    transitivePeerDependencies:
+      - '@babel/core'
+      - '@opentelemetry/api'
+      - '@playwright/test'
+      - babel-plugin-macros
+      - react
+      - react-dom
+      - sass
 
   '@types/node@20.17.19':
     dependencies:
