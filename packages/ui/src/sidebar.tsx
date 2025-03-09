@@ -254,12 +254,33 @@ const SidebarProvider = React.forwardRef<
   React.ComponentProps<"div"> & {
     defaultOpen?: boolean;
   }
->(({ defaultOpen = true, style, children, ...props }, ref) => {
-  const [open, setOpen] = React.useState(
-    typeof window !== "undefined" && window.innerWidth < 768
-      ? false
-      : defaultOpen,
-  );
+>(({ style, children, ...props }, ref) => {
+  const [open, setOpen] = React.useState(false);
+  const [sidebarWidth, setSidebarWidth] = React.useState(SIDEBAR_WIDTH);
+
+  React.useEffect(() => {
+    if (typeof window !== "undefined") {
+      const handleResize = () => {
+        setSidebarWidth(
+          window.innerWidth < 640
+            ? SIDEBAR_WIDTH_SM
+            : window.innerWidth < 768
+              ? SIDEBAR_WIDTH_MD
+              : SIDEBAR_WIDTH,
+        );
+      };
+
+      handleResize();
+      window.addEventListener("resize", handleResize);
+      return () => window.removeEventListener("resize", handleResize);
+    }
+  }, []);
+
+  React.useEffect(() => {
+    if (typeof window !== "undefined") {
+      setOpen(window.innerWidth >= 768);
+    }
+  }, []);
 
   const toggleSidebar = React.useCallback(() => {
     setOpen((prev) => !prev);
@@ -303,17 +324,12 @@ const SidebarProvider = React.forwardRef<
         ref={ref}
         style={
           {
-            "--sidebar-width":
-              typeof window !== "undefined" && window.innerWidth < 640
-                ? SIDEBAR_WIDTH_SM
-                : window.innerWidth < 768
-                  ? SIDEBAR_WIDTH_MD
-                  : SIDEBAR_WIDTH,
+            "--sidebar-width": sidebarWidth,
             "--sidebar-width-icon": SIDEBAR_WIDTH_ICON,
             ...style,
           } as React.CSSProperties
         }
-        className={cn("w-full flex min-h-screen")}
+        className={cn("flex min-h-screen w-full")}
         {...props}
       >
         {children}
@@ -343,12 +359,11 @@ const Sidebar = React.forwardRef<
       )}
       {...props}
     >
-      <div className="flex h-full flex-col bg-white">
-        <div className="flex w-full items-center justify-between px-4">
+      <div className="flex h-full flex-col bg-white pt-2">
+        <div className="flex w-full items-center justify-between px-4 pb-2">
           {open && (
             <div className="flex items-center gap-2">
-              {/* Removed logo prop usage */}
-              {title && <span className="text-lg font-semibold">{title}</span>}
+              {title && <span className="text-lg font-bold">{title}</span>}
             </div>
           )}
           <Button variant="ghost" size="icon" onClick={toggleSidebar}>

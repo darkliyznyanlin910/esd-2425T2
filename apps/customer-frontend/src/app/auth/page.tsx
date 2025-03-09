@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { authClient } from "@repo/auth/client";
@@ -25,11 +25,12 @@ export default function AuthPage() {
       await signIn.email({ email, password });
     }
   };
-
-  if (session) {
-    console.log(session);
-    router.push("/order");
-  }
+  useEffect(() => {
+    if (session) {
+      console.log(session);
+      router.push("/order");
+    }
+  }, [session, router]);
 
   return (
     <div
