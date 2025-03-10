@@ -93,7 +93,7 @@ port_forward() {
     echo "Access at: http://localhost:$LOCAL_PORT"
   done
   
-  echo "To stop all port forwarding, run: $0 stop-forward"
+  echo "To stop all port forwarding, run: $0 $1 stop"
 }
 
 port_status() {
