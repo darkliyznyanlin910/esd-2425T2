@@ -68,7 +68,6 @@ export const DOCKER_SERVICE_MAP: Record<Service, string> = {
 };
 
 export const getServiceBaseUrl = (service: Service) => {
-  console.log(env.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT);
   if (env.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT === "local") {
     return LOCAL_SERVICE_MAP[service];
   } else if (env.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT === "docker") {
