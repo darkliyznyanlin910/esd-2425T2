@@ -10,7 +10,7 @@
         <mxCell id="N_pRQEPDte80IIOeTLnO-1" value="Order Service" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
           <mxGeometry x="211" y="240" width="121" height="57.5" as="geometry" />
         </mxCell>
-        <mxCell id="N_pRQEPDte80IIOeTLnO-2" value="" style="endArrow=classic;startArrow=classic;html=1;rounded=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;edgeStyle=orthogonalEdgeStyle;" parent="1" target="sGVSHZmp7kZCRn9jOwzH-1" edge="1">
+        <mxCell id="N_pRQEPDte80IIOeTLnO-2" value="" style="endArrow=none;startArrow=classic;html=1;rounded=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;edgeStyle=orthogonalEdgeStyle;startFill=1;" parent="1" target="sGVSHZmp7kZCRn9jOwzH-1" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
             <mxPoint x="299" y="240" as="sourcePoint" />
             <mxPoint x="159.25" y="147" as="targetPoint" />
@@ -23,7 +23,7 @@
         <mxCell id="N_pRQEPDte80IIOeTLnO-3" value="1. Update OrderStatus to &quot;Finding Driver&quot;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
           <mxGeometry x="151" y="105" width="135" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="FCyn03ZtiModcpzmfuNr-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.25;entryY=0;entryDx=0;entryDy=0;startArrow=classic;startFill=1;" edge="1" parent="1" source="N_pRQEPDte80IIOeTLnO-4" target="N_pRQEPDte80IIOeTLnO-18">
+        <mxCell id="FCyn03ZtiModcpzmfuNr-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.25;entryY=0;entryDx=0;entryDy=0;startArrow=classic;startFill=1;endArrow=none;" edge="1" parent="1" source="N_pRQEPDte80IIOeTLnO-4" target="N_pRQEPDte80IIOeTLnO-18">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="N_pRQEPDte80IIOeTLnO-4" value="Driver Service" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
@@ -59,7 +59,7 @@
         <mxCell id="N_pRQEPDte80IIOeTLnO-18" value="&lt;u&gt;Admin Frontend&lt;/u&gt;&lt;div&gt;- View all ongoing orders&lt;br&gt;&lt;/div&gt;&lt;div&gt;- Assign Drivers to Delivery&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="113.5" y="555" width="216" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="N_pRQEPDte80IIOeTLnO-23" value="" style="endArrow=classic;startArrow=classic;html=1;rounded=0;entryX=1;entryY=0.75;entryDx=0;entryDy=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;edgeStyle=orthogonalEdgeStyle;" parent="1" source="N_pRQEPDte80IIOeTLnO-5" target="sGVSHZmp7kZCRn9jOwzH-1" edge="1">
+        <mxCell id="N_pRQEPDte80IIOeTLnO-23" value="" style="endArrow=none;startArrow=classic;html=1;rounded=0;entryX=1;entryY=0.75;entryDx=0;entryDy=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;edgeStyle=orthogonalEdgeStyle;startFill=1;" parent="1" source="N_pRQEPDte80IIOeTLnO-5" target="sGVSHZmp7kZCRn9jOwzH-1" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
             <mxPoint x="659" y="260" as="sourcePoint" />
             <mxPoint x="582" y="171" as="targetPoint" />
@@ -74,7 +74,7 @@
         <mxCell id="N_pRQEPDte80IIOeTLnO-25" value="6. Update OrderStatus to &quot;Driver Found&quot;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
           <mxGeometry x="151" y="137.5" width="135" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="FCyn03ZtiModcpzmfuNr-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;startArrow=classic;startFill=1;" edge="1" parent="1" source="N_pRQEPDte80IIOeTLnO-26" target="N_pRQEPDte80IIOeTLnO-4">
+        <mxCell id="FCyn03ZtiModcpzmfuNr-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;startArrow=none;startFill=0;" edge="1" parent="1" source="N_pRQEPDte80IIOeTLnO-26" target="N_pRQEPDte80IIOeTLnO-4">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="N_pRQEPDte80IIOeTLnO-26" value="&lt;u&gt;Driver Frontend&lt;/u&gt;&lt;div&gt;- Manage assigned Deliveries&lt;br&gt;&lt;/div&gt;&lt;div&gt;- View all available Deliveries&lt;/div&gt;&lt;div&gt;- Accepts Delivery&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
