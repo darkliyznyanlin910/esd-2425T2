@@ -1,13 +1,13 @@
 <mxfile host="65bd71144e">
     <diagram name="Page-1" id="AIPoxRdhrtce3UdJt4KN">
-        <mxGraphModel dx="886" dy="649" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="576" dy="422" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
                 <mxCell id="uWxkei3LBMc92IfPlKmw-2" value="&lt;u&gt;External System API Call&lt;/u&gt;&lt;div&gt;- Submit Order Application&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="32" y="58.75" width="216" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="2" style="edgeStyle=none;html=1;exitX=0;exitY=0.75;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;rounded=0;curved=0;" edge="1" parent="1" source="uWxkei3LBMc92IfPlKmw-4" target="3v4G5k-9SBofemgfU9J0-18">
+                <mxCell id="2" style="edgeStyle=none;html=1;exitX=0;exitY=0.75;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;rounded=0;curved=0;" parent="1" source="uWxkei3LBMc92IfPlKmw-4" target="3v4G5k-9SBofemgfU9J0-18" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <Array as="points">
                             <mxPoint x="336" y="102"/>
@@ -56,8 +56,11 @@
                         <mxPoint x="611.5" y="270" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="sGVSHZmp7kZCRn9jOwzH-7" value="5. Start Delivery Workflow with created Order" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
-                    <mxGeometry x="337" y="121" width="135" height="30" as="geometry"/>
+                <mxCell id="sGVSHZmp7kZCRn9jOwzH-7" value="6. Start Delivery Workflow with created Order" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+                    <mxGeometry x="189" y="235" width="135" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="11" value="&lt;span style=&quot;color: rgb(0, 0, 0); font-family: Helvetica; font-size: 12px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: rgb(251, 251, 251); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important;&quot;&gt;5. Order Workflow calls Order Service to trigger Delivery Worklow&lt;/span&gt;" style="text;whiteSpace=wrap;html=1;align=center;" vertex="1" parent="1">
+                    <mxGeometry x="402" y="129" width="141" height="36" as="geometry"/>
                 </mxCell>
             </root>
         </mxGraphModel>
