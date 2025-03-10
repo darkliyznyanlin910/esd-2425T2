@@ -16,10 +16,10 @@ export default function AuthPage() {
     e.preventDefault();
     if (isSignUp) {
       await authClient.admin.createUser({
-        name: "Test User",
+        name: "John Doe",
         email: email,
         password: password,
-        role: "admin",
+        role: role,
       });
       await signUp.email({ email, password, name: "John Doe" });
     } else {
