@@ -20,10 +20,16 @@ const driverRouter = new OpenAPIHono<HonoExtension>()
     createRoute({
       method: "post",
       path: "/create",
-      // middleware: [
-      //   bearerAuth({ token: env.INTERNAL_COMMUNICATION_SECRET }),
-      //   authMiddleware(["client"], true),
-      // ],
+      middleware: [
+        authMiddleware({
+          authBased: {
+            allowedRoles: ["client"],
+          },
+          bearer: {
+            tokens: [env.INTERNAL_COMMUNICATION_SECRET],
+          },
+        }),
+      ],
       description: "Create new driver",
       request: {
         body: {
@@ -239,8 +245,14 @@ const driverRouter = new OpenAPIHono<HonoExtension>()
       method: "post",
       path: "/:state",
       middleware: [
-        bearerAuth({ token: env.INTERNAL_COMMUNICATION_SECRET }),
-        authMiddleware(["driver"], true),
+        authMiddleware({
+          authBased: {
+            allowedRoles: ["driver"],
+          },
+          bearer: {
+            tokens: [env.INTERNAL_COMMUNICATION_SECRET],
+          },
+        }),
       ] as const,
       description: "Update temporal workflow with order status",
       request: {
