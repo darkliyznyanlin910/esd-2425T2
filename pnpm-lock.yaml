@@ -301,9 +301,6 @@ importers:
       '@repo/tsconfig':
         specifier: workspace:*
         version: link:../../tooling/typescript
-      '@types/next':
-        specifier: ^9.0.0
-        version: 9.0.0(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@types/node':
         specifier: ^20.17.7
         version: 20.17.19
@@ -401,6 +398,9 @@ importers:
       '@hono/zod-validator':
         specifier: ^0.4.2
         version: 0.4.3(hono@4.7.1)(zod@3.24.1)
+      '@repo/auth':
+        specifier: workspace:*
+        version: link:../auth
       '@repo/db-invoice':
         specifier: workspace:*
         version: link:../../packages/db-invoice
@@ -2533,10 +2533,6 @@ packages:
 
   '@types/ms@2.1.0':
     resolution: {integrity: sha512-GsCCIZDE/p3i96vtEqx+7dBUGXrc7zeSK3wwPHIaRThS+9OhWIXRqzs4d6k1SVU8g91DrNRWxWUGhp5KXQb2VA==}
-
-  '@types/next@9.0.0':
-    resolution: {integrity: sha512-gnBXM8rP1mnCgT1uE2z8SnpFTKRWReJlhbZLZkOLq/CH1ifvTNwjIVtXvsywTy1dwVklf+y/MB0Eh6FOa94yrg==}
-    deprecated: This is a stub types definition. next provides its own type definitions, so you do not need this installed.
 
   '@types/node@20.17.19':
     resolution: {integrity: sha512-LEwC7o1ifqg/6r2gn9Dns0f1rhK+fPFDoMiceTJ6kWmVk6bgXBI/9IOWfVan4WiAavK9pIVWdX0/e3J+eEUh5A==}
@@ -6691,18 +6687,6 @@ snapshots:
   '@types/minimatch@5.1.2': {}
 
   '@types/ms@2.1.0': {}
-
-  '@types/next@9.0.0(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
-    dependencies:
-      next: 14.2.24(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-    transitivePeerDependencies:
-      - '@babel/core'
-      - '@opentelemetry/api'
-      - '@playwright/test'
-      - babel-plugin-macros
-      - react
-      - react-dom
-      - sass
 
   '@types/node@20.17.19':
     dependencies:

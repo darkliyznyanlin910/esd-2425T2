@@ -5,13 +5,24 @@ import { authMiddleware } from "@repo/auth/auth";
 import { HonoExtension } from "@repo/auth/type";
 import { db } from "@repo/db-invoice";
 
+import { env } from "../env";
+
 const invoiceRouter = new OpenAPIHono<HonoExtension>()
   .openapi(
     createRoute({
       method: "post",
       path: "/",
       description: "Create a new invoice",
-      middleware: [authMiddleware(["admin"], true)],
+      middleware: [
+        authMiddleware({
+          authBased: {
+            allowedRoles: ["admin"],
+          },
+          bearer: {
+            tokens: [env.INTERNAL_COMMUNICATION_SECRET],
+          },
+        }),
+      ],
       request: {
         body: {
           content: {
