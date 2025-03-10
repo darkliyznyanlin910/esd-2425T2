@@ -29,11 +29,9 @@ enum DriverAvailability {
 
 model Driver {
   id           String               @id @default(uuid())
-  name         String
   phone        String
-  email        String
   userId       String               @unique
-  availability DriverAvailability   @default(AVAILABLE) // ENUM for driver availability
+  availability DriverAvailability   @default(AVAILABLE)
   createdAt    DateTime             @default(now())
   updatedAt    DateTime             @updatedAt
 
