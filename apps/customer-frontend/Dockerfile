@@ -21,10 +21,6 @@ WORKDIR /repo
 COPY --from=builder /repo/out/full/ .
 RUN pnpm install
  
-# Build the project
-COPY --from=builder /repo/out/full/ .
-RUN pnpm run build
- 
 FROM base AS runner
 WORKDIR /repo
  
