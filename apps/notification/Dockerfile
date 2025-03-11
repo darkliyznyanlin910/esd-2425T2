@@ -8,7 +8,7 @@ RUN pnpm install -g turbo
 
 WORKDIR /repo
 COPY . .
-RUN turbo prune @repo/notification --docker
+RUN turbo prune @repo/notification-backend --docker
 
 # Stage 2: Build
 FROM node:22-alpine AS builder

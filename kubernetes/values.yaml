@@ -25,6 +25,66 @@ auth:
     port: 80
     targetPort: 3002
 
+chatbot-backend:
+  name: esd-chatbot-backend
+  replicaCount: 1
+  image:
+    repository: esd-chatbot-backend
+    tag: latest
+    pullPolicy: Never
+  service:
+    type: ClusterIP
+    port: 80
+    targetPort: 3003
+
+notification:
+  name: esd-notification
+  replicaCount: 1
+  image:
+    repository: esd-notification
+    tag: latest
+    pullPolicy: Never
+  service:
+    type: ClusterIP
+    port: 80
+    targetPort: 3004
+
+order:
+  name: esd-order
+  replicaCount: 1
+  image:
+    repository: esd-order
+    tag: latest
+    pullPolicy: Never
+  service:
+    type: ClusterIP
+    port: 80
+    targetPort: 3005
+
+driver:
+  name: esd-driver
+  replicaCount: 1
+  image:
+    repository: esd-driver
+    tag: latest
+    pullPolicy: Never
+  service:
+    type: ClusterIP
+    port: 80
+    targetPort: 3006
+
+invoice:
+  name: esd-invoice
+  replicaCount: 1
+  image:
+    repository: esd-invoice
+    tag: latest
+    pullPolicy: Never
+  service:
+    type: ClusterIP
+    port: 80
+    targetPort: 3007
+
 customer-frontend:
   name: esd-customer-frontend
   replicaCount: 1

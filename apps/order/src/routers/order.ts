@@ -13,8 +13,6 @@ import { delivery, order } from "@repo/temporal-workflows";
 import { env } from "../env";
 import { generateDisplayId } from "../utils";
 
-const temporalClient = await connectToTemporal();
-
 const orderRouter = new OpenAPIHono<HonoExtension>()
   .openapi(
     createRoute({
@@ -107,6 +105,8 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
         },
       });
 
+      const temporalClient = await connectToTemporal();
+
       await temporalClient.workflow.start(order, {
         workflowId: createdOrder.id,
         args: [createdOrder],
@@ -160,6 +160,8 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
           400,
         );
       }
+
+      const temporalClient = await connectToTemporal();
 
       await temporalClient.workflow.start(delivery, {
         workflowId: order.id,
