@@ -14,6 +14,19 @@ services:
       - "5050:5050"
     networks:
       - app-net
+  driver-frontend:
+    build:
+      context: .
+      dockerfile: apps/driver-frontend/Dockerfile
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT=docker
+    env_file:
+      - service-env/.env
+    ports:
+      - "5051:5050"
+    networks:
+      - app-net
   auth:
     build:
       context: .
