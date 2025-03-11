@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Archive, Bell, FilePlus, Notebook, Truck } from "lucide-react";
+import { Bell, Notebook, Truck } from "lucide-react";
 
 import { authClient } from "@repo/auth/client";
 import { Button } from "@repo/ui/button";

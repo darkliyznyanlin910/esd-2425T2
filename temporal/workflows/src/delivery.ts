@@ -6,8 +6,8 @@ import {
   setHandler,
 } from "@temporalio/workflow";
 
-import * as activities from "@repo/temporal-activities";
-import { Order, OrderStatus } from "@repo/temporal-common";
+import type * as activities from "@repo/temporal-activities";
+import type { Order, OrderStatus } from "@repo/temporal-common";
 
 export const PICKUP_TIMEOUT = "10 min";
 export const DELIVERY_TIMEOUT = "2 days";
@@ -21,8 +21,6 @@ const {
   sendOrderToDrivers,
   notifyAdmin,
   assignOrderToDriver,
-  generateInvoice,
-  sendInvoiceToCustomer,
   invalidateOrder,
 } = proxyActivities<typeof activities>({
   startToCloseTimeout: "1m",
@@ -73,6 +71,7 @@ export async function delivery(
   try {
     await sendOrderToDrivers(order);
   } catch (error) {
+    console.error(error);
     await updateOrderStatus(order.id, "DELAYED");
     await notifyAdmin(order);
     throw ApplicationFailure.create({

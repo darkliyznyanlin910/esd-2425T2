@@ -8,14 +8,15 @@ import {
 } from "@temporalio/workflow";
 import { z } from "zod";
 
-import * as activities from "@repo/temporal-activities";
-import {
+import type * as activities from "@repo/temporal-activities";
+import type {
   Order,
   paymentInformationSchema,
   StripeSessionStatus,
 } from "@repo/temporal-common";
 
 export const ORDER_DEFAULT_UNIT_AMOUNT = 5;
+export const PAYMENT_TIMEOUT = "5m";
 
 export const getPaymentInformationQuery = defineQuery<
   Promise<z.infer<typeof paymentInformationSchema>>
@@ -31,6 +32,11 @@ const {
   createStripeCustomer,
   createStripeCheckoutSession,
   getStripeCheckoutSession,
+  updateOrderStatus,
+  getStripeInvoiceIdFromSessionId,
+  getStripeInvoice,
+  generateInvoice,
+  sendInvoiceToCustomer,
 } = proxyActivities<typeof activities>({
   startToCloseTimeout: "1m",
   retry: {
@@ -88,7 +94,7 @@ Created at: ${order.createdAt.toLocaleString()}`,
     const status =
       temp.status === "open"
         ? "open"
-        : temp.status === "complete" || temp.status === "expired"
+        : temp.status === "complete"
           ? temp.status
           : "expired";
 
@@ -96,7 +102,7 @@ Created at: ${order.createdAt.toLocaleString()}`,
       return {
         status,
         sessionId: temp.id,
-        sessionUrl: temp.url || "",
+        sessionUrl: temp.url!,
       };
     }
 
@@ -106,9 +112,56 @@ Created at: ${order.createdAt.toLocaleString()}`,
     };
   });
 
-  setHandler(paymentSucceededSignal, async (orderId) => {
-    console.log("Payment succeeded", orderId);
+  setHandler(paymentSucceededSignal, async (sessionId) => {
+    const temp = await getStripeCheckoutSession(sessionId);
+    if (!temp.status) {
+      throw ApplicationFailure.create({
+        message: "Stripe session status is null",
+      });
+    }
+
+    if (temp.status !== "complete") {
+      throw ApplicationFailure.create({
+        message: "Stripe session status is not complete",
+      });
+    }
+
+    stripeSessionStatus = "complete";
   });
 
-  console.log(order);
+  setHandler(paymentFailedSignal, async (sessionId) => {
+    const temp = await getStripeCheckoutSession(sessionId);
+    if (!temp.status) {
+      throw ApplicationFailure.create({
+        message: "Stripe session status is null",
+      });
+    }
+
+    if (temp.status !== "expired") {
+      throw ApplicationFailure.create({
+        message: "Stripe session status is not expired",
+      });
+    }
+
+    stripeSessionStatus = "expired";
+  });
+
+  const isPaymentSuccessful = await condition(
+    () => stripeSessionStatus === "complete",
+    PAYMENT_TIMEOUT,
+  );
+
+  if (isPaymentSuccessful) {
+    await updateOrderStatus(order.id, "PAYMENT_SUCCESSFUL");
+    const invoiceId = await getStripeInvoiceIdFromSessionId(session.id);
+    const stripeInvoice = await getStripeInvoice(invoiceId);
+    const invoice = await generateInvoice(
+      order,
+      stripeInvoice.amount_due / 100,
+      stripeInvoice.hosted_invoice_url ?? undefined,
+    );
+    await sendInvoiceToCustomer(invoice);
+  } else {
+    await updateOrderStatus(order.id, "PAYMENT_FAILED");
+  }
 }
