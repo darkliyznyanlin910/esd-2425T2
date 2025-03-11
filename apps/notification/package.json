@@ -7,10 +7,10 @@
     "./type": "./src/type.ts"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "esbuild src/index.ts --bundle --platform=node --outfile=dist/index.cjs",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
     "dev": "pnpm with-env tsx watch src/index.ts",
-    "start": "pnpm with-env tsx src/index.ts",
+    "start": "pnpm with-env node dist/index.cjs",
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false",
