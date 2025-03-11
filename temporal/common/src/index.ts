@@ -9,12 +9,15 @@ export type { Invoice } from "@repo/db-invoice/client";
 export type StripeSessionStatus = Stripe.Checkout.Session.Status;
 
 export type OrderStatus =
-  | "processing"
-  | "findingDriver"
-  | "driverFound"
-  | "pickedUp"
-  | "delivered"
-  | "delayed";
+  | "PROCESSING"
+  | "FINDING_DRIVER"
+  | "DRIVER_FOUND"
+  | "PICKED_UP"
+  | "DELIVERED"
+  | "DELAYED"
+  | "PAYMENT_PENDING"
+  | "PAYMENT_FAILED"
+  | "PAYMENT_SUCCESSFUL";
 
 export const paymentInformationSchema = z
   .object({

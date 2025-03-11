@@ -216,7 +216,14 @@ const driverRouter = new OpenAPIHono<HonoExtension>()
           content: {
             "application/json": {
               schema: z.object({
-                status: z.enum(["PENDING", "PICKED_UP", "DELIVERED"]),
+                status: z.enum([
+                  "PROCESSING",
+                  "FINDINGDRIVER",
+                  "DRIVERFOUND",
+                  "PICKEDUP",
+                  "DELIVERED",
+                  "DELAYED",
+                ]),
               }),
             },
           },
