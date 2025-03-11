@@ -1,5 +1,4 @@
 import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
-import { bearerAuth } from "hono/bearer-auth";
 import { z } from "zod";
 
 import { authMiddleware } from "@repo/auth/auth";
