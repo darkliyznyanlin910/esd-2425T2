@@ -20,6 +20,8 @@ WORKDIR /repo
 # First install the dependencies (as they change less often)
 COPY --from=builder /repo/out/full/ .
 RUN pnpm install
+
+RUN pnpm turbo run build --filter=@repo/driver-frontend...
  
 FROM base AS runner
 WORKDIR /repo
@@ -36,8 +38,8 @@ COPY --from=installer --chown=nextjs:nodejs /repo/apps/driver-frontend/.next/sta
 COPY --from=installer --chown=nextjs:nodejs /repo/apps/driver-frontend/public ./apps/driver-frontend/public
 COPY --from=installer --chown=nextjs:nodejs /repo/packages /repo/packages
 
-EXPOSE 5050
+EXPOSE 6600
  
-ENV PORT=5050
+ENV PORT=6600
 ENV HOSTNAME=0.0.0.0
 CMD ["node", "apps/driver-frontend/server.js"]

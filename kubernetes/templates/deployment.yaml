@@ -1,4 +1,4 @@
-{{- range $service := list "auth" "chatbot-backend" "notification" "order" "driver" "invoice" "customer-frontend" }}
+{{- range $service := list "auth" "chatbot-backend" "notification" "order" "driver" "invoice" "customer-frontend" "admin-frontend" "driver-frontend" }}
 ---
 apiVersion: apps/v1
 kind: Deployment

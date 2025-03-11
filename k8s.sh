@@ -28,8 +28,11 @@ build_and_load() {
   docker build -t esd-invoice:latest -f apps/invoice/Dockerfile .
 
   # Frontend
+  docker build -t esd-driver-frontend:latest -f apps/driver-frontend/Dockerfile .
   docker build -t esd-customer-frontend:latest -f apps/customer-frontend/Dockerfile .
+  docker build -t esd-admin-frontend:latest -f apps/admin-frontend/Dockerfile .
 
+  
   # Load images to cluster
   echo "Loading images to cluster..."
   # Backend
@@ -42,7 +45,8 @@ build_and_load() {
 
   # Frontend
   kind load docker-image esd-customer-frontend:latest --name $CLUSTER_NAME
-
+  kind load docker-image esd-driver-frontend:latest --name $CLUSTER_NAME
+  kind load docker-image esd-admin-frontend:latest --name $CLUSTER_NAME
   echo "Images loaded successfully"
 }
 
@@ -72,7 +76,8 @@ stop_forward() {
     for PID_FILE in "$PID_DIR"/*.pid; do
       if [ -f "$PID_FILE" ]; then
         SERVICE=$(basename "$PID_FILE" .pid)
-        PID=$(cat "$PID_FILE")
+        PID_DATA=$(cat "$PID_FILE")
+        PID=$(echo "$PID_DATA" | cut -d':' -f1)
         echo "Stopping $SERVICE (PID: $PID)..."
         kill $PID 2>/dev/null || true
         rm "$PID_FILE"
@@ -89,7 +94,7 @@ port_forward() {
   mkdir -p "$PID_DIR"
   
   # Default services to forward if none specified
-  SERVICES="nginx:8000:80,customer-frontend:5050:80"
+  SERVICES="nginx:8000:80,admin-frontend:4400:80,customer-frontend:5500:80,driver-frontend:6600:80"
   
   IFS=',' read -ra SERVICE_ARRAY <<< "$SERVICES"
   
@@ -102,12 +107,13 @@ port_forward() {
     echo "Starting port forwarding for $SERVICE (localhost:$LOCAL_PORT -> port $REMOTE_PORT)..."
     kubectl port-forward "svc/esd-app-$SERVICE" "$LOCAL_PORT:$REMOTE_PORT" &
     PID=$!
-    echo $PID > "$PID_DIR/$SERVICE.pid"
+    # Store both PID and port information
+    echo "$PID:$LOCAL_PORT" > "$PID_DIR/$SERVICE.pid"
     echo "Port forwarding for $SERVICE started with PID: $PID"
     echo "Access at: http://localhost:$LOCAL_PORT"
   done
   
-  echo "To stop all port forwarding, run: $0 $1 stop"
+  echo "To stop all port forwarding, run: $0 port stop"
 }
 
 port_status() {
@@ -132,14 +138,15 @@ port_status() {
   for PID_FILE in "$PID_DIR"/*.pid; do
     if [ -f "$PID_FILE" ]; then
       SERVICE=$(basename "$PID_FILE" .pid)
-      PID=$(cat "$PID_FILE")
+      PID_DATA=$(cat "$PID_FILE")
+      
+      # Extract PID and PORT from stored data
+      PID=$(echo "$PID_DATA" | cut -d':' -f1)
+      PORT=$(echo "$PID_DATA" | cut -d':' -f2)
       
       # Check if process is running
       if ps -p $PID > /dev/null; then
         STATUS="RUNNING"
-        
-        # Extract port from process command
-        PORT=$(ps -p $PID -o command= | grep -oP 'localhost:\K[0-9]+' || echo "unknown")
         URL="http://localhost:$PORT"
       else
         STATUS="STOPPED"

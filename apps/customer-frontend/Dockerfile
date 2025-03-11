@@ -20,6 +20,8 @@ WORKDIR /repo
 # First install the dependencies (as they change less often)
 COPY --from=builder /repo/out/full/ .
 RUN pnpm install
+
+RUN pnpm turbo run build --filter=@repo/customer-frontend...
  
 FROM base AS runner
 WORKDIR /repo
@@ -36,8 +38,8 @@ COPY --from=installer --chown=nextjs:nodejs /repo/apps/customer-frontend/.next/s
 COPY --from=installer --chown=nextjs:nodejs /repo/apps/customer-frontend/public ./apps/customer-frontend/public
 COPY --from=installer --chown=nextjs:nodejs /repo/packages /repo/packages
 
-EXPOSE 5050
+EXPOSE 5500
  
-ENV PORT=5050
+ENV PORT=5500
 ENV HOSTNAME=0.0.0.0
 CMD ["node", "apps/customer-frontend/server.js"]

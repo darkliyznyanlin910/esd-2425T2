@@ -8,8 +8,6 @@ import { getPaymentInformationQuery } from "@repo/temporal-workflows";
 
 import { env } from "../env";
 
-const temporalClient = await connectToTemporal();
-
 const paymentRouter = new OpenAPIHono().openapi(
   createRoute({
     method: "get",
@@ -48,6 +46,8 @@ const paymentRouter = new OpenAPIHono().openapi(
   }),
   async (c) => {
     const { orderId, stripeSessionId } = c.req.valid("param");
+
+    const temporalClient = await connectToTemporal();
 
     const paymentInformation = await temporalClient.workflow
       .getHandle(orderId)
