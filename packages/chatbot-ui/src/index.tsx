@@ -25,9 +25,6 @@ export function CustomChat() {
     async onToolCall({ toolCall }) {
       const tool =
         toolFunctionMap[toolCall.toolName as keyof typeof toolFunctionMap];
-      if (!tool) {
-        throw new Error(`Tool ${toolCall.toolName} not found`);
-      }
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       const result = await tool(toolCall.args as any);
       return result;

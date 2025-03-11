@@ -44,6 +44,7 @@ export default function AuthPage() {
         return;
       }
     } catch (err) {
+      console.log(err);
       setError("Something went wrong.");
       return;
     }
@@ -54,7 +55,7 @@ export default function AuthPage() {
       return;
     }
 
-    if (session?.user.role === "admin") {
+    if (session.user.role === "admin") {
       router.push("/dashboard");
     } else {
       setError("Unauthorized access.");

@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
+
+import type { Context } from "hono";
 import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
-import { Context } from "hono";
 import { bearerAuth } from "hono/bearer-auth";
 import { streamSSE } from "hono/streaming";
 import { z } from "zod";
@@ -7,10 +9,10 @@ import { z } from "zod";
 import { authMiddleware } from "@repo/auth/auth";
 import { OrderSchema } from "@repo/db-order/zod";
 
+import type { EventHandlers } from "../type";
 import { emitter } from "../app";
 import { env } from "../env";
 import { useSSE } from "../middlewares";
-import { EventHandlers } from "../type";
 
 const driverRouter = new OpenAPIHono()
   .openapi(
