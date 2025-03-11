@@ -207,48 +207,6 @@ const driverRouter = new OpenAPIHono<HonoExtension>()
   )
   .openapi(
     createRoute({
-      method: "put",
-      path: "/assignments/:id/status",
-      description: "Update order assignment status by id",
-      request: {
-        params: z.object({ id: z.string() }),
-        body: {
-          content: {
-            "application/json": {
-              schema: z.object({
-                status: z.enum([
-                  "PROCESSING",
-                  "FINDINGDRIVER",
-                  "DRIVERFOUND",
-                  "PICKEDUP",
-                  "DELIVERED",
-                  "DELAYED",
-                ]),
-              }),
-            },
-          },
-        },
-      },
-      responses: {
-        200: { description: "Order status updated" },
-        404: { description: "Assignment not found" },
-      },
-    }),
-    async (c) => {
-      const { id } = c.req.valid("param");
-      const { status } = c.req.valid("json");
-      const updatedAssignment = await db.orderAssignment.update({
-        where: { id },
-        data: { status },
-      });
-      return c.json({
-        message: "Order status updated",
-        assignment: updatedAssignment,
-      });
-    },
-  )
-  .openapi(
-    createRoute({
       method: "post",
       path: "/:state",
       middleware: [
@@ -274,7 +232,7 @@ const driverRouter = new OpenAPIHono<HonoExtension>()
           },
         },
         params: z.object({
-          state: z.enum(["driverFound", "pickedUp", "delivered"]),
+          state: z.enum(["DRIVER_FOUND", "PICKED_UP", "DELIVERED"]),
         }),
       },
       responses: { 200: { description: "Signal sent" } },
@@ -282,11 +240,11 @@ const driverRouter = new OpenAPIHono<HonoExtension>()
     async (c) => {
       const { orderId, driverId } = c.req.valid("json");
       const { state } = c.req.valid("param");
-      if (state === "driverFound") {
+      if (state === "DRIVER_FOUND") {
         await temporalClient.workflow
           .getHandle(orderId)
           .signal(driverFoundSignal, driverId);
-      } else if (state === "pickedUp") {
+      } else if (state === "PICKED_UP") {
         await temporalClient.workflow.getHandle(orderId).signal(pickedUpSignal);
       } else {
         await temporalClient.workflow

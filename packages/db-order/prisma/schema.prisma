@@ -27,13 +27,15 @@ datasource db {
 }
 
 enum OrderStatus {
-  PENDING
-  ASSIGNED
+  PROCESSING
+  FINDING_DRIVER
+  DRIVER_FOUND
   PICKED_UP
-  IN_TRANSIT
   DELIVERED
-  FAILED
-  RETURNED
+  DELAYED
+  PAYMENT_PENDING
+  PAYMENT_FAILED
+  PAYMENT_SUCCESSFUL
 }
 
 
@@ -41,7 +43,7 @@ model Order {
   id          String @id @default(uuid())
   userId      String
   displayId   String
-  orderStatus String @default("paymentPending")
+  orderStatus String @default("PAYMENT_PENDING")
 
   // From
   fromAddressLine1 String
@@ -69,7 +71,7 @@ model OrderTrackingRecord {
   id          String   @id @default(uuid())
   order       Order    @relation(fields: [orderId], references: [id])
   orderId     String
-  status      OrderStatus  @default(PENDING)
+  status      OrderStatus  @default(PROCESSING)
   description String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
