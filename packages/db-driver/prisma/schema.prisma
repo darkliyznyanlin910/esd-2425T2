@@ -9,16 +9,6 @@ datasource db {
   url      = env("DRIVER_POSTGRES_URL")
 }
 
-/// ENUM for Order Status
-enum OrderStatus {
-  PENDING
-  ASSIGNED
-  PICKED_UP
-  IN_TRANSIT
-  DELIVERED
-  FAILED
-  RETURNED
-}
 
 /// ENUM for Driver Availability
 enum DriverAvailability {
@@ -43,7 +33,6 @@ model OrderAssignment {
   driverId      String
   driver        Driver       @relation(fields: [driverId], references: [id])
   orderId       String
-  status        OrderStatus  @default(PENDING) // ENUM for tracking delivery status
   paymentAmount Float
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt

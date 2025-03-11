@@ -9,7 +9,7 @@ FROM base AS builder
 WORKDIR /repo
 COPY . .
  
-RUN turbo prune @repo/customer-frontend --docker
+RUN turbo prune @repo/driver-frontend --docker
  
 # Add lockfile and package.json's of isolated subworkspace
 FROM base AS installer
@@ -31,13 +31,13 @@ USER nextjs
  
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
-COPY --from=installer --chown=nextjs:nodejs /repo/apps/customer-frontend/.next/standalone ./
-COPY --from=installer --chown=nextjs:nodejs /repo/apps/customer-frontend/.next/static ./apps/customer-frontend/.next/static
-COPY --from=installer --chown=nextjs:nodejs /repo/apps/customer-frontend/public ./apps/customer-frontend/public
+COPY --from=installer --chown=nextjs:nodejs /repo/apps/driver-frontend/.next/standalone ./
+COPY --from=installer --chown=nextjs:nodejs /repo/apps/driver-frontend/.next/static ./apps/driver-frontend/.next/static
+COPY --from=installer --chown=nextjs:nodejs /repo/apps/driver-frontend/public ./apps/driver-frontend/public
 COPY --from=installer --chown=nextjs:nodejs /repo/packages /repo/packages
 
 EXPOSE 5050
  
 ENV PORT=5050
 ENV HOSTNAME=0.0.0.0
-CMD ["node", "apps/customer-frontend/server.js"]
+CMD ["node", "apps/driver-frontend/server.js"]
