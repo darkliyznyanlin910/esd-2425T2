@@ -30,7 +30,7 @@ const routes = app
       description: "Template API",
     },
   })
-  .get("/", (c) => c.json({ ok: true }))
+  .get("/", (c) => c.json({ ok: true, service: "chatbot-backend" }))
   .get(
     "/docs",
     apiReference({

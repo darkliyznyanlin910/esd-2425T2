@@ -28,7 +28,7 @@ const routes = app
       description: "Template API",
     },
   })
-  .get("/", (c) => c.json({ ok: true }))
+  .get("/", (c) => c.json({ ok: true, service: "driver" }))
   .get(
     "/docs",
     apiReference({

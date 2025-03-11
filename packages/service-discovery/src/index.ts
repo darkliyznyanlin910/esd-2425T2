@@ -38,9 +38,9 @@ export const LOCAL_SERVICE_MAP: Record<Service, string> = {
 export const KUBERNETES_SERVICE_MAP: Record<Service, string> = {
   // Frontend
   web: "http://localhost:3000", // dummy service
-  "admin-frontend": "http://localhost:4000",
-  "customer-frontend": "http://localhost:5000",
-  "driver-frontend": "http://localhost:6000",
+  "admin-frontend": "http://localhost:4400",
+  "customer-frontend": "http://localhost:5500",
+  "driver-frontend": "http://localhost:6600",
   // Backend
   api: "http://localhost:8000/api", // dummy service
   auth: "http://localhost:8000/auth",
@@ -54,9 +54,9 @@ export const KUBERNETES_SERVICE_MAP: Record<Service, string> = {
 export const DOCKER_SERVICE_MAP: Record<Service, string> = {
   // Frontend
   web: "http://localhost:3000", // dummy service
-  "admin-frontend": "http://localhost:4000",
-  "customer-frontend": "http://localhost:5000",
-  "driver-frontend": "http://localhost:6000",
+  "admin-frontend": "http://localhost:4400",
+  "customer-frontend": "http://localhost:5500",
+  "driver-frontend": "http://localhost:6600",
   // Backend
   api: "http://localhost:8000/api", // dummy service
   auth: "http://localhost:8000/auth",

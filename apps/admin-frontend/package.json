@@ -4,14 +4,15 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "CI=build pnpm next build",
+    "build": "pnpm with-env-k8s next build",
     "clean": "git clean -xdf .cache .next .turbo node_modules",
     "dev": "pnpm with-env next dev -p 4400",
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
     "start": "pnpm with-env next start -p 4400",
     "typecheck": "tsc --noEmit",
-    "with-env": "dotenv -e ../../service-env/.env --"
+    "with-env": "dotenv -e ../../service-env/.env --",
+    "with-env-k8s": "dotenv -e ../../kubernetes/.env.k8s --"
   },
   "dependencies": {
     "@repo/auth": "workspace:*",
