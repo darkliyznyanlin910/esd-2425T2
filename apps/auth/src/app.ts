@@ -22,7 +22,7 @@ app.use(
 );
 
 const routes = app
-  .get("/", (c) => c.json({ ok: true }))
+  .get("/", (c) => c.json({ ok: true, service: "auth" }))
   .on(["POST", "GET"], "/auth/**", async (c) => {
     return auth.handler(c.req.raw);
   })

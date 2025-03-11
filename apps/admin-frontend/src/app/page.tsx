@@ -1,20 +1,14 @@
-// import { hc } from "hono/client";
+import { getServiceBaseUrl } from "@repo/service-discovery";
 
-// import type { AppType } from "@repo/api/type";
-
-import { getApiBaseUrl, getBaseUrl } from "~/utils/getBaseUrl";
+import { env } from "../env";
 
 export default async function HomePage() {
-  // const client = hc<AppType>(getApiBaseUrl());
-  // const res = await client.index.$get();
-  // const data = await res.json();
-
   return (
     <div>
       <h1>Hello World</h1>
-      <p>Base URL: {getBaseUrl()}</p>
-      <p>API Base URL: {getApiBaseUrl()}</p>
-      {/* <p>Message: {data.ok}</p> */}
+      <p>Deployment Environment: {env.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT}</p>
+      <p>Base URL: {getServiceBaseUrl("admin-frontend")}</p>
+      <p>API Base URL: {getServiceBaseUrl("order")}</p>
     </div>
   );
 }
