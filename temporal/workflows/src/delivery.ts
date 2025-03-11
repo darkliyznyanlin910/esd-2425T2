@@ -12,9 +12,9 @@ import { Order, OrderStatus } from "@repo/temporal-common";
 export const PICKUP_TIMEOUT = "10 min";
 export const DELIVERY_TIMEOUT = "2 days";
 
-export const driverFoundSignal = defineSignal<[string]>("driverFound");
-export const pickedUpSignal = defineSignal("pickedUp");
-export const deliveredSignal = defineSignal("delivered");
+export const driverFoundSignal = defineSignal<[string]>("DRIVER_FOUND");
+export const pickedUpSignal = defineSignal("PICKED_UP");
+export const deliveredSignal = defineSignal("DELIVERED");
 
 const {
   updateOrderStatus,
@@ -35,45 +35,45 @@ export async function delivery(
   order: Order,
   manualAssignDriverId?: string,
 ): Promise<void> {
-  if (order.orderStatus == "processing") {
-    await updateOrderStatus(order.id, "findingDriver");
+  if (order.orderStatus == "PROCESSING") {
+    await updateOrderStatus(order.id, "FINDING_DRIVER");
   }
 
-  let orderStatus: OrderStatus = "findingDriver";
+  let orderStatus: OrderStatus = "FINDING_DRIVER";
 
   if (manualAssignDriverId) {
-    await updateOrderStatus(order.id, "driverFound");
+    await updateOrderStatus(order.id, "DRIVER_FOUND");
     await assignOrderToDriver(order, manualAssignDriverId);
-    orderStatus = "driverFound";
+    orderStatus = "DRIVER_FOUND";
   }
 
   setHandler(driverFoundSignal, async (driverId) => {
-    if (orderStatus == "findingDriver") {
-      await updateOrderStatus(order.id, "driverFound");
+    if (orderStatus == "FINDING_DRIVER") {
+      await updateOrderStatus(order.id, "DRIVER_FOUND");
       await assignOrderToDriver(order, driverId);
       await invalidateOrder(order);
-      orderStatus = "driverFound";
+      orderStatus = "DRIVER_FOUND";
     }
   });
 
   setHandler(pickedUpSignal, async () => {
-    if (orderStatus == "driverFound") {
-      await updateOrderStatus(order.id, "pickedUp");
-      orderStatus = "pickedUp";
+    if (orderStatus == "DRIVER_FOUND") {
+      await updateOrderStatus(order.id, "PICKED_UP");
+      orderStatus = "PICKED_UP";
     }
   });
 
   setHandler(deliveredSignal, async () => {
-    if (orderStatus == "pickedUp") {
-      await updateOrderStatus(order.id, "delivered");
-      orderStatus = "delivered";
+    if (orderStatus == "PICKED_UP") {
+      await updateOrderStatus(order.id, "DELIVERED");
+      orderStatus = "DELIVERED";
     }
   });
 
   try {
     await sendOrderToDrivers(order);
   } catch (error) {
-    await updateOrderStatus(order.id, "delayed");
+    await updateOrderStatus(order.id, "DELAYED");
     await notifyAdmin(order);
     throw ApplicationFailure.create({
       message: "Failed to send order to drivers",
@@ -83,12 +83,12 @@ export async function delivery(
   }
 
   const notPickedUpInTime = !(await condition(
-    () => orderStatus === "pickedUp",
+    () => orderStatus === "PICKED_UP",
     PICKUP_TIMEOUT,
   ));
 
   if (notPickedUpInTime) {
-    await updateOrderStatus(order.id, "delayed");
+    await updateOrderStatus(order.id, "DELAYED");
     await notifyAdmin(order);
     throw ApplicationFailure.create({
       message: "Order not picked up in time",
@@ -98,12 +98,12 @@ export async function delivery(
   }
 
   const notDeliveredInTime = !(await condition(
-    () => orderStatus === "delivered",
+    () => orderStatus === "DELIVERED",
     DELIVERY_TIMEOUT,
   ));
 
   if (notDeliveredInTime) {
-    await updateOrderStatus(order.id, "delayed");
+    await updateOrderStatus(order.id, "DELAYED");
     await notifyAdmin(order);
     throw ApplicationFailure.create({
       message: "Order not delivered in time",
