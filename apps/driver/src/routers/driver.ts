@@ -14,7 +14,6 @@ import {
 
 import { env } from "../env";
 
-const temporalClient = await connectToTemporal();
 const driverRouter = new OpenAPIHono<HonoExtension>()
   .openapi(
     createRoute({
@@ -275,6 +274,7 @@ const driverRouter = new OpenAPIHono<HonoExtension>()
     async (c) => {
       const { orderId, driverId } = c.req.valid("json");
       const { state } = c.req.valid("param");
+      const temporalClient = await connectToTemporal();
       if (state === "driverFound") {
         await temporalClient.workflow
           .getHandle(orderId)
