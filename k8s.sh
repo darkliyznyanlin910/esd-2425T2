@@ -19,12 +19,28 @@ build_and_load() {
 
   # Build images
   echo "Building Docker images..."
+  # Backend
   docker build -t esd-auth:latest -f apps/auth/Dockerfile .
+  docker build -t esd-chatbot-backend:latest -f apps/chatbot-backend/Dockerfile .
+  docker build -t esd-notification:latest -f apps/notification/Dockerfile .
+  docker build -t esd-order:latest -f apps/order/Dockerfile .
+  docker build -t esd-driver:latest -f apps/driver/Dockerfile .
+  docker build -t esd-invoice:latest -f apps/invoice/Dockerfile .
+
+  # Frontend
   docker build -t esd-customer-frontend:latest -f apps/customer-frontend/Dockerfile .
 
   # Load images to cluster
   echo "Loading images to cluster..."
+  # Backend
   kind load docker-image esd-auth:latest --name $CLUSTER_NAME
+  kind load docker-image esd-chatbot-backend:latest --name $CLUSTER_NAME
+  kind load docker-image esd-notification:latest --name $CLUSTER_NAME
+  kind load docker-image esd-order:latest --name $CLUSTER_NAME
+  kind load docker-image esd-driver:latest --name $CLUSTER_NAME
+  kind load docker-image esd-invoice:latest --name $CLUSTER_NAME
+
+  # Frontend
   kind load docker-image esd-customer-frontend:latest --name $CLUSTER_NAME
 
   echo "Images loaded successfully"

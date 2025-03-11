@@ -33,5 +33,5 @@ WORKDIR /repo
 COPY --from=builder /repo/apps/driver/dist /repo/apps/driver/dist
 COPY --from=builder /repo/packages /repo/packages
 
-EXPOSE 3003
+EXPOSE 3006
 CMD ["node", "/repo/apps/driver/dist/index.cjs"]

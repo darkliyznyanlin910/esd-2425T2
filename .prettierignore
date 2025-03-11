@@ -1,1 +1,1 @@
-kubernetes/values.yaml
+kubernetes/**/*.yaml
