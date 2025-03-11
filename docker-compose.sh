@@ -7,9 +7,6 @@ elif [ "$2" = "databases" ]; then
   COMPOSE_FILE="docker-compose-databases.yml"
 elif [ "$2" = "localstack" ]; then
   COMPOSE_FILE="docker-compose-localstack.yml"
-else
-  echo "Usage: $0 (up|down|clean) [temporal|databases|localstack]"
-  exit 1
 fi
 
 if [ "$1" = "up" ]; then

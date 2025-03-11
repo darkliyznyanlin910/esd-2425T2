@@ -1,4 +1,4 @@
-{{- range $service := list "api" }}
+{{- range $service := list "auth" "customer-frontend" }}
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -25,11 +25,9 @@ spec:
         - name: {{ $service }}
           image: "{{ index $.Values $service "image" "repository" }}:{{ index $.Values $service "image" "tag" }}"
           imagePullPolicy: {{ index $.Values $service "image" "pullPolicy" | default "IfNotPresent" }}
-          env:
-            {{- range $env := index $.Values $service "env" }}
-            - name: {{ $env.name }}
-              value: {{ $env.value | quote }}
-            {{- end }}
+          envFrom:
+            - configMapRef:
+                name: common-env
           resources:
             requests:
               memory: "128Mi"

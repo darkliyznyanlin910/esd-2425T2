@@ -19,15 +19,13 @@ build_and_load() {
 
   # Build images
   echo "Building Docker images..."
-  # docker build -t esd-web:latest -f apps/web/Dockerfile .
-  docker build -t esd-api:latest -f apps/api/Dockerfile .
-  # docker build -t esd-auth:latest -f apps/auth/Dockerfile .
+  docker build -t esd-auth:latest -f apps/auth/Dockerfile .
+  docker build -t esd-customer-frontend:latest -f apps/customer-frontend/Dockerfile .
 
   # Load images to cluster
   echo "Loading images to cluster..."
-  # kind load docker-image esd-auth:latest --name $CLUSTER_NAME
-  # kind load docker-image esd-web:latest --name $CLUSTER_NAME
-  kind load docker-image esd-api:latest --name $CLUSTER_NAME
+  kind load docker-image esd-auth:latest --name $CLUSTER_NAME
+  kind load docker-image esd-customer-frontend:latest --name $CLUSTER_NAME
 
   echo "Images loaded successfully"
 }
@@ -42,7 +40,7 @@ install_helm() {
 
   # Install with Helm
   echo "Installing with Helm..."
-  helm install esd-app ./kubernetes/ -f ./kubernetes/values.yaml -f ./kubernetes/temporal-values.yaml
+  helm install esd-app ./kubernetes/ -f ./kubernetes/values.yaml
 
   echo "Waiting for services to start..."
   sleep 10
@@ -75,7 +73,7 @@ port_forward() {
   mkdir -p "$PID_DIR"
   
   # Default services to forward if none specified
-  SERVICES="nginx:8000:80,api:3000:80"
+  SERVICES="nginx:8000:80,customer-frontend:5050:80"
   
   IFS=',' read -ra SERVICE_ARRAY <<< "$SERVICES"
   

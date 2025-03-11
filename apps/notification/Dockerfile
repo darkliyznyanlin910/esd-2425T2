@@ -8,7 +8,7 @@ RUN pnpm install -g turbo
 
 WORKDIR /repo
 COPY . .
-RUN turbo prune @repo/auth --docker
+RUN turbo prune @repo/notification --docker
 
 # Stage 2: Build
 FROM node:22-alpine AS builder
@@ -23,15 +23,15 @@ COPY --from=base /repo/out/full/ .
 RUN pnpm install
 
 # Build the project
-WORKDIR /repo/apps/auth
+WORKDIR /repo/apps/notification
 RUN pnpm build
 
 # Stage 3: Run
 FROM node:22-alpine AS runner
 WORKDIR /repo
 
-COPY --from=builder /repo/apps/auth/dist /repo/apps/auth/dist
+COPY --from=builder /repo/apps/notification/dist /repo/apps/notification/dist
 COPY --from=builder /repo/packages /repo/packages
 
-EXPOSE 3002
-CMD ["node", "/repo/apps/auth/dist/index.cjs"]
+EXPOSE 3004
+CMD ["node", "/repo/apps/notification/dist/index.cjs"]
