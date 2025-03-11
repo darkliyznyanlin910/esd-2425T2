@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: common-env
+data:
+  {{- range $key, $val := .Files.Lines ".env" }}
+  {{- $pair := regexSplit "=" $val 2 }}
+  {{- if eq (len $pair) 2 }}
+  {{ index $pair 0 | trim }}: {{ index $pair 1 | trim }}
+  {{- end }}
+  {{- end }}
