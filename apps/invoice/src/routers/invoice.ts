@@ -1,8 +1,8 @@
 import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
 import { z } from "zod";
 
+import type { HonoExtension } from "@repo/auth/type";
 import { authMiddleware } from "@repo/auth/auth";
-import { HonoExtension } from "@repo/auth/type";
 import { db } from "@repo/db-invoice";
 
 import { env } from "../env";
@@ -34,6 +34,7 @@ const invoiceRouter = new OpenAPIHono<HonoExtension>()
                   .enum(["PENDING", "CANCELLED", "COMPLETED"])
                   .default("PENDING"),
                 path: z.string(),
+                amount: z.number(),
               }),
             },
           },
@@ -130,14 +131,16 @@ const invoiceRouter = new OpenAPIHono<HonoExtension>()
       const { id } = c.req.valid("param");
       const { status } = c.req.valid("json");
 
-      const updatedInvoice = await db.invoice.update({
-        where: { id },
-        data: { status },
-      });
-
-      if (!updatedInvoice) return c.json({ error: "Invoice not found" }, 404);
-
-      return c.json(updatedInvoice);
+      try {
+        const updatedInvoice = await db.invoice.update({
+          where: { id },
+          data: { status },
+        });
+        return c.json(updatedInvoice);
+      } catch (error) {
+        console.error(error);
+        return c.json({ error: "Invoice not found" }, 404);
+      }
     },
   )
 
@@ -160,13 +163,20 @@ const invoiceRouter = new OpenAPIHono<HonoExtension>()
     async (c) => {
       const { id } = c.req.valid("param");
 
-      const deletedInvoice = await db.invoice.delete({
-        where: { id },
-      });
-
-      if (!deletedInvoice) return c.json({ error: "Invoice not found" }, 404);
-
-      return c.json({}, 200);
+      try {
+        const deletedInvoice = await db.invoice.delete({
+          where: { id },
+        });
+        return c.json(
+          {
+            message: "Invoice deleted successfully",
+            deletedInvoice,
+          },
+          200,
+        );
+      } catch (error) {
+        return c.json({ error: "Invoice not found" }, 404);
+      }
     },
   );
 

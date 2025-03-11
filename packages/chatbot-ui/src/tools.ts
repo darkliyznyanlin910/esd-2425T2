@@ -4,7 +4,7 @@ import type { AiSdkToolSet } from "@repo/chatbot-common";
 
 const orderIdSchema = z.object({ orderId: z.string() });
 
-type ToolReturnTypes = {
+interface ToolReturnTypes {
   getOrders: string[];
   getOrderDetails: { orderId: string; status: string };
   getDriverDetails: {
@@ -12,11 +12,11 @@ type ToolReturnTypes = {
     driverName: string;
     driverPhone: string;
   };
-  getTrackingDetails: Array<{
+  getTrackingDetails: {
     orderId: string;
     status: string;
-  }>;
-};
+  }[];
+}
 
 export const backendTools = {
   getOrders: {

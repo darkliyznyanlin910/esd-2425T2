@@ -4,7 +4,11 @@ import { z } from "zod";
 import { authMiddleware } from "@repo/auth/auth";
 import { paymentInformationSchema } from "@repo/temporal-common";
 import { connectToTemporal } from "@repo/temporal-common/temporal-client";
-import { getPaymentInformationQuery } from "@repo/temporal-workflows";
+import {
+  getPaymentInformationQuery,
+  paymentFailedSignal,
+  paymentSucceededSignal,
+} from "@repo/temporal-workflows";
 
 import { env } from "../env";
 
@@ -17,7 +21,10 @@ const paymentRouter = new OpenAPIHono().openapi(
     request: {
       params: z.object({
         orderId: z.string(),
-        stripeSessionId: z.string().optional(),
+      }),
+      query: z.object({
+        status: z.enum(["success", "failed"]).optional(),
+        sessionId: z.string().optional(),
       }),
     },
     middleware: [
@@ -45,9 +52,20 @@ const paymentRouter = new OpenAPIHono().openapi(
     },
   }),
   async (c) => {
-    const { orderId, stripeSessionId } = c.req.valid("param");
+    const { orderId } = c.req.valid("param");
+    const { status, sessionId } = c.req.valid("query");
 
     const temporalClient = await connectToTemporal();
+
+    if (status === "success") {
+      await temporalClient.workflow
+        .getHandle(orderId)
+        .signal(paymentSucceededSignal, sessionId);
+    } else if (status === "failed") {
+      await temporalClient.workflow
+        .getHandle(orderId)
+        .signal(paymentFailedSignal, sessionId);
+    }
 
     const paymentInformation = await temporalClient.workflow
       .getHandle(orderId)

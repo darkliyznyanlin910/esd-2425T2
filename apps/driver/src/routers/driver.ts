@@ -1,8 +1,8 @@
 import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
 import { z } from "zod";
 
+import type { HonoExtension } from "@repo/auth/type";
 import { authMiddleware } from "@repo/auth/auth";
-import { HonoExtension } from "@repo/auth/type";
 import { db } from "@repo/db-driver";
 import { connectToTemporal } from "@repo/temporal-common/temporal-client";
 import {
