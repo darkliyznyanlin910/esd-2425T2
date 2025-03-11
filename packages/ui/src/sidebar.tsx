@@ -176,10 +176,7 @@ const SidebarMenuItem = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <li
     ref={ref}
-    className={cn(
-      "flex items-center gap-2 rounded-md p-2 hover:bg-gray-100",
-      className,
-    )}
+    className={cn("flex items-center gap-2 rounded-md p-2", className)}
     {...props}
   />
 ));
@@ -192,7 +189,7 @@ const SidebarMenuButton = React.forwardRef<
   <button
     ref={ref}
     className={cn(
-      "flex w-full items-center rounded-md p-2 text-left hover:bg-gray-200",
+      "flex w-full items-center rounded-md p-2 text-left hover:bg-accent",
       className,
     )}
     {...props}
@@ -352,17 +349,17 @@ const Sidebar = React.forwardRef<
     <div
       ref={ref}
       className={cn(
-        "relative h-screen bg-white pt-3 shadow-md transition-none",
+        "relative h-screen bg-background pt-3 shadow-md transition-none dark:shadow-white",
         open
           ? "w-[--sidebar-width]"
           : "flex w-[--sidebar-width-icon] items-center justify-center",
       )}
       {...props}
     >
-      <div className="flex h-full flex-col bg-white pt-2">
+      <div className="flex h-full flex-col bg-background pt-2">
         <div className="flex w-full items-center justify-between px-4 pb-2">
           {open && (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 text-foreground">
               {title && <span className="text-lg font-bold">{title}</span>}
             </div>
           )}
