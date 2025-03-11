@@ -24,7 +24,7 @@ RUN pnpm install
 
 # Build the project
 WORKDIR /repo/apps/notification
-RUN pnpm build
+RUN pnpm turbo run build --filter=@repo/notification-backend...
 
 # Stage 3: Run
 FROM node:22-alpine AS runner

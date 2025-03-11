@@ -85,6 +85,18 @@ invoice:
     port: 80
     targetPort: 3007
 
+admin-frontend:
+  name: esd-admin-frontend
+  replicaCount: 1
+  image:
+    repository: esd-admin-frontend
+    tag: latest
+    pullPolicy: Never
+  service:
+    type: ClusterIP
+    port: 80
+    targetPort: 4400
+
 customer-frontend:
   name: esd-customer-frontend
   replicaCount: 1
@@ -95,4 +107,16 @@ customer-frontend:
   service:
     type: ClusterIP
     port: 80
-    targetPort: 5050
+    targetPort: 5500
+
+driver-frontend:
+  name: esd-driver-frontend
+  replicaCount: 1
+  image:
+    repository: esd-driver-frontend
+    tag: latest
+    pullPolicy: Never
+  service:
+    type: ClusterIP
+    port: 80
+    targetPort: 6600
