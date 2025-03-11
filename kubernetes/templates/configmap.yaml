@@ -3,7 +3,7 @@ kind: ConfigMap
 metadata:
   name: common-env
 data:
-  {{- range $key, $val := .Files.Lines ".env" }}
+  {{- range $key, $val := .Files.Lines ".env.k8s" }}
   {{- $pair := regexSplit "=" $val 2 }}
   {{- if eq (len $pair) 2 }}
   {{ index $pair 0 | trim }}: {{ index $pair 1 | trim }}

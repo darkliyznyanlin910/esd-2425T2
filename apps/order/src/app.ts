@@ -29,7 +29,7 @@ const routes = app
       description: "ESD Order API",
     },
   })
-  .get("/", (c) => c.json({ ok: true }))
+  .get("/", (c) => c.json({ ok: true, service: "order" }))
   .get(
     "/docs",
     apiReference({
