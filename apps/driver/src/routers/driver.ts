@@ -17,7 +17,7 @@ const driverRouter = new OpenAPIHono<HonoExtension>()
   .openapi(
     createRoute({
       method: "post",
-      path: "/create",
+      path: "/",
       middleware: [
         authMiddleware({
           authBased: {
@@ -63,7 +63,7 @@ const driverRouter = new OpenAPIHono<HonoExtension>()
   .openapi(
     createRoute({
       method: "get",
-      path: "/drivers/:id",
+      path: "/:id",
       description: "Get driver by id",
       request: { params: z.object({ id: z.string() }) },
       responses: {
@@ -93,7 +93,7 @@ const driverRouter = new OpenAPIHono<HonoExtension>()
   .openapi(
     createRoute({
       method: "put",
-      path: "/drivers/:id",
+      path: "/:id",
       description: "Update driver by id",
       request: {
         params: z.object({ id: z.string() }),
@@ -127,7 +127,7 @@ const driverRouter = new OpenAPIHono<HonoExtension>()
   .openapi(
     createRoute({
       method: "put",
-      path: "/drivers/:id/availability",
+      path: "/:id/availability",
       description: "Update driver availability",
       request: {
         params: z.object({ id: z.string() }),
@@ -162,7 +162,7 @@ const driverRouter = new OpenAPIHono<HonoExtension>()
   .openapi(
     createRoute({
       method: "delete",
-      path: "/drivers/:id",
+      path: "/:id",
       description: "Delete driver by id",
       request: { params: z.object({ id: z.string() }) },
       responses: {
