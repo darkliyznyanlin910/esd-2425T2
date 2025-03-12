@@ -21,7 +21,7 @@ model Driver {
   id           String               @id @default(uuid())
   phone        String
   userId       String               @unique
-  availability DriverAvailability   @default(AVAILABLE)
+  availability DriverAvailability   @default(OFFLINE)
   createdAt    DateTime             @default(now())
   updatedAt    DateTime             @updatedAt
 
