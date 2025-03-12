@@ -2,7 +2,7 @@ import { OpenAPIHono } from "@hono/zod-openapi";
 import { apiReference } from "@scalar/hono-api-reference";
 import { cors } from "hono/cors";
 
-import { getServiceBaseUrl } from "@repo/service-discovery";
+import { getServiceBaseUrl, SERVICES } from "@repo/service-discovery";
 
 import { orderRouter } from "./routers/order";
 import { paymentRouter } from "./routers/payment";
@@ -10,8 +10,9 @@ import { paymentRouter } from "./routers/payment";
 const app = new OpenAPIHono();
 
 app.use(
+  "/order/**",
   cors({
-    origin: "*",
+    origin: SERVICES.map((service) => getServiceBaseUrl(service)),
     allowHeaders: ["Content-Type", "Authorization"],
     allowMethods: ["POST", "GET", "OPTIONS"],
     exposeHeaders: ["Content-Length"],
