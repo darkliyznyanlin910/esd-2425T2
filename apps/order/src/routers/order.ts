@@ -72,12 +72,14 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
       },
     }),
     async (c) => {
+      console.log("Creating order");
       const { order: orderDetails, userId: userIdFromRequest } =
         c.req.valid("json");
 
       const user = c.get("user");
 
       let userId: string | undefined = undefined;
+      console.log("UserID in backend : " + userId);
 
       if (!!user && user.role === "client" && !c.req.header("Authorization")) {
         userId = user.id;

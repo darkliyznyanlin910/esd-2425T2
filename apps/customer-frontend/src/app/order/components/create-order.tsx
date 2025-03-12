@@ -13,6 +13,7 @@ import {
   useForm,
 } from "@repo/ui/form";
 
+const secret = process.env.NEXT_PUBLIC_INTERNAL_COMMUNICATION_SECRET;
 const orderSchema = z.object({
   fromAddressLine1: z.string().min(1, "Required"),
   fromAddressLine2: z.string().optional(),
@@ -26,14 +27,11 @@ const orderSchema = z.object({
   toState: z.string().optional(),
   toZipCode: z.string().min(1, "Required"),
   toCountry: z.string().min(1, "Required"),
-  userId: z.string().min(1, "Required"),
 });
 
 const CreateOrder = () => {
   const { useSession } = authClient;
   const { data: session } = useSession();
-  const user_id = session?.user.id ?? "";
-
   const form = useForm({
     schema: orderSchema,
     defaultValues: {
@@ -49,7 +47,6 @@ const CreateOrder = () => {
       toState: "",
       toZipCode: "",
       toCountry: "",
-      userId: user_id,
     },
   });
 
@@ -57,15 +54,19 @@ const CreateOrder = () => {
     try {
       const response = await fetch("http://localhost:3005/order", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ order: values, userId: user_id }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${secret}`,
+        },
+        body: JSON.stringify({ order: values, userId: session?.user.id ?? "" }),
       });
-
+      console.log(response);
       if (response.ok) {
         alert("Order created successfully!");
         form.reset();
       } else {
         alert("Failed to create order.");
+        console.log(response);
       }
     } catch (error) {
       console.error("Error creating order:", error);
