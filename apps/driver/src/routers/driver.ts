@@ -126,6 +126,41 @@ const driverRouter = new OpenAPIHono<HonoExtension>()
   )
   .openapi(
     createRoute({
+      method: "put",
+      path: "/drivers/:id/availability",
+      description: "Update driver availability",
+      request: {
+        params: z.object({ id: z.string() }),
+        body: {
+          content: {
+            "application/json": {
+              schema: z.object({
+                availability: z.enum(["AVAILABLE", "ON_DELIVERY", "OFFLINE"]),
+              }),
+            },
+          },
+        },
+      },
+      responses: {
+        200: { description: "Driver availability updated" },
+        404: { description: "Driver not found" },
+      },
+    }),
+    async (c) => {
+      const { id } = c.req.valid("param");
+      const { availability } = c.req.valid("json");
+      const updatedDriver = await db.driver.update({
+        where: { id },
+        data: { availability },
+      });
+      return c.json({
+        message: "Driver availability updated",
+        driver: updatedDriver,
+      });
+    },
+  )
+  .openapi(
+    createRoute({
       method: "delete",
       path: "/drivers/:id",
       description: "Delete driver by id",
