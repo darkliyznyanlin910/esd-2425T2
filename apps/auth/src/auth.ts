@@ -39,7 +39,7 @@ export const auth = betterAuth({
       path: "/docs",
     }),
     admin({
-      adminRole: ["admin", "driver"],
+      adminRole: ["admin"],
       defaultRole: "client",
       schema: {
         user: {
