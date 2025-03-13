@@ -71,7 +71,7 @@ const paymentRouter = new OpenAPIHono().openapi(
       .getHandle(orderId)
       .query(getPaymentInformationQuery);
 
-    return c.json(paymentInformation);
+    return c.json(paymentInformation); //redirect to order page
   },
 );
 
