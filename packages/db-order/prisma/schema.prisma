@@ -7,7 +7,7 @@ generator client {
 generator zod {
   provider                         = "zod-prisma-types"
   output                           = "../src/generated/zod"
-  createInputTypes                 = true
+  createInputTypes                 = false
   createModelTypes                 = true
   addInputTypeValidation           = false
   addIncludeType                   = false
