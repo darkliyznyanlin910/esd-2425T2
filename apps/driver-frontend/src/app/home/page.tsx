@@ -1,11 +1,8 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { Archive, CheckCircle } from "lucide-react";
-
-import { authClient } from "@repo/auth/client";
 import { Button } from "@repo/ui/button";  
 import {
   Sidebar,
@@ -22,21 +19,7 @@ import PendingOrders from "./components/pending-orders";
 import AcceptRejectOrder from "./components/AcceptRejectOrder";
 
 export default function DriverHomepage() {
-  const { useSession, signOut } = authClient;
-  const { data: session } = useSession();
-  const router = useRouter();
   const [selectedMenu, setSelectedMenu] = useState("pending-orders");
-
-  useEffect(() => {
-    if (!session) {
-      router.push("/auth");
-    }
-  }, [session, router]);
-
-  const handleSignOut = async () => {
-    await signOut();
-    router.push("/auth");
-  };
 
   const menuComponents: Record<string, JSX.Element> = {
     "pending-orders": <PendingOrders />,
@@ -82,7 +65,6 @@ export default function DriverHomepage() {
 
             <SidebarFooter>
               <Button
-                onClick={handleSignOut}
                 className="w-full bg-red-600 hover:bg-red-500"
               >
                 Sign Out
