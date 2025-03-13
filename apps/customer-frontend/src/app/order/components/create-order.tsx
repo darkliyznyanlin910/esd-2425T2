@@ -1,9 +1,12 @@
 "use client";
 
 import React from "react";
+import { hc } from "hono/client";
 import { z } from "zod";
 
 import { authClient } from "@repo/auth/client";
+import { AppType } from "@repo/order/type";
+import { getServiceBaseUrl } from "@repo/service-discovery";
 import { Button } from "@repo/ui/button";
 import {
   Form,
@@ -13,7 +16,6 @@ import {
   useForm,
 } from "@repo/ui/form";
 
-const secret = process.env.NEXT_PUBLIC_INTERNAL_COMMUNICATION_SECRET;
 const orderSchema = z.object({
   fromAddressLine1: z.string().min(1, "Required"),
   fromAddressLine2: z.string().optional(),
@@ -31,7 +33,6 @@ const orderSchema = z.object({
 
 const CreateOrder = () => {
   const { useSession } = authClient;
-  const { data: session } = useSession();
   const form = useForm({
     schema: orderSchema,
     defaultValues: {
@@ -52,14 +53,27 @@ const CreateOrder = () => {
 
   const onSubmit = async (values: z.infer<typeof orderSchema>) => {
     try {
-      const response = await fetch("http://localhost:3005/order", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${secret}`,
+      // const response = await fetch("http://localhost:3005/order", {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify({ order: values, userId: session?.user.id ?? "" }),
+      // });
+      const response = await hc<AppType>(
+        getServiceBaseUrl("order"),
+      ).order.$post(
+        {
+          json: {
+            order: values,
+          },
         },
-        body: JSON.stringify({ order: values, userId: session?.user.id ?? "" }),
-      });
+        {
+          init: {
+            credentials: "include",
+          },
+        },
+      );
       console.log(response);
       if (response.ok) {
         alert("Order created successfully!");

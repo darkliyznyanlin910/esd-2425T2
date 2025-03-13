@@ -337,6 +337,9 @@ importers:
       '@repo/chatbot-ui':
         specifier: workspace:*
         version: link:../../packages/chatbot-ui
+      '@repo/order':
+        specifier: workspace:*
+        version: link:../order
       '@repo/service-discovery':
         specifier: workspace:*
         version: link:../../packages/service-discovery
