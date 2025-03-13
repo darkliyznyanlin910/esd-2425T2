@@ -8,6 +8,8 @@ import { ReloadIcon, RocketIcon } from "@radix-ui/react-icons";
 import { cva } from "class-variance-authority";
 import { Code2 } from "lucide-react";
 
+import { ToolName, ToolReturnTypes } from "@repo/chatbot-common";
+
 import { cn } from "../index";
 import { FilePreview } from "./file-preview";
 import { MarkdownRenderer } from "./markdown-renderer";
@@ -201,13 +203,41 @@ function ToolCall({
                   <Code2 className="h-4 w-4" />
                   <span>Result from {invocation.toolName}</span>
                 </div>
-                <pre className="overflow-x-auto whitespace-pre-wrap text-foreground">
-                  {JSON.stringify(invocation.result, null, 2)}
-                </pre>
+                <ToolCallResult
+                  toolName={invocation.toolName as ToolName}
+                  result={invocation.result}
+                />
               </div>
             );
         }
       })}
     </div>
   );
+}
+
+function ToolCallResult({
+  toolName,
+  result,
+}: {
+  toolName: ToolName;
+  result: ToolReturnTypes;
+}): React.ReactNode {
+  if (toolName == "getDriverDetails") {
+    const formattedResult =
+      result as unknown as ToolReturnTypes["getDriverDetails"];
+    return <div>{formattedResult.driverName}</div>;
+  } else if (toolName == "getOrderDetails") {
+    const formattedResult =
+      result as unknown as ToolReturnTypes["getOrderDetails"];
+    return <div>{formattedResult.status}</div>;
+  } else if (toolName == "getOrders") {
+    const formattedResult = result as unknown as ToolReturnTypes["getOrders"];
+    return formattedResult.map((item) => <div>{item}</div>);
+  } else if (toolName == "getTrackingDetails") {
+    const formattedResult =
+      result as unknown as ToolReturnTypes["getTrackingDetails"];
+    return formattedResult.map((item) => <div>{item.status}</div>);
+  } else {
+    return <div>Unknown tool</div>;
+  }
 }
