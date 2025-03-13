@@ -151,7 +151,7 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
         return c.json({ error: "Order not found" }, 404);
       }
 
-      if (order.orderStatus == "paymentPending") {
+      if (order.orderStatus == "PAYMENT_PENDING") {
         return c.json(
           { error: "Order is still in payment pending state" },
           400,
