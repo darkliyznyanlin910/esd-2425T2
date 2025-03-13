@@ -4,7 +4,7 @@ import type { AiSdkToolSet } from "@repo/chatbot-common";
 
 const orderIdSchema = z.object({ orderId: z.string() });
 
-interface ToolReturnTypes {
+export interface ToolReturnTypes {
   getOrders: string[];
   getOrderDetails: { orderId: string; status: string };
   getDriverDetails: {
@@ -21,7 +21,18 @@ interface ToolReturnTypes {
 export const backendTools = {
   getOrders: {
     description: "show the orders to the user",
-    parameters: z.object({}),
+    parameters: z.object({
+      take: z.number().default(10).describe("the number of orders to show"),
+      page: z.number().default(1).describe("the page number to show"),
+      sortBy: z
+        .enum(["createdAt", "updatedAt"])
+        .default("createdAt")
+        .describe("the field to sort by"),
+      sortOrder: z
+        .enum(["asc", "desc"])
+        .default("desc")
+        .describe("the order to sort by"),
+    }),
   },
   getOrderDetails: {
     description: "show the order details to the user",
@@ -38,8 +49,9 @@ export const backendTools = {
   },
 } satisfies AiSdkToolSet;
 
+export type ToolName = keyof typeof backendTools;
 export type ToolFunctionMap = {
-  [K in keyof typeof backendTools]: (
+  [K in ToolName]: (
     params: z.infer<(typeof backendTools)[K]["parameters"]>,
   ) => Promise<ToolReturnTypes[K]>;
 };
