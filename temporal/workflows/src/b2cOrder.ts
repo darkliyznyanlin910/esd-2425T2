@@ -119,13 +119,11 @@ Created at: ${order.createdAt.toLocaleString()}`,
         message: "Stripe session status is null",
       });
     }
-
     if (temp.status !== "complete") {
       throw ApplicationFailure.create({
         message: "Stripe session status is not complete",
       });
     }
-
     stripeSessionStatus = "complete";
   });
 

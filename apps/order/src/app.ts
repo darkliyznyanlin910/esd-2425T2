@@ -10,11 +10,11 @@ import { paymentRouter } from "./routers/payment";
 const app = new OpenAPIHono();
 
 app.use(
-  "/order/**",
+  "*",
   cors({
     origin: SERVICES.map((service) => getServiceBaseUrl(service)),
     allowHeaders: ["Content-Type", "Authorization"],
-    allowMethods: ["POST", "GET", "OPTIONS"],
+    allowMethods: ["GET", "POST", "PUT", "DELETE"],
     exposeHeaders: ["Content-Length"],
     maxAge: 600,
     credentials: true,
