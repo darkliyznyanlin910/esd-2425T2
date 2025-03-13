@@ -56,7 +56,8 @@
     "TEMPORAL_SERVER",
     "OPENAI_API_KEY",
     "INTERNAL_COMMUNICATION_SECRET",
-    "STRIPE_SECRET_KEY"
+    "STRIPE_SECRET_KEY",
+    "GOOGLE_MAP_API_KEY"
   ],
   "globalPassThroughEnv": [
     "NODE_ENV",
