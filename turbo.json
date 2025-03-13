@@ -31,7 +31,7 @@
     "//#clean": {
       "cache": false
     },
-    "db:push": {
+    "push": {
       "cache": false,
       "interactive": true
     },
