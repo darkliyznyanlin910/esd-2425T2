@@ -11,7 +11,7 @@ import { connectToTemporal } from "@repo/temporal-common/temporal-client";
 import { delivery, order } from "@repo/temporal-workflows";
 
 import { env } from "../env";
-import { generateDisplayId } from "../utils";
+import { generateDisplayId, getAddress, getGeocoding } from "../utils";
 
 const orderRouter = new OpenAPIHono<HonoExtension>()
   .openapi(
@@ -22,9 +22,6 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
         authMiddleware({
           authBased: {
             allowedRoles: ["client"],
-          },
-          bearer: {
-            tokens: [env.INTERNAL_COMMUNICATION_SECRET],
           },
         }),
       ] as const,
@@ -37,18 +34,11 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
                 order: OrderSchema.pick({
                   fromAddressLine1: true,
                   fromAddressLine2: true,
-                  fromCity: true,
-                  fromState: true,
                   fromZipCode: true,
-                  fromCountry: true,
                   toAddressLine1: true,
                   toAddressLine2: true,
-                  toCity: true,
-                  toState: true,
                   toZipCode: true,
-                  toCountry: true,
                 }),
-                userId: z.string().optional(),
               }),
             },
           },
@@ -66,42 +56,35 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
         400: {
           description: "User ID is required",
         },
-        401: {
+        403: {
           description: "Unauthorized",
         },
       },
     }),
     async (c) => {
-      const { order: orderDetails, userId: userIdFromRequest } =
-        c.req.valid("json");
+      const { order: orderDetails } = c.req.valid("json");
 
       const user = c.get("user");
 
-      let userId: string | undefined = undefined;
-
-      if (!!user && user.role === "client" && !c.req.header("Authorization")) {
-        userId = user.id;
+      if (!user) {
+        return c.json({ error: "Unauthorized" }, 403);
       }
 
       console.log(db);
 
       const existingOrders = await db.order.count({
         where: {
-          userId: userId ?? userIdFromRequest,
+          userId: user.id,
         },
       });
 
       const generatedDisplayId = generateDisplayId(existingOrders + 1);
 
-      if (!userId && !userIdFromRequest) {
-        return c.json({ error: "User ID is required" }, 400);
-      }
-
       const createdOrder = await db.order.create({
         data: {
           ...orderDetails,
           displayId: generatedDisplayId,
-          userId: userId ?? userIdFromRequest!,
+          userId: user.id,
         },
       });
 
@@ -112,6 +95,20 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
         args: [createdOrder],
         taskQueue,
       });
+
+      const fromGeocoding = await getGeocoding(
+        getAddress(createdOrder, "from"),
+      );
+
+      if (fromGeocoding.error) {
+        console.error(fromGeocoding.error);
+      }
+
+      const toGeocoding = await getGeocoding(getAddress(createdOrder, "to"));
+
+      if (toGeocoding.error) {
+        console.error(toGeocoding.error);
+      }
 
       return c.json(createdOrder);
     },
@@ -253,7 +250,7 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
           },
           description: "Get order by id",
         },
-        401: {
+        403: {
           description: "Unauthorized",
         },
         404: {
