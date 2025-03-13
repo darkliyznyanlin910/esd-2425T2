@@ -26,6 +26,17 @@ const AcceptRejectOrder = () => {
             </Button>
           </div>
         </div>
+        <div className="p-4 border-b">
+          <p>Order #234: Pickup from DEF Store, Deliver to WXY Location</p>
+          <div className="flex gap-4 mt-4">
+            <Button onClick={handleAccept} className="flex items-center gap-2 bg-green-600 hover:bg-green-500">
+              <CheckCircle size={18} /> Accept
+            </Button>
+            <Button onClick={handleReject} className="flex items-center gap-2 bg-red-600 hover:bg-red-500">
+              <XCircle size={18} /> Reject
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   );
