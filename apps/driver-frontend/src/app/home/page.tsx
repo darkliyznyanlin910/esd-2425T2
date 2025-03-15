@@ -40,15 +40,15 @@ export default function DriverHomepage() {
   
   // Orders that have been accepted and are in various states (pending, pickup, delivered)
   const [pendingOrders, setPendingOrders] = useState<Order[]>([
-    { id: "1", name: "Order 1", status: "pending" },
-    { id: "2", name: "Order 2", status: "pending" },
-    { id: "3", name: "Order 3", status: "pending" },
+    { id: "1", name: "Order #22345673", description: "Pickup Parcel ABC234 from AAA Warehouse, Deliver to XXX", status: "pending" },
+    { id: "2", name: "Order #7845672", description: "Pickup Parcel ABC123 from YYY Warehouse, Deliver to XXX", status: "pending" },
+    { id: "3", name: "Order #46569631", description: "Pickup Parcel DEF134 from ZZZ Warehouse, Deliver to XXX", status: "pending" },
   ]);
   
   // Orders waiting for accept/reject decision
   const [ordersToReview, setOrdersToReview] = useState<Order[]>([
-    { id: "123", name: "Order #123", description: "Pickup from ABC Store, Deliver to XYZ Location", status: "pending" },
-    { id: "234", name: "Order #234", description: "Pickup from DEF Store, Deliver to WXY Location", status: "pending" },
+    { id: "123", name: "Order #93457682", description: "Pickup from BBB Store, Deliver to XXX", status: "pending" },
+    { id: "234", name: "Order #88888888", description: "Pickup from CCC Store, Deliver to XXX", status: "pending" },
   ]);
 
   const [alertOpen, setAlertOpen] = useState(false);
