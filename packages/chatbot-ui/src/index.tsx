@@ -2,7 +2,7 @@
 
 import { useChat } from "@ai-sdk/react";
 
-import { toolFunctionMap } from "@repo/chatbot-common";
+import { toolFunctionMap, ToolName } from "@repo/chatbot-common";
 import { getServiceBaseUrl } from "@repo/service-discovery";
 import { ChatContainer, ChatForm, ChatMessages } from "@repo/ui/chat/chat";
 import { MessageInput } from "@repo/ui/chat/message-input";
@@ -18,12 +18,15 @@ export function CustomChat() {
     status,
     append,
     stop,
+    addToolResult,
   } = useChat({
-    api: `${getServiceBaseUrl("chatbot")}/chat`,
+    api: `${getServiceBaseUrl("chatbot")}/chat/chat`,
     maxSteps: 10,
     async onToolCall({ toolCall }) {
-      const tool =
-        toolFunctionMap[toolCall.toolName as keyof typeof toolFunctionMap];
+      const tool = toolFunctionMap[toolCall.toolName as ToolName];
+      if (!tool) {
+        throw new Error(`Tool ${toolCall.toolName} not found`);
+      }
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       const result = await tool(toolCall.args as any);
       return result;
@@ -36,7 +39,6 @@ export function CustomChat() {
 
   return (
     <div className="flex h-full w-full flex-col gap-2 rounded-xl border p-2">
-      <h1 className="text-xl font-bold">Customer Support</h1>
       <ChatContainer className="w-full flex-1">
         {isEmpty ? (
           <PromptSuggestions
@@ -51,7 +53,11 @@ export function CustomChat() {
 
         {!isEmpty ? (
           <ChatMessages messages={messages}>
-            <MessageList messages={messages} isTyping={isTyping} />
+            <MessageList
+              messages={messages}
+              isTyping={isTyping}
+              {...({ addToolResult } as any)}
+            />
           </ChatMessages>
         ) : null}
 
@@ -60,13 +66,12 @@ export function CustomChat() {
           isPending={status == "streaming" || isTyping}
           handleSubmit={handleSubmit}
         >
-          {({ files, setFiles }) => (
+          {() => (
             <MessageInput
               value={input}
               onChange={handleInputChange}
               // allowAttachments
-              files={files}
-              setFiles={setFiles}
+              // files={files}
               stop={stop}
               isGenerating={status == "streaming"}
             />
