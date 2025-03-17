@@ -1,16 +1,25 @@
+"use client";
+
 import type { ChatMessageProps, Message } from "./chat-message";
 import { ChatMessage } from "./chat-message";
 import { TypingIndicator } from "./typing-indicator";
 
 type AdditionalMessageOptions = Omit<ChatMessageProps, keyof Message>;
 
-interface MessageListProps {
+export interface MessageListProps {
   messages: Message[];
   showTimeStamps?: boolean;
   isTyping?: boolean;
   messageOptions?:
     | AdditionalMessageOptions
     | ((message: Message) => AdditionalMessageOptions);
+  addToolResult?: ({
+    toolCallId,
+    result,
+  }: {
+    toolCallId: string;
+    result: any;
+  }) => void;
 }
 
 export function MessageList({
@@ -18,6 +27,7 @@ export function MessageList({
   showTimeStamps = true,
   isTyping = false,
   messageOptions,
+  addToolResult,
 }: MessageListProps) {
   return (
     <div className="space-y-4 overflow-visible">
@@ -33,6 +43,7 @@ export function MessageList({
             showTimeStamp={showTimeStamps}
             {...message}
             {...additionalOptions}
+            addToolResult={addToolResult}
           />
         );
       })}

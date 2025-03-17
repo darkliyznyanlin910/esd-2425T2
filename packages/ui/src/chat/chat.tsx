@@ -28,6 +28,13 @@ interface ChatPropsBase {
     messageId: string,
     rating: "thumbs-up" | "thumbs-down",
   ) => void;
+  addToolResult: ({
+    toolCallId,
+    result,
+  }: {
+    toolCallId: string;
+    result: any;
+  }) => void;
 }
 
 interface ChatPropsWithoutSuggestions extends ChatPropsBase {
@@ -53,6 +60,7 @@ export function Chat({
   suggestions,
   className,
   onRateResponse,
+  addToolResult,
 }: ChatProps) {
   const lastMessage = messages.at(-1);
   const isEmpty = messages.length === 0;
@@ -162,7 +170,7 @@ export function ChatMessages({
         {children}
       </div>
 
-      <div className="flex flex-1 items-end justify-end [grid-column:1/1] [grid-row:1/1]">
+      <div className="-z-10 flex flex-1 items-end justify-end [grid-column:1/1] [grid-row:1/1]">
         {!shouldAutoScroll && (
           <div className="sticky bottom-0 left-0 flex w-full justify-end">
             <Button
