@@ -4,13 +4,20 @@
 
 import type { VariantProps } from "class-variance-authority";
 import React, { useMemo } from "react";
-import { ReloadIcon, RocketIcon } from "@radix-ui/react-icons";
 import { cva } from "class-variance-authority";
-import { Code2 } from "lucide-react";
 
-import { ToolName, ToolReturnTypes } from "@repo/chatbot-common";
+import { ToolName } from "@repo/chatbot-common";
 
 import { cn } from "../index";
+import {
+  DriverDetails,
+  OrderDetails,
+  OrdersList,
+  ToolInvocation,
+  TrackingDetails,
+  UnknownTool,
+} from "./components";
+import { SelectOrder } from "./components/SelectOrder";
 import { FilePreview } from "./file-preview";
 import { MarkdownRenderer } from "./markdown-renderer";
 
@@ -62,24 +69,6 @@ interface Attachment {
   url: string;
 }
 
-interface PartialToolCall {
-  state: "partial-call";
-  toolName: string;
-}
-
-interface ToolCall {
-  state: "call";
-  toolName: string;
-}
-
-interface ToolResult {
-  state: "result";
-  toolName: string;
-  result: any;
-}
-
-type ToolInvocation = PartialToolCall | ToolCall | ToolResult;
-
 export interface Message {
   id: string;
   role: "user" | "assistant" | (string & {});
@@ -94,6 +83,13 @@ export interface ChatMessageProps extends Message {
   animation?: Animation;
   actions?: React.ReactNode;
   className?: string;
+  addToolResult?: ({
+    toolCallId,
+    result,
+  }: {
+    toolCallId: string;
+    result: any;
+  }) => void;
 }
 
 export const ChatMessage: React.FC<ChatMessageProps> = ({
@@ -106,6 +102,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
   className,
   experimental_attachments,
   toolInvocations,
+  addToolResult,
 }) => {
   const files = useMemo(() => {
     return experimental_attachments?.map((attachment) => {
@@ -116,7 +113,12 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
   }, [experimental_attachments]);
 
   if (toolInvocations && toolInvocations.length > 0) {
-    return <ToolCall toolInvocations={toolInvocations} />;
+    return (
+      <ToolInvocationsRenderer
+        toolInvocations={toolInvocations}
+        addToolResult={addToolResult}
+      />
+    );
   }
 
   const isUser = role === "user";
@@ -172,72 +174,39 @@ function dataUrlToUint8Array(data: string) {
   return new Uint8Array(buf);
 }
 
-function ToolCall({
+function ToolInvocationsRenderer({
   toolInvocations,
-}: Pick<ChatMessageProps, "toolInvocations">) {
+  addToolResult,
+}: Pick<ChatMessageProps, "toolInvocations" | "addToolResult">) {
   if (!toolInvocations?.length) return null;
 
   return (
     <div className="flex flex-col items-start gap-2">
       {toolInvocations.map((invocation, index) => {
-        switch (invocation.state) {
-          case "partial-call":
-          case "call":
+        const toolName = invocation.toolName as ToolName;
+
+        // Route to the appropriate component based on tool name
+        switch (toolName) {
+          case "getDriverDetails":
+            return <DriverDetails key={index} invocation={invocation} />;
+          case "getOrderDetails":
+            return <OrderDetails key={index} invocation={invocation} />;
+          case "getOrders":
+            return <OrdersList key={index} invocation={invocation} />;
+          case "getTrackingDetails":
+            return <TrackingDetails key={index} invocation={invocation} />;
+          case "selectOrder":
             return (
-              <div
+              <SelectOrder
                 key={index}
-                className="flex items-center gap-2 rounded-lg border bg-muted px-3 py-2 text-sm text-muted-foreground"
-              >
-                <RocketIcon className="h-4 w-4" />
-                <span>Calling {invocation.toolName}...</span>
-                <ReloadIcon className="h-3 w-3 animate-spin" />
-              </div>
+                invocation={invocation}
+                addToolResult={addToolResult}
+              />
             );
-          case "result":
-            return (
-              <div
-                key={index}
-                className="flex flex-col gap-1.5 rounded-lg border bg-muted px-3 py-2 text-sm"
-              >
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <Code2 className="h-4 w-4" />
-                  <span>Result from {invocation.toolName}</span>
-                </div>
-                <ToolCallResult
-                  toolName={invocation.toolName as ToolName}
-                  result={invocation.result}
-                />
-              </div>
-            );
+          default:
+            return <UnknownTool key={index} invocation={invocation} />;
         }
       })}
     </div>
   );
-}
-
-function ToolCallResult({
-  toolName,
-  result,
-}: {
-  toolName: ToolName;
-  result: ToolReturnTypes;
-}): React.ReactNode {
-  if (toolName == "getDriverDetails") {
-    const formattedResult =
-      result as unknown as ToolReturnTypes["getDriverDetails"];
-    return <div>{formattedResult.driverName}</div>;
-  } else if (toolName == "getOrderDetails") {
-    const formattedResult =
-      result as unknown as ToolReturnTypes["getOrderDetails"];
-    return <div>{formattedResult.status}</div>;
-  } else if (toolName == "getOrders") {
-    const formattedResult = result as unknown as ToolReturnTypes["getOrders"];
-    return formattedResult.map((item) => <div>{item}</div>);
-  } else if (toolName == "getTrackingDetails") {
-    const formattedResult =
-      result as unknown as ToolReturnTypes["getTrackingDetails"];
-    return formattedResult.map((item) => <div>{item.status}</div>);
-  } else {
-    return <div>Unknown tool</div>;
-  }
 }
