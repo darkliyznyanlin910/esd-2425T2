@@ -1,8 +1,8 @@
+import type { Order } from "@repo/db-order/zod";
 import { db } from "@repo/db-order";
-import { Order } from "@repo/db-order/zod";
 
+import type { GeocodingResponse } from "./type";
 import { env } from "./env";
-import { GeocodingResponse } from "./type";
 
 export const generateDisplayId = (num: number): string => {
   return `#${num.toString().padStart(4, "0")}`;

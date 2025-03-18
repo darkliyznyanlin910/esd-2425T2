@@ -97,29 +97,17 @@ export const SelectOrder: React.FC<SelectOrderProps> = ({
     );
   }
 
-  // If we have a result, display it
-  if (state === "result") {
-    // Use the explicit type for clarity
-    const result = invocation.result as unknown as SelectOrderResult;
+  // Use the explicit type for clarity
+  const result = invocation.result as unknown as SelectOrderResult;
 
-    return (
-      <ToolWrapper>
-        <ResultHeader toolName={toolName} />
-        <div className="flex flex-col gap-2 p-2">
-          <div className="flex items-center gap-2">
-            <span className="font-medium">Selected Order:</span>
-            <span>{result.orderId}</span>
-          </div>
-        </div>
-      </ToolWrapper>
-    );
-  }
-
-  // Fallback for unexpected state
   return (
     <ToolWrapper>
-      <div className="text-sm text-muted-foreground">
-        Error: Invalid select order state
+      <ResultHeader toolName={toolName} />
+      <div className="flex flex-col gap-2 p-2">
+        <div className="flex items-center gap-2">
+          <span className="font-medium">Selected Order:</span>
+          <span>{result.orderId}</span>
+        </div>
       </div>
     </ToolWrapper>
   );

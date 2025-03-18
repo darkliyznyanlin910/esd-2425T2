@@ -2,26 +2,26 @@ import React from "react";
 import { ReloadIcon, RocketIcon } from "@radix-ui/react-icons";
 import { Code2 } from "lucide-react";
 
-import { ToolName, ToolResult } from "@repo/chatbot-common";
+import { ToolName } from "@repo/chatbot-common";
 
 export type ToolState = "partial-call" | "call" | "result";
 
 export interface PartialToolCall {
   state: "partial-call";
-  toolName: ToolName | string;
+  toolName: ToolName;
   toolCallId?: string;
 }
 
 export interface ToolCall {
   state: "call";
-  toolName: ToolName | string;
+  toolName: ToolName;
   args: any;
   toolCallId: string;
 }
 
 export interface ToolResultCall {
   state: "result";
-  toolName: ToolName | string;
+  toolName: ToolName;
   result: any;
   toolCallId?: string;
 }

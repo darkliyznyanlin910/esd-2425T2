@@ -19,33 +19,21 @@ export const OrderDetails: React.FC<OrderDetailsProps> = ({ invocation }) => {
     return <LoadingState toolName={toolName} />;
   }
 
-  // If we have a result, display it
-  if (state === "result") {
-    const result = invocation.result as ToolResult["getOrderDetails"];
-    return (
-      <ToolWrapper>
-        <ResultHeader toolName={toolName} />
-        <div className="flex flex-col gap-2 p-2">
-          <div className="flex items-center gap-2">
-            <span className="font-medium">Status:</span>
-            <span className="capitalize">{result.status}</span>
-          </div>
-          {result.orderId && (
-            <div className="flex items-center gap-2">
-              <span className="font-medium">Order ID:</span>
-              <span>{result.orderId}</span>
-            </div>
-          )}
-        </div>
-      </ToolWrapper>
-    );
-  }
-
-  // Fallback for unexpected state
+  const result = invocation.result as ToolResult["getOrderDetails"];
   return (
     <ToolWrapper>
-      <div className="text-sm text-muted-foreground">
-        Error: Invalid order details state
+      <ResultHeader toolName={toolName} />
+      <div className="flex flex-col gap-2 p-2">
+        <div className="flex items-center gap-2">
+          <span className="font-medium">Status:</span>
+          <span className="capitalize">{result.status}</span>
+        </div>
+        {result.orderId && (
+          <div className="flex items-center gap-2">
+            <span className="font-medium">Order ID:</span>
+            <span>{result.orderId}</span>
+          </div>
+        )}
       </div>
     </ToolWrapper>
   );
