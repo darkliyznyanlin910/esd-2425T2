@@ -19,43 +19,29 @@ export const OrdersList: React.FC<OrdersListProps> = ({ invocation }) => {
     return <LoadingState toolName={toolName} />;
   }
 
-  // If we have a result, display it
-  if (state === "result") {
-    const result = invocation.result as ToolResult["getOrders"];
+  const result = invocation.result as ToolResult["getOrders"];
 
-    if (!result.length) {
-      return (
-        <ToolWrapper>
-          <ResultHeader toolName={toolName} />
-          <div className="p-2 text-sm text-muted-foreground">
-            No orders found
-          </div>
-        </ToolWrapper>
-      );
-    }
-
+  if (!result.length) {
     return (
       <ToolWrapper>
         <ResultHeader toolName={toolName} />
-        <div className="flex flex-col gap-2 p-2">
-          <div className="text-sm font-medium">Orders:</div>
-          <ul className="space-y-1">
-            {result.map((order, index) => (
-              <li key={index} className="text-sm">
-                {order}
-              </li>
-            ))}
-          </ul>
-        </div>
+        <div className="p-2 text-sm text-muted-foreground">No orders found</div>
       </ToolWrapper>
     );
   }
 
-  // Fallback for unexpected state
   return (
     <ToolWrapper>
-      <div className="text-sm text-muted-foreground">
-        Error: Invalid orders list state
+      <ResultHeader toolName={toolName} />
+      <div className="flex flex-col gap-2 p-2">
+        <div className="text-sm font-medium">Orders:</div>
+        <ul className="space-y-1">
+          {result.map((order, index) => (
+            <li key={index} className="text-sm">
+              {order}
+            </li>
+          ))}
+        </ul>
       </div>
     </ToolWrapper>
   );

@@ -28,13 +28,6 @@ interface ChatPropsBase {
     messageId: string,
     rating: "thumbs-up" | "thumbs-down",
   ) => void;
-  addToolResult: ({
-    toolCallId,
-    result,
-  }: {
-    toolCallId: string;
-    result: any;
-  }) => void;
 }
 
 interface ChatPropsWithoutSuggestions extends ChatPropsBase {
@@ -60,7 +53,6 @@ export function Chat({
   suggestions,
   className,
   onRateResponse,
-  addToolResult,
 }: ChatProps) {
   const lastMessage = messages.at(-1);
   const isEmpty = messages.length === 0;

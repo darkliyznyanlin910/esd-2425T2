@@ -175,6 +175,7 @@ const invoiceRouter = new OpenAPIHono<HonoExtension>()
           200,
         );
       } catch (error) {
+        console.error(error);
         return c.json({ error: "Invoice not found" }, 404);
       }
     },
