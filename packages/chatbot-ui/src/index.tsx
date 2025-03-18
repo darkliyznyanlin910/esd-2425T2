@@ -4,7 +4,8 @@ import { useChat } from "@ai-sdk/react";
 
 import { toolFunctionMap, ToolName } from "@repo/chatbot-common";
 import { getServiceBaseUrl } from "@repo/service-discovery";
-import { ChatContainer, ChatForm } from "@repo/ui/chat/chat";
+import { ChatContainer, ChatForm, ChatMessages } from "@repo/ui/chat/chat";
+import { Message } from "@repo/ui/chat/chat-message";
 import { MessageInput } from "@repo/ui/chat/message-input";
 import { MessageList } from "@repo/ui/chat/message-list";
 import { PromptSuggestions } from "@repo/ui/chat/prompt-suggestions";
@@ -52,11 +53,13 @@ export function CustomChat() {
         ) : null}
 
         {!isEmpty ? (
-          <MessageList
-            messages={messages}
-            isTyping={isTyping}
-            {...({ addToolResult } as any)}
-          />
+          <ChatMessages messages={messages as Message[]}>
+            <MessageList
+              messages={messages as Message[]}
+              isTyping={isTyping}
+              addToolResult={addToolResult}
+            />
+          </ChatMessages>
         ) : null}
 
         <ChatForm
