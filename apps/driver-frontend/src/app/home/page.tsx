@@ -1,20 +1,18 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { XCircle, User, Phone, Mail, Lock, Save, Edit } from "lucide-react";
+import { useState } from "react";
 import Image from "next/image";
-import { Archive, CheckCircle } from "lucide-react";
-import { Button } from "@repo/ui/button";  
 import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarProvider,
-  SidebarSeparator,
-} from "@repo/ui/sidebar";  
+  Archive,
+  CheckCircle,
+  Edit,
+  Lock,
+  Mail,
+  Phone,
+  Save,
+  User,
+  XCircle,
+} from "lucide-react";
 
 import {
   AlertDialog,
@@ -26,7 +24,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@repo/ui/alert-dialog";
-
+import { Button } from "@repo/ui/button";
 // import {
 //   Form,
 //   FormControl,
@@ -39,6 +37,16 @@ import {
 
 import { Input } from "@repo/ui/input";
 import { Label } from "@repo/ui/label";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarProvider,
+  SidebarSeparator,
+} from "@repo/ui/sidebar";
 
 interface Order {
   id: string;
@@ -58,18 +66,43 @@ interface DriverProfile {
 
 export default function DriverHomepage() {
   const [selectedMenu, setSelectedMenu] = useState("pending-orders");
-  
+
   // Orders that have been accepted and are in various states (pending, pickup, delivered)
   const [pendingOrders, setPendingOrders] = useState<Order[]>([
-    { id: "1", name: "Order #22345673", description: "Pickup Parcel ABC234 from AAA Warehouse, Deliver to XXX", status: "pending" },
-    { id: "2", name: "Order #7845672", description: "Pickup Parcel ABC123 from YYY Warehouse, Deliver to XXX", status: "pending" },
-    { id: "3", name: "Order #46569631", description: "Pickup Parcel DEF134 from ZZZ Warehouse, Deliver to XXX", status: "pending" },
+    {
+      id: "1",
+      name: "Order #22345673",
+      description: "Pickup Parcel ABC234 from AAA Warehouse, Deliver to XXX",
+      status: "pending",
+    },
+    {
+      id: "2",
+      name: "Order #7845672",
+      description: "Pickup Parcel ABC123 from YYY Warehouse, Deliver to XXX",
+      status: "pending",
+    },
+    {
+      id: "3",
+      name: "Order #46569631",
+      description: "Pickup Parcel DEF134 from ZZZ Warehouse, Deliver to XXX",
+      status: "pending",
+    },
   ]);
-  
+
   // Orders waiting for accept/reject decision
   const [ordersToReview, setOrdersToReview] = useState<Order[]>([
-    { id: "123", name: "Order #93457682", description: "Pickup from BBB Store, Deliver to XXX", status: "pending" },
-    { id: "234", name: "Order #88888888", description: "Pickup from CCC Store, Deliver to XXX", status: "pending" },
+    {
+      id: "123",
+      name: "Order #93457682",
+      description: "Pickup from BBB Store, Deliver to XXX",
+      status: "pending",
+    },
+    {
+      id: "234",
+      name: "Order #88888888",
+      description: "Pickup from CCC Store, Deliver to XXX",
+      status: "pending",
+    },
   ]);
 
   // Driver profile state
@@ -85,7 +118,7 @@ export default function DriverHomepage() {
   const [isEditingPhone, setIsEditingPhone] = useState(false);
   const [isEditingEmail, setIsEditingEmail] = useState(false);
   const [isEditingPassword, setIsEditingPassword] = useState(false);
-  
+
   // Temporary form values
   const [phoneValue, setPhoneValue] = useState(driverProfile.phone);
   const [emailValue, setEmailValue] = useState(driverProfile.email);
@@ -93,30 +126,30 @@ export default function DriverHomepage() {
 
   const [alertOpen, setAlertOpen] = useState(false);
   const [orderToReject, setOrderToReject] = useState<string | null>(null);
-  
+
   // Update handler for profile fields
-  const handleProfileUpdate = (field: 'phone' | 'email' | 'password') => {
+  const handleProfileUpdate = (field: "phone" | "email" | "password") => {
     const currentTime = new Date().toISOString();
-    
-    if (field === 'phone' && phoneValue) {
-      setDriverProfile(prev => ({
+
+    if (field === "phone" && phoneValue) {
+      setDriverProfile((prev) => ({
         ...prev,
         phone: phoneValue,
-        updatedAt: currentTime
+        updatedAt: currentTime,
       }));
       setIsEditingPhone(false);
-    } else if (field === 'email' && emailValue) {
-      setDriverProfile(prev => ({
+    } else if (field === "email" && emailValue) {
+      setDriverProfile((prev) => ({
         ...prev,
         email: emailValue,
-        updatedAt: currentTime
+        updatedAt: currentTime,
       }));
       setIsEditingEmail(false);
-    } else if (field === 'password' && passwordValue) {
-      setDriverProfile(prev => ({
+    } else if (field === "password" && passwordValue) {
+      setDriverProfile((prev) => ({
         ...prev,
         password: "••••••••", // Always display masked password
-        updatedAt: currentTime
+        updatedAt: currentTime,
       }));
       setPasswordValue("");
       setIsEditingPassword(false);
@@ -124,29 +157,34 @@ export default function DriverHomepage() {
   };
 
   // Reset form fields when canceling edit
-  const cancelEdit = (field: 'phone' | 'email' | 'password') => {
-    if (field === 'phone') {
+  const cancelEdit = (field: "phone" | "email" | "password") => {
+    if (field === "phone") {
       setPhoneValue(driverProfile.phone);
       setIsEditingPhone(false);
-    } else if (field === 'email') {
+    } else if (field === "email") {
       setEmailValue(driverProfile.email);
       setIsEditingEmail(false);
-    } else if (field === 'password') {
+    } else {
       setPasswordValue("");
       setIsEditingPassword(false);
     }
   };
 
   const handleAccept = (id: string) => {
-    const orderIndex = ordersToReview.findIndex(order => order.id === id);
-    
+    const orderIndex = ordersToReview.findIndex((order) => order.id === id);
+
     if (orderIndex !== -1) {
       const orderToAccept = ordersToReview[orderIndex];
-      
-      setPendingOrders(prevOrders => [...prevOrders, orderToAccept]);
-      
-      setOrdersToReview(prevOrders => prevOrders.filter((_, index) => index !== orderIndex));
-      
+      if (!orderToAccept) {
+        return;
+      }
+
+      setPendingOrders((prevOrders) => [...prevOrders, orderToAccept]);
+
+      setOrdersToReview((prevOrders) =>
+        prevOrders.filter((_, index) => index !== orderIndex),
+      );
+
       setSelectedMenu("pending-orders");
     }
   };
@@ -158,7 +196,9 @@ export default function DriverHomepage() {
 
   const confirmReject = () => {
     if (orderToReject) {
-      setOrdersToReview(prevOrders => prevOrders.filter(order => order.id !== orderToReject));
+      setOrdersToReview((prevOrders) =>
+        prevOrders.filter((order) => order.id !== orderToReject),
+      );
       setOrderToReject(null);
     }
     setAlertOpen(false);
@@ -172,8 +212,8 @@ export default function DriverHomepage() {
   const handlePickup = (id: string) => {
     setPendingOrders((prevOrders) =>
       prevOrders.map((order) =>
-        order.id === id ? { ...order, status: "pickup" } : order
-      )
+        order.id === id ? { ...order, status: "pickup" } : order,
+      ),
     );
   };
 
@@ -184,8 +224,8 @@ export default function DriverHomepage() {
       prevOrders.map((order) =>
         order.id === id
           ? { ...order, status: "delivered", deliveryTime: currentTimestamp }
-          : order
-      )
+          : order,
+      ),
     );
   };
 
@@ -212,7 +252,8 @@ export default function DriverHomepage() {
                     className={`flex items-center gap-2 ${selectedMenu === "pending-orders" ? "text-dark-blue-700 font-bold" : "text-black"}`}
                     onClick={() => setSelectedMenu("pending-orders")}
                   >
-                    <Archive size={18} /> Pending Orders {pendingOrders.length > 0 && `(${pendingOrders.length})`}
+                    <Archive size={18} /> Pending Orders{" "}
+                    {pendingOrders.length > 0 && `(${pendingOrders.length})`}
                   </SidebarMenuButton>
                 </SidebarMenuItem>
                 <SidebarMenuItem className="block">
@@ -220,7 +261,8 @@ export default function DriverHomepage() {
                     className={`flex items-center gap-2 ${selectedMenu === "accept-reject-order" ? "text-dark-blue-700 font-bold" : "text-black"}`}
                     onClick={() => setSelectedMenu("accept-reject-order")}
                   >
-                    <CheckCircle size={18} /> Accept/Reject Order {ordersToReview.length > 0 && `(${ordersToReview.length})`}
+                    <CheckCircle size={18} /> Accept/Reject Order{" "}
+                    {ordersToReview.length > 0 && `(${ordersToReview.length})`}
                   </SidebarMenuButton>
                 </SidebarMenuItem>
                 <SidebarMenuItem className="block">
@@ -235,9 +277,7 @@ export default function DriverHomepage() {
             </SidebarContent>
 
             <SidebarFooter>
-              <Button
-                className="w-full bg-red-600 hover:bg-red-500"
-              >
+              <Button className="w-full bg-red-600 hover:bg-red-500">
                 Sign Out
               </Button>
             </SidebarFooter>
@@ -245,19 +285,19 @@ export default function DriverHomepage() {
         </Sidebar>
         <main className="flex-1 p-0">
           {selectedMenu === "pending-orders" ? (
-            <PendingOrdersWrapper 
-              orders={pendingOrders} 
+            <PendingOrdersWrapper
+              orders={pendingOrders}
               handlePickup={handlePickup}
               handleDelivered={handleDelivered}
             />
           ) : selectedMenu === "accept-reject-order" ? (
-            <AcceptRejectOrderWrapper 
+            <AcceptRejectOrderWrapper
               orders={ordersToReview}
               handleAccept={handleAccept}
               handleReject={initiateReject}
             />
           ) : (
-            <ProfileManagementWrapper 
+            <ProfileManagementWrapper
               profile={driverProfile}
               isEditingPhone={isEditingPhone}
               isEditingEmail={isEditingEmail}
@@ -284,12 +324,13 @@ export default function DriverHomepage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Confirm Order Rejection</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to reject this order? This action cannot be undone.
+              Are you sure you want to reject this order? This action cannot be
+              undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel onClick={cancelReject}>Cancel</AlertDialogCancel>
-            <AlertDialogAction 
+            <AlertDialogAction
               onClick={confirmReject}
               className="bg-red-600 text-white hover:bg-red-500"
             >
@@ -304,70 +345,87 @@ export default function DriverHomepage() {
 
 // PendingOrders component
 // PendingOrders component with table view
-function PendingOrdersWrapper({ 
-  orders, 
-  handlePickup, 
-  handleDelivered 
-}: { 
-  orders: Order[], 
-  handlePickup: (id: string) => void,
-  handleDelivered: (id: string) => void
+function PendingOrdersWrapper({
+  orders,
+  handlePickup,
+  handleDelivered,
+}: {
+  orders: Order[];
+  handlePickup: (id: string) => void;
+  handleDelivered: (id: string) => void;
 }) {
   return (
     <div className="p-6">
-      <h2 className="text-xl font-semibold mb-4">Pending Orders</h2>
-      
+      <h2 className="mb-4 text-xl font-semibold">Pending Orders</h2>
+
       {orders.length > 0 ? (
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>
               <tr className="bg-gray-100">
-                <th className="p-3 text-left font-medium text-gray-700 border">Order ID</th>
-                <th className="p-3 text-left font-medium text-gray-700 border">Description</th>
-                <th className="p-3 text-left font-medium text-gray-700 border">Status</th>
-                <th className="p-3 text-left font-medium text-gray-700 border">Delivery Time</th>
-                <th className="p-3 text-left font-medium text-gray-700 border">Actions</th>
+                <th className="border p-3 text-left font-medium text-gray-700">
+                  Order ID
+                </th>
+                <th className="border p-3 text-left font-medium text-gray-700">
+                  Description
+                </th>
+                <th className="border p-3 text-left font-medium text-gray-700">
+                  Status
+                </th>
+                <th className="border p-3 text-left font-medium text-gray-700">
+                  Delivery Time
+                </th>
+                <th className="border p-3 text-left font-medium text-gray-700">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody>
               {orders.map((order) => (
                 <tr key={order.id} className="border-b hover:bg-gray-50">
-                  <td className="p-3 border">{order.name}</td>
-                  <td className="p-3 border text-sm text-gray-600">
-                    {order.description || "No description provided"}
+                  <td className="border p-3">{order.name}</td>
+                  <td className="border p-3 text-sm text-gray-600">
+                    {order.description ?? "No description provided"}
                   </td>
-                  <td className="p-3 border">
-                    <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${
-                      order.status === "pending" ? "bg-yellow-100 text-yellow-800" : 
-                      order.status === "pickup" ? "bg-blue-100 text-blue-800" : 
-                      "bg-green-100 text-green-800"
-                    }`}>
-                      {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                  <td className="border p-3">
+                    <span
+                      className={`inline-block rounded px-2 py-1 text-xs font-medium ${
+                        order.status === "pending"
+                          ? "bg-yellow-100 text-yellow-800"
+                          : order.status === "pickup"
+                            ? "bg-blue-100 text-blue-800"
+                            : "bg-green-100 text-green-800"
+                      }`}
+                    >
+                      {order.status.charAt(0).toUpperCase() +
+                        order.status.slice(1)}
                     </span>
                   </td>
-                  <td className="p-3 border text-sm">
-                    {order.deliveryTime || "Not delivered yet"}
+                  <td className="border p-3 text-sm">
+                    {order.deliveryTime ?? "Not delivered yet"}
                   </td>
-                  <td className="p-3 border">
+                  <td className="border p-3">
                     {order.status !== "delivered" ? (
                       <div className="flex gap-2">
                         <Button
                           onClick={() => handlePickup(order.id)}
-                          className="flex items-center gap-1 text-xs bg-yellow-500 hover:bg-yellow-400 py-1 px-2 h-auto"
-                          disabled={order.status === "pickup" || order.status === "delivered"} 
+                          className="flex h-auto items-center gap-1 bg-yellow-500 px-2 py-1 text-xs hover:bg-yellow-400"
+                          disabled={order.status === "pickup"}
                         >
                           <Archive size={14} /> Pickup
                         </Button>
                         <Button
                           onClick={() => handleDelivered(order.id)}
-                          className="flex items-center gap-1 text-xs bg-green-600 hover:bg-green-500 py-1 px-2 h-auto"
-                          disabled={order.status !== "pickup"} 
+                          className="flex h-auto items-center gap-1 bg-green-600 px-2 py-1 text-xs hover:bg-green-500"
+                          disabled={order.status !== "pickup"}
                         >
                           <CheckCircle size={14} /> Delivered
                         </Button>
                       </div>
                     ) : (
-                      <span className="text-green-600 text-sm font-medium">Completed</span>
+                      <span className="text-sm font-medium text-green-600">
+                        Completed
+                      </span>
                     )}
                   </td>
                 </tr>
@@ -376,9 +434,11 @@ function PendingOrdersWrapper({
           </table>
         </div>
       ) : (
-        <div className="text-center py-8 text-gray-500 bg-gray-50 border rounded-md">
+        <div className="rounded-md border bg-gray-50 py-8 text-center text-gray-500">
           <p className="text-lg">No pending orders available.</p>
-          <p className="text-sm">New orders will appear here when assigned to you.</p>
+          <p className="text-sm">
+            New orders will appear here when assigned to you.
+          </p>
         </div>
       )}
     </div>
@@ -386,31 +446,31 @@ function PendingOrdersWrapper({
 }
 
 // AcceptRejectOrder component
-function AcceptRejectOrderWrapper({ 
-  orders, 
-  handleAccept, 
-  handleReject 
-}: { 
-  orders: Order[], 
-  handleAccept: (id: string) => void,
-  handleReject: (id: string) => void
+function AcceptRejectOrderWrapper({
+  orders,
+  handleAccept,
+  handleReject,
+}: {
+  orders: Order[];
+  handleAccept: (id: string) => void;
+  handleReject: (id: string) => void;
 }) {
   return (
     <div className="p-6">
       <h2 className="text-xl font-semibold">Accept or Reject Order</h2>
       <div className="mt-4">
         {orders.map((order) => (
-          <div key={order.id} className="p-4 border-b">
-            <p>{order.description || order.name}</p>
-            <div className="flex gap-4 mt-4">
-              <Button 
-                onClick={() => handleAccept(order.id)} 
+          <div key={order.id} className="border-b p-4">
+            <p>{order.description ?? order.name}</p>
+            <div className="mt-4 flex gap-4">
+              <Button
+                onClick={() => handleAccept(order.id)}
                 className="flex items-center gap-2 bg-green-600 hover:bg-green-500"
               >
                 <CheckCircle size={18} /> Accept
               </Button>
-              <Button 
-                onClick={() => handleReject(order.id)} 
+              <Button
+                onClick={() => handleReject(order.id)}
                 className="flex items-center gap-2 bg-red-600 hover:bg-red-500"
               >
                 <XCircle size={18} /> Reject
@@ -419,7 +479,7 @@ function AcceptRejectOrderWrapper({
           </div>
         ))}
         {orders.length === 0 && (
-          <div className="text-center py-8 text-gray-500">
+          <div className="py-8 text-center text-gray-500">
             No orders to review at this time.
           </div>
         )}
@@ -444,23 +504,23 @@ function ProfileManagementWrapper({
   setEmailValue,
   setPasswordValue,
   handleProfileUpdate,
-  cancelEdit
+  cancelEdit,
 }: {
-  profile: DriverProfile,
-  isEditingPhone: boolean,
-  isEditingEmail: boolean,
-  isEditingPassword: boolean,
-  phoneValue: string,
-  emailValue: string,
-  passwordValue: string,
-  setIsEditingPhone: (value: boolean) => void,
-  setIsEditingEmail: (value: boolean) => void,
-  setIsEditingPassword: (value: boolean) => void,
-  setPhoneValue: (value: string) => void,
-  setEmailValue: (value: string) => void,
-  setPasswordValue: (value: string) => void,
-  handleProfileUpdate: (field: 'phone' | 'email' | 'password') => void,
-  cancelEdit: (field: 'phone' | 'email' | 'password') => void
+  profile: DriverProfile;
+  isEditingPhone: boolean;
+  isEditingEmail: boolean;
+  isEditingPassword: boolean;
+  phoneValue: string;
+  emailValue: string;
+  passwordValue: string;
+  setIsEditingPhone: (value: boolean) => void;
+  setIsEditingEmail: (value: boolean) => void;
+  setIsEditingPassword: (value: boolean) => void;
+  setPhoneValue: (value: string) => void;
+  setEmailValue: (value: string) => void;
+  setPasswordValue: (value: string) => void;
+  handleProfileUpdate: (field: "phone" | "email" | "password") => void;
+  cancelEdit: (field: "phone" | "email" | "password") => void;
 }) {
   // Format date for display
   const formatDate = (dateString: string) => {
@@ -470,46 +530,46 @@ function ProfileManagementWrapper({
 
   return (
     <div className="p-6">
-      <h2 className="text-xl font-semibold mb-6">Profile Management</h2>
-      
-      <div className="bg-white border rounded-lg shadow-sm mb-6">
-        <div className="p-6 border-b">
+      <h2 className="mb-6 text-xl font-semibold">Profile Management</h2>
+
+      <div className="mb-6 rounded-lg border bg-white shadow-sm">
+        <div className="border-b p-6">
           <h3 className="text-lg font-medium">Driver Information</h3>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="mt-1 text-sm text-gray-500">
             View and update your profile information.
           </p>
         </div>
-        
-        <div className="p-6 space-y-6">
+
+        <div className="space-y-6 p-6">
           {/* Driver ID (Read-only) */}
           <div className="space-y-2">
-            <div className="flex justify-between items-center">
+            <div className="flex items-center justify-between">
               <Label htmlFor="driverId" className="text-sm font-medium">
                 Driver ID
               </Label>
               <span className="text-xs text-gray-500">(Cannot be changed)</span>
             </div>
-            <div className="flex items-center space-x-2 border p-2 rounded-md bg-gray-50">
+            <div className="flex items-center space-x-2 rounded-md border bg-gray-50 p-2">
               <User size={18} className="text-gray-500" />
-              <Input 
-                id="driverId" 
-                value={profile.driverId} 
-                disabled 
-                className="border-0 bg-transparent focus-visible:ring-0 p-0" 
+              <Input
+                id="driverId"
+                value={profile.driverId}
+                disabled
+                className="border-0 bg-transparent p-0 focus-visible:ring-0"
               />
             </div>
           </div>
 
           {/* Phone Number (Editable) */}
           <div className="space-y-2">
-            <div className="flex justify-between items-center">
+            <div className="flex items-center justify-between">
               <Label htmlFor="phone" className="text-sm font-medium">
                 Phone Number
               </Label>
               {!isEditingPhone && (
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
+                <Button
+                  variant="ghost"
+                  size="sm"
                   className="h-8 px-2 text-blue-600"
                   onClick={() => setIsEditingPhone(true)}
                 >
@@ -517,39 +577,39 @@ function ProfileManagementWrapper({
                 </Button>
               )}
             </div>
-            <div className="flex items-center space-x-2 border p-2 rounded-md">
+            <div className="flex items-center space-x-2 rounded-md border p-2">
               <Phone size={18} className="text-gray-500" />
               {isEditingPhone ? (
                 <div className="flex-1">
-                  <Input 
-                    id="phone" 
-                    value={phoneValue} 
+                  <Input
+                    id="phone"
+                    value={phoneValue}
                     onChange={(e) => setPhoneValue(e.target.value)}
-                    className="border-0 focus-visible:ring-0 p-0" 
+                    className="border-0 p-0 focus-visible:ring-0"
                     autoFocus
                   />
-                  <div className="flex justify-end mt-2 space-x-2">
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      onClick={() => cancelEdit('phone')}
+                  <div className="mt-2 flex justify-end space-x-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => cancelEdit("phone")}
                     >
                       Cancel
                     </Button>
-                    <Button 
-                      size="sm" 
-                      onClick={() => handleProfileUpdate('phone')}
+                    <Button
+                      size="sm"
+                      onClick={() => handleProfileUpdate("phone")}
                     >
                       <Save size={16} className="mr-1" /> Save
                     </Button>
                   </div>
                 </div>
               ) : (
-                <Input 
-                  id="phone" 
-                  value={profile.phone} 
-                  disabled 
-                  className="border-0 bg-transparent focus-visible:ring-0 p-0" 
+                <Input
+                  id="phone"
+                  value={profile.phone}
+                  disabled
+                  className="border-0 bg-transparent p-0 focus-visible:ring-0"
                 />
               )}
             </div>
@@ -557,14 +617,14 @@ function ProfileManagementWrapper({
 
           {/* Email (Editable) */}
           <div className="space-y-2">
-            <div className="flex justify-between items-center">
+            <div className="flex items-center justify-between">
               <Label htmlFor="email" className="text-sm font-medium">
                 Email Address
               </Label>
               {!isEditingEmail && (
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
+                <Button
+                  variant="ghost"
+                  size="sm"
                   className="h-8 px-2 text-blue-600"
                   onClick={() => setIsEditingEmail(true)}
                 >
@@ -572,40 +632,40 @@ function ProfileManagementWrapper({
                 </Button>
               )}
             </div>
-            <div className="flex items-center space-x-2 border p-2 rounded-md">
+            <div className="flex items-center space-x-2 rounded-md border p-2">
               <Mail size={18} className="text-gray-500" />
               {isEditingEmail ? (
                 <div className="flex-1">
-                  <Input 
-                    id="email" 
+                  <Input
+                    id="email"
                     type="email"
-                    value={emailValue} 
+                    value={emailValue}
                     onChange={(e) => setEmailValue(e.target.value)}
-                    className="border-0 focus-visible:ring-0 p-0" 
+                    className="border-0 p-0 focus-visible:ring-0"
                     autoFocus
                   />
-                  <div className="flex justify-end mt-2 space-x-2">
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      onClick={() => cancelEdit('email')}
+                  <div className="mt-2 flex justify-end space-x-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => cancelEdit("email")}
                     >
                       Cancel
                     </Button>
-                    <Button 
-                      size="sm" 
-                      onClick={() => handleProfileUpdate('email')}
+                    <Button
+                      size="sm"
+                      onClick={() => handleProfileUpdate("email")}
                     >
                       <Save size={16} className="mr-1" /> Save
                     </Button>
                   </div>
                 </div>
               ) : (
-                <Input 
-                  id="email" 
-                  value={profile.email} 
-                  disabled 
-                  className="border-0 bg-transparent focus-visible:ring-0 p-0" 
+                <Input
+                  id="email"
+                  value={profile.email}
+                  disabled
+                  className="border-0 bg-transparent p-0 focus-visible:ring-0"
                 />
               )}
             </div>
@@ -613,14 +673,14 @@ function ProfileManagementWrapper({
 
           {/* Password (Editable) */}
           <div className="space-y-2">
-            <div className="flex justify-between items-center">
+            <div className="flex items-center justify-between">
               <Label htmlFor="password" className="text-sm font-medium">
                 Password
               </Label>
               {!isEditingPassword && (
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
+                <Button
+                  variant="ghost"
+                  size="sm"
                   className="h-8 px-2 text-blue-600"
                   onClick={() => setIsEditingPassword(true)}
                 >
@@ -628,48 +688,48 @@ function ProfileManagementWrapper({
                 </Button>
               )}
             </div>
-            <div className="flex items-center space-x-2 border p-2 rounded-md">
+            <div className="flex items-center space-x-2 rounded-md border p-2">
               <Lock size={18} className="text-gray-500" />
               {isEditingPassword ? (
                 <div className="flex-1">
-                  <Input 
-                    id="password" 
+                  <Input
+                    id="password"
                     type="password"
-                    value={passwordValue} 
+                    value={passwordValue}
                     onChange={(e) => setPasswordValue(e.target.value)}
-                    className="border-0 focus-visible:ring-0 p-0" 
+                    className="border-0 p-0 focus-visible:ring-0"
                     placeholder="Enter new password"
                     autoFocus
                   />
-                  <div className="flex justify-end mt-2 space-x-2">
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      onClick={() => cancelEdit('password')}
+                  <div className="mt-2 flex justify-end space-x-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => cancelEdit("password")}
                     >
                       Cancel
                     </Button>
-                    <Button 
-                      size="sm" 
-                      onClick={() => handleProfileUpdate('password')}
+                    <Button
+                      size="sm"
+                      onClick={() => handleProfileUpdate("password")}
                     >
                       <Save size={16} className="mr-1" /> Save
                     </Button>
                   </div>
                 </div>
               ) : (
-                <Input 
-                  id="password" 
+                <Input
+                  id="password"
                   type="password"
-                  value={profile.password} 
-                  disabled 
-                  className="border-0 bg-transparent focus-visible:ring-0 p-0" 
+                  value={profile.password}
+                  disabled
+                  className="border-0 bg-transparent p-0 focus-visible:ring-0"
                 />
               )}
             </div>
           </div>
         </div>
-        
+
         <div className="border-t p-4 text-sm text-gray-500">
           <p>Profile last updated: {formatDate(profile.updatedAt)}</p>
         </div>
