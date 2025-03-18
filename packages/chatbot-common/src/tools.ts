@@ -39,6 +39,12 @@ export const backendTools = {
       orderIds: z.array(z.string()),
     }),
   },
+  getInvoice: {
+    description: "show the invoice details to the user",
+    parameters: z.object({
+      orderId: z.string(),
+    }),
+  },
 } satisfies AiSdkToolSet;
 
 export type ToolName = keyof typeof backendTools;
@@ -68,6 +74,11 @@ export interface ToolReturnTypes {
     }[]
   >;
   selectOrder: void;
+  getInvoice: Promise<{
+    orderId: string;
+    amount: number;
+    url: string;
+  }>;
 }
 
 export const toolFunctionMap: ToolFunctionMap = {
@@ -98,5 +109,12 @@ export const toolFunctionMap: ToolFunctionMap = {
         status: "pending",
       },
     ];
+  },
+  getInvoice: async ({ orderId }) => {
+    return {
+      orderId,
+      amount: 100,
+      url: "https://knl-personal.s3.ap-southeast-1.amazonaws.com/KaungNyanLin_Resume.pdf",
+    };
   },
 };
