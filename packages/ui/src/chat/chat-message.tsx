@@ -17,6 +17,7 @@ import {
   TrackingDetails,
   UnknownTool,
 } from "./components";
+import { Invoice } from "./components/Invoice";
 import { SelectOrder } from "./components/SelectOrder";
 import { FilePreview } from "./file-preview";
 import { MarkdownRenderer } from "./markdown-renderer";
@@ -203,6 +204,8 @@ function ToolInvocationsRenderer({
                 addToolResult={addToolResult}
               />
             );
+          case "getInvoice":
+            return <Invoice key={index} invocation={invocation} />;
           default:
             return <UnknownTool key={index} invocation={invocation} />;
         }
