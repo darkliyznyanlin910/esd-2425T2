@@ -17,7 +17,7 @@ const driverRouter = new OpenAPIHono<HonoExtension>()
   .openapi(
     createRoute({
       method: "post",
-      path: "/create",
+      path: "/",
       middleware: [
         authMiddleware({
           authBased: {
@@ -34,9 +34,7 @@ const driverRouter = new OpenAPIHono<HonoExtension>()
           content: {
             "application/json": {
               schema: z.object({
-                name: z.string(),
                 phone: z.string(),
-                email: z.string().email(),
                 userId: z.string(),
               }),
             },
@@ -63,7 +61,7 @@ const driverRouter = new OpenAPIHono<HonoExtension>()
   .openapi(
     createRoute({
       method: "get",
-      path: "/drivers/:id",
+      path: "/:id",
       description: "Get driver by id",
       request: { params: z.object({ id: z.string() }) },
       responses: {
@@ -73,9 +71,11 @@ const driverRouter = new OpenAPIHono<HonoExtension>()
             "application/json": {
               schema: z.object({
                 id: z.string(),
-                name: z.string(),
                 phone: z.string(),
-                email: z.string().email(),
+                userId: z.string(),
+                availability: z.enum(["AVAILABLE", "ON_DELIVERY", "OFFLINE"]),
+                createdAt: z.string(),
+                updatedAt: z.string(),
               }),
             },
           },
@@ -93,7 +93,7 @@ const driverRouter = new OpenAPIHono<HonoExtension>()
   .openapi(
     createRoute({
       method: "put",
-      path: "/drivers/:id",
+      path: "/:id",
       description: "Update driver by id",
       request: {
         params: z.object({ id: z.string() }),
@@ -101,9 +101,8 @@ const driverRouter = new OpenAPIHono<HonoExtension>()
           content: {
             "application/json": {
               schema: z.object({
-                name: z.string().optional(),
                 phone: z.string().optional(),
-                email: z.string().email().optional(),
+                userId: z.string().optional(),
               }),
             },
           },
@@ -127,7 +126,7 @@ const driverRouter = new OpenAPIHono<HonoExtension>()
   .openapi(
     createRoute({
       method: "put",
-      path: "/drivers/:id/availability",
+      path: "/:id/availability",
       description: "Update driver availability",
       request: {
         params: z.object({ id: z.string() }),
@@ -162,7 +161,7 @@ const driverRouter = new OpenAPIHono<HonoExtension>()
   .openapi(
     createRoute({
       method: "delete",
-      path: "/drivers/:id",
+      path: "/:id",
       description: "Delete driver by id",
       request: { params: z.object({ id: z.string() }) },
       responses: {
@@ -222,6 +221,8 @@ const driverRouter = new OpenAPIHono<HonoExtension>()
                 driverId: z.string(),
                 orderId: z.string(),
                 paymentAmount: z.number(),
+                createdAt: z.string(),
+                updatedAt: z.string(),
               }),
             },
           },

@@ -38,27 +38,20 @@ enum OrderStatus {
   PAYMENT_SUCCESSFUL
 }
 
-
 model Order {
-  id          String @id @default(uuid())
+  id          String      @id @default(uuid())
   userId      String
   displayId   String
-  orderStatus String @default("PAYMENT_PENDING")
+  orderStatus OrderStatus @default(PAYMENT_PENDING)
 
   // From
   fromAddressLine1 String
   fromAddressLine2 String?
-  fromCity         String
-  fromState        String?
   fromZipCode      String
-  fromCountry      String
   // To
   toAddressLine1   String
   toAddressLine2   String?
-  toCity           String
-  toState          String?
   toZipCode        String
-  toCountry        String
 
   createdAt       DateTime              @default(now())
   updatedAt       DateTime              @updatedAt
@@ -68,11 +61,19 @@ model Order {
 }
 
 model OrderTrackingRecord {
-  id          String   @id @default(uuid())
-  order       Order    @relation(fields: [orderId], references: [id])
+  id          String      @id @default(uuid())
+  order       Order       @relation(fields: [orderId], references: [id])
   orderId     String
-  status      OrderStatus  @default(PROCESSING)
+  status      OrderStatus @default(PROCESSING)
   description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model GeocodingCache {
+  id        String   @id @default(uuid())
+  address   String   @unique
+  lat       Float
+  lng       Float
+  createdAt DateTime @default(now())
 }
