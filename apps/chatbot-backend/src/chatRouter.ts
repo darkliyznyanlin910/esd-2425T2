@@ -4,14 +4,14 @@ import { stream } from "hono/streaming";
 import { z } from "zod";
 
 import type { AiSdkMessages } from "@repo/chatbot-common";
-import { backendTools } from "@repo/chatbot-ui/tools";
+import { backendTools } from "@repo/chatbot-common";
 
 import { model } from "./ai";
 
 const chatRouter = new OpenAPIHono().openapi(
   createRoute({
     method: "post",
-    path: "/",
+    path: "/chat",
     request: {
       body: {
         content: {

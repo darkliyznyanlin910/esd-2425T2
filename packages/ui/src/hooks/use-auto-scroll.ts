@@ -49,7 +49,6 @@ export function useAutoScroll(dependencies: React.DependencyList) {
     if (shouldAutoScroll) {
       scrollToBottom();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, dependencies);
 
   return {
