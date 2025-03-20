@@ -3,7 +3,6 @@ import { Input } from "@repo/ui/input";
 import { Label } from "@repo/ui/label";
 import { Edit, Lock, Mail, Phone, Save, User } from "lucide-react";
 
-// Define the DriverProfile interface if not importing it
 interface DriverProfile {
   driverId: string;
   phone: string;

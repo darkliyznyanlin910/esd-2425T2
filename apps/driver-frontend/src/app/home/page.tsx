@@ -18,19 +18,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@repo/ui/alert-dialog";
-import { Button } from "@repo/ui/button";
-// import {
-//   Form,
-//   FormControl,
-//   FormDescription,
-//   FormField,
-//   FormItem,
-//   FormLabel,
-//   FormMessage,
-// } from "@repo/ui/form";
 
-// import { Input } from "@repo/ui/input";
-// import { Label } from "@repo/ui/label";
+import { Button } from "@repo/ui/button";
+
 import {
   Sidebar,
   SidebarContent,
@@ -58,7 +48,6 @@ interface DriverProfile {
   updatedAt: string;
 }
 
-// Import the components from the separate files
 import { PendingOrdersWrapper } from "./components/pendingOrders";
 import { AcceptRejectOrderWrapper } from "./components/acceptReject";
 import { ProfileManagementWrapper } from "./components/profile";
@@ -66,7 +55,6 @@ import { ProfileManagementWrapper } from "./components/profile";
 export default function DriverHomepage() {
   const [selectedMenu, setSelectedMenu] = useState("pending-orders");
 
-  // Orders that have been accepted and are in various states (pending, pickup, delivered)
   const [pendingOrders, setPendingOrders] = useState<Order[]>([
     {
       id: "1",
@@ -88,7 +76,6 @@ export default function DriverHomepage() {
     },
   ]);
 
-  // Orders waiting for accept/reject decision
   const [ordersToReview, setOrdersToReview] = useState<Order[]>([
     {
       id: "123",
@@ -104,7 +91,6 @@ export default function DriverHomepage() {
     },
   ]);
 
-  // Driver profile state
   const [driverProfile, setDriverProfile] = useState<DriverProfile>({
     driverId: "DRV-10025",
     phone: "+1 (555) 123-4567",
@@ -113,20 +99,15 @@ export default function DriverHomepage() {
     updatedAt: new Date().toISOString(),
   });
 
-  // Edit mode states
   const [isEditingPhone, setIsEditingPhone] = useState(false);
   const [isEditingEmail, setIsEditingEmail] = useState(false);
   const [isEditingPassword, setIsEditingPassword] = useState(false);
-
-  // Temporary form values
   const [phoneValue, setPhoneValue] = useState(driverProfile.phone);
   const [emailValue, setEmailValue] = useState(driverProfile.email);
   const [passwordValue, setPasswordValue] = useState("");
-
   const [alertOpen, setAlertOpen] = useState(false);
   const [orderToReject, setOrderToReject] = useState<string | null>(null);
 
-  // Update handler for profile fields
   const handleProfileUpdate = (field: "phone" | "email" | "password") => {
     const currentTime = new Date().toISOString();
 
@@ -147,7 +128,7 @@ export default function DriverHomepage() {
     } else if (field === "password" && passwordValue) {
       setDriverProfile((prev) => ({
         ...prev,
-        password: "••••••••", // Always display masked password
+        password: "••••••••", 
         updatedAt: currentTime,
       }));
       setPasswordValue("");
@@ -155,7 +136,6 @@ export default function DriverHomepage() {
     }
   };
 
-  // Reset form fields when canceling edit
   const cancelEdit = (field: "phone" | "email" | "password") => {
     if (field === "phone") {
       setPhoneValue(driverProfile.phone);
@@ -217,7 +197,6 @@ export default function DriverHomepage() {
   };
 
   const handleDelivered = (id: string) => {
-    // set delivery time to current time
     const currentTimestamp = new Date().toLocaleString();
     setPendingOrders((prevOrders) =>
       prevOrders.map((order) =>
