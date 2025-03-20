@@ -3,6 +3,7 @@ import { z } from "zod";
 
 import { db } from "@repo/db-auth";
 import { UserSchema } from "@repo/db-auth/zod";
+import { getServiceBaseUrl } from "@repo/service-discovery";
 
 import { auth, authMiddleware } from "../auth";
 import { env } from "../env";
@@ -20,7 +21,6 @@ const userRouter = new OpenAPIHono()
                 password: z.string(),
                 email: z.string(),
                 name: z.string(),
-                role: z.enum(["client", "driver"]),
               }),
             },
           },
@@ -43,6 +43,16 @@ const userRouter = new OpenAPIHono()
       },
     }),
     async (c) => {
+      const url = c.req.header("X-Forwarded-For") ?? c.req.header("Origin");
+      const role =
+        url == getServiceBaseUrl("customer-frontend")
+          ? "client"
+          : url == getServiceBaseUrl("driver-frontend")
+            ? "driver"
+            : null;
+      if (!role) {
+        return c.json({ message: "Invalid origin" }, 400);
+      }
       const body = await c.req.json();
       try {
         const res = await auth.api.createUser({
@@ -50,7 +60,7 @@ const userRouter = new OpenAPIHono()
             password: body.password,
             email: body.email,
             name: body.name,
-            role: body.role,
+            role: role,
           },
         });
         console.log(res.user);
