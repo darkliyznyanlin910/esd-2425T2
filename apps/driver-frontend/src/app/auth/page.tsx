@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { authClient } from "@repo/auth/client";
+import { HonoClient } from "@repo/auth/type";
 import { Button } from "@repo/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@repo/ui/card";
 import { Input } from "@repo/ui/input";
@@ -20,7 +21,12 @@ export default function AuthPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isSignUp) {
-      await signUp.email({ email, password, name: "John Doe" });
+      const res = await HonoClient.user.signup.$post(
+        { json: { email, password, name: "Joe" } },
+        { init: { credentials: "include" } },
+      );
+      const data = await res.json();
+      console.log(data);
     } else {
       await signIn.email({ email, password });
     }
@@ -28,7 +34,7 @@ export default function AuthPage() {
   useEffect(() => {
     if (session) {
       console.log(session);
-      router.push("/order");
+      router.push("/home");
     }
   }, [session, router]);
 

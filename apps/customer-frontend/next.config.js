@@ -14,6 +14,8 @@ const config = {
     "@repo/auth",
     "@repo/ui",
     "@repo/validators",
+    "@repo/chatbot-common",
+    "@repo/chatbot-ui",
   ],
 
   /** We already do linting and typechecking as separate tasks in CI */
