@@ -14,12 +14,19 @@ export default function AuthPage() {
   const { useSession, signIn, signUp } = authClient;
   const { data: session } = useSession();
   const [email, setEmail] = useState("");
+  const [role] = useState("client");
   const [password, setPassword] = useState("");
-  const [isSignUp, setIsSignUp] = useState(false);
+  const [isSignUp, setIsSignUp] = useState<boolean | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isSignUp) {
+      await authClient.admin.createUser({
+        name: "John Doe",
+        email: email,
+        password: password,
+        role: role,
+      });
       await signUp.email({ email, password, name: "John Doe" });
     } else {
       await signIn.email({ email, password });
