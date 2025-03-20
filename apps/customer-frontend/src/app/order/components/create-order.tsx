@@ -50,6 +50,7 @@ const CreateOrder = () => {
       toCountry: "",
     },
   });
+  const [orderId,setOrderId] = React.useState<string>("");
 
   const onSubmit = async (values: z.infer<typeof orderSchema>) => {
     try {
@@ -78,6 +79,7 @@ const CreateOrder = () => {
       if (response.ok) {
         alert("Order created successfully!");
         form.reset();
+
       } else {
         alert("Failed to create order.");
         console.log(response);
