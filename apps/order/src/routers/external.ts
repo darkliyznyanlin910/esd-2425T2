@@ -97,6 +97,7 @@ const externalRouter = new OpenAPIHono()
             "application/json": {
               schema: z.object({
                 order: OrderSchema.pick({
+                  orderDetails: true,
                   fromAddressLine1: true,
                   fromAddressLine2: true,
                   fromZipCode: true,
