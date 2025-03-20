@@ -11,7 +11,7 @@ import { HonoExtension } from "./type";
 const app = new OpenAPIHono<HonoExtension>();
 
 app.use(
-  "/auth/**", // or replace with "*" to enable cors for all routes
+  "*",
   cors({
     origin: SERVICES.map((service) => getServiceBaseUrl(service)),
     allowHeaders: ["Content-Type", "Authorization"],
@@ -44,9 +44,9 @@ const routes = app
       spec: { url: `${getServiceBaseUrl("auth")}/openapi` },
     }),
   )
+  .route("/user", userRouter)
   .on(["POST", "GET"], "/auth/**", async (c) => {
     return auth.handler(c.req.raw);
-  })
-  .route("/user", userRouter);
+  });
 
 export { app, routes };
