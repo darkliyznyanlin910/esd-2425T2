@@ -2,14 +2,15 @@ import { createEnv } from "@t3-oss/env-core";
 import { z } from "zod";
 
 export const env = createEnv({
-  server: {},
-  shared: {
-    DEPLOYMENT_ENVIRONMENT: z
-      .enum(["local", "docker", "aws-prod", "aws-dev"])
+  client: {
+    NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT: z
+      .enum(["local", "docker", "kubernetes"])
       .default("local"),
   },
+  clientPrefix: "NEXT_PUBLIC_",
   runtimeEnv: {
-    DEPLOYMENT_ENVIRONMENT: process.env.DEPLOYMENT_ENVIRONMENT,
+    NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT:
+      process.env.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT,
   },
   skipValidation: process.env.npm_lifecycle_event === "lint",
 });

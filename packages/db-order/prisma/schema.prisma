@@ -1,0 +1,79 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
+  output        = "../src/generated/client"
+}
+
+generator zod {
+  provider                         = "zod-prisma-types"
+  output                           = "../src/generated/zod"
+  createInputTypes                 = false
+  createModelTypes                 = true
+  addInputTypeValidation           = false
+  addIncludeType                   = false
+  addSelectType                    = false
+  validateWhereUniqueInput         = false
+  createOptionalDefaultValuesTypes = false
+  createRelationValuesTypes        = false
+  createPartialTypes               = false
+  useDefaultValidators             = false
+  coerceDate                       = true
+  writeNullishInModelTypes         = true
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("ORDER_POSTGRES_URL")
+}
+
+enum OrderStatus {
+  PROCESSING
+  FINDING_DRIVER
+  DRIVER_FOUND
+  PICKED_UP
+  DELIVERED
+  DELAYED
+  PAYMENT_PENDING
+  PAYMENT_FAILED
+  PAYMENT_SUCCESSFUL
+}
+
+model Order {
+  id          String      @id @default(uuid())
+  userId      String
+  displayId   String
+  orderStatus OrderStatus @default(PAYMENT_PENDING)
+  orderDetails String
+  // From
+  fromAddressLine1 String
+  fromAddressLine2 String?
+  fromZipCode      String
+  // To
+  toAddressLine1   String
+  toAddressLine2   String?
+  toZipCode        String
+
+  createdAt       DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
+  trackingRecords OrderTrackingRecord[]
+
+  @@unique([userId, displayId])
+}
+
+model OrderTrackingRecord {
+  id          String      @id @default(uuid())
+  order       Order       @relation(fields: [orderId], references: [id])
+  orderId     String
+  status      OrderStatus @default(PROCESSING)
+  description String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model GeocodingCache {
+  id        String   @id @default(uuid())
+  address   String   @unique
+  lat       Float
+  lng       Float
+  createdAt DateTime @default(now())
+}

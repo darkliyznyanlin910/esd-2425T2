@@ -1,20 +1,28 @@
-import { zValidator } from "@hono/zod-validator";
-import { Hono } from "hono";
+import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
 import { z } from "zod";
 
-const testRouter = new Hono().get(
-  "/hello",
-  zValidator(
-    "query",
-    z.object({
-      name: z.string(),
-    }),
-  ),
+const testRouter = new OpenAPIHono().openapi(
+  createRoute({
+    method: "get",
+    path: "/",
+    responses: {
+      200: {
+        content: {
+          "application/json": {
+            schema: z.object({
+              message: z.string(),
+            }),
+          },
+        },
+        description: "Test response",
+      },
+      401: {
+        description: "Unauthorized",
+      },
+    },
+  }),
   (c) => {
-    const { name } = c.req.valid("query");
-    return c.json({
-      message: `Hello! ${name} from test`,
-    });
+    return c.json({ message: "Hello, world!" });
   },
 );
 

@@ -1,0 +1,46 @@
+name: esd-databases
+
+services:
+  auth_database:
+    image: postgres:15-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: auth_database
+    volumes:
+      - ./data/auth_data:/var/lib/postgresql/data
+
+  order_database:
+    image: postgres:15-alpine
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: order_database
+    volumes:
+      - ./data/order_data:/var/lib/postgresql/data
+
+  driver_database:
+    image: postgres:15-alpine
+    ports:
+      - "5434:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: driver_database
+    volumes:
+      - ./data/driver_data:/var/lib/postgresql/data
+      
+  invoice_database:
+    image: postgres:15-alpine
+    ports:
+      - "5435:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: invoice_database
+    volumes:
+      - ./data/invoice_data:/var/lib/postgresql/data

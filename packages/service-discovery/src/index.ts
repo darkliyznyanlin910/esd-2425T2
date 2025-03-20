@@ -1,27 +1,79 @@
 import { env } from "./env";
 
 export const AWS_DOMAIN = "johnnyknl.com";
-export const AWS_NAMESPACE = "esd-itsa";
-export const SERVICES = ["api", "web"] as const;
+export const AWS_NAMESPACE = "esd";
+export const SERVICES = [
+  // Frontend
+  "web", // dummy service
+  "customer-frontend",
+  "admin-frontend",
+  "driver-frontend",
+  // Backend
+  "api", // dummy service
+  "auth",
+  "chatbot",
+  "notification",
+  "order",
+  "driver",
+  "invoice",
+] as const;
 export type Service = (typeof SERVICES)[number];
 
 export const LOCAL_SERVICE_MAP: Record<Service, string> = {
-  api: "http://localhost:3001",
-  web: "http://localhost:3000",
+  // Frontend
+  web: "http://localhost:3000", // dummy service
+  "admin-frontend": "http://localhost:4400",
+  "customer-frontend": "http://localhost:5500",
+  "driver-frontend": "http://localhost:6600",
+  // Backend
+  api: "http://localhost:3001", // dummy service
+  auth: "http://localhost:3002",
+  chatbot: "http://localhost:3003",
+  notification: "http://localhost:3004",
+  order: "http://localhost:3005",
+  driver: "http://localhost:3006",
+  invoice: "http://localhost:3007",
+};
+
+export const KUBERNETES_SERVICE_MAP: Record<Service, string> = {
+  // Frontend
+  web: "http://localhost:3000", // dummy service
+  "admin-frontend": "http://localhost:4400",
+  "customer-frontend": "http://localhost:5500",
+  "driver-frontend": "http://localhost:6600",
+  // Backend
+  api: "http://localhost:8000/api", // dummy service
+  auth: "http://localhost:8000/auth",
+  chatbot: "http://localhost:8000/chatbot",
+  notification: "http://localhost:8000/notification",
+  order: "http://localhost:8000/order",
+  driver: "http://localhost:8000/driver",
+  invoice: "http://localhost:8000/invoice",
+};
+
+export const DOCKER_SERVICE_MAP: Record<Service, string> = {
+  // Frontend
+  web: "http://localhost:3000", // dummy service
+  "admin-frontend": "http://localhost:4400",
+  "customer-frontend": "http://localhost:5500",
+  "driver-frontend": "http://localhost:6600",
+  // Backend
+  api: "http://localhost:8000/api", // dummy service
+  auth: "http://localhost:8000/auth",
+  chatbot: "http://localhost:8000/chatbot",
+  notification: "http://localhost:8000/notification",
+  order: "http://localhost:8000/order",
+  driver: "http://localhost:8000/driver",
+  invoice: "http://localhost:8000/invoice",
 };
 
 export const getServiceBaseUrl = (service: Service) => {
-  if (env.DEPLOYMENT_ENVIRONMENT === "local") {
+  if (env.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT === "local") {
     return LOCAL_SERVICE_MAP[service];
-  } else if (env.DEPLOYMENT_ENVIRONMENT === "docker") {
-    if (service == "web") {
-      return `http://localhost:8000`;
-    } else {
-      return `http://localhost:8000/microservice/${service}`;
-    }
-  } else if (env.DEPLOYMENT_ENVIRONMENT === "aws-prod") {
-    return `https://${service}.production.${AWS_NAMESPACE}.${AWS_DOMAIN}`;
+  } else if (env.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT === "docker") {
+    return DOCKER_SERVICE_MAP[service];
   } else {
-    return `https://${service}.development.${AWS_NAMESPACE}.${AWS_DOMAIN}`;
+    // kubernetes
+    return KUBERNETES_SERVICE_MAP[service];
   }
 };

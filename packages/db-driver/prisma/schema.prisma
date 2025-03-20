@@ -1,0 +1,39 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
+  output        = "../src/generated/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DRIVER_POSTGRES_URL")
+}
+
+
+/// ENUM for Driver Availability
+enum DriverAvailability {
+  AVAILABLE
+  ON_DELIVERY
+  OFFLINE
+}
+
+model Driver {
+  id           String               @id @default(uuid())
+  phone        String
+  userId       String               @unique
+  availability DriverAvailability   @default(OFFLINE)
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+
+  assignments  OrderAssignment[]
+}
+
+model OrderAssignment {
+  id            String       @id @default(uuid())
+  driverId      String
+  driver        Driver       @relation(fields: [driverId], references: [id])
+  orderId       String
+  paymentAmount Float
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+}

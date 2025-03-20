@@ -1,0 +1,122 @@
+global:
+  environment: local
+  commonEnv: {}
+
+nginx:
+  replicaCount: 1
+  image:
+    repository: nginx
+    tag: stable
+    pullPolicy: IfNotPresent
+  service:
+    type: LoadBalancer
+    port: 80
+    targetPort: 80
+
+auth:
+  name: esd-auth
+  replicaCount: 1
+  image:
+    repository: esd-auth
+    tag: latest
+    pullPolicy: Never
+  service:
+    type: ClusterIP
+    port: 80
+    targetPort: 3002
+
+chatbot-backend:
+  name: esd-chatbot-backend
+  replicaCount: 1
+  image:
+    repository: esd-chatbot-backend
+    tag: latest
+    pullPolicy: Never
+  service:
+    type: ClusterIP
+    port: 80
+    targetPort: 3003
+
+notification:
+  name: esd-notification
+  replicaCount: 1
+  image:
+    repository: esd-notification
+    tag: latest
+    pullPolicy: Never
+  service:
+    type: ClusterIP
+    port: 80
+    targetPort: 3004
+
+order:
+  name: esd-order
+  replicaCount: 1
+  image:
+    repository: esd-order
+    tag: latest
+    pullPolicy: Never
+  service:
+    type: ClusterIP
+    port: 80
+    targetPort: 3005
+
+driver:
+  name: esd-driver
+  replicaCount: 1
+  image:
+    repository: esd-driver
+    tag: latest
+    pullPolicy: Never
+  service:
+    type: ClusterIP
+    port: 80
+    targetPort: 3006
+
+invoice:
+  name: esd-invoice
+  replicaCount: 1
+  image:
+    repository: esd-invoice
+    tag: latest
+    pullPolicy: Never
+  service:
+    type: ClusterIP
+    port: 80
+    targetPort: 3007
+
+admin-frontend:
+  name: esd-admin-frontend
+  replicaCount: 1
+  image:
+    repository: esd-admin-frontend
+    tag: latest
+    pullPolicy: Never
+  service:
+    type: ClusterIP
+    port: 80
+    targetPort: 4400
+
+customer-frontend:
+  name: esd-customer-frontend
+  replicaCount: 1
+  image:
+    repository: esd-customer-frontend
+    tag: latest
+    pullPolicy: Never
+  service:
+    type: ClusterIP
+    port: 80
+    targetPort: 5500
+
+driver-frontend:
+  name: esd-driver-frontend
+  replicaCount: 1
+  image:
+    repository: esd-driver-frontend
+    tag: latest
+    pullPolicy: Never
+  service:
+    type: ClusterIP
+    port: 80
+    targetPort: 6600

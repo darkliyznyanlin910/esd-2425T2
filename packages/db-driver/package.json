@@ -1,0 +1,47 @@
+{
+  "name": "@repo/db-driver",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./src/index.ts"
+    },
+    "./env": "./env.ts",
+    "./client": {
+      "types": "./src/generated/client/index.d.ts",
+      "default": "./src/generated/client/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "dev": "tsc",
+    "format": "prettier --check . --ignore-path ../../.gitignore --ignore-path .prettierignore",
+    "lint": "eslint",
+    "push": "pnpm with-env prisma db push",
+    "pull": "pnpm with-env prisma db pull",
+    "studio": "pnpm with-env prisma studio -p 5566 -b none",
+    "sync": "pnpm with-env prisma generate",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false",
+    "with-env": "dotenv -e ../../service-env/.env --",
+    "postinstall": "pnpm sync"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.2.1",
+    "@t3-oss/env-nextjs": "^0.11.1",
+    "dotenv-cli": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "@repo/prettier-config": "workspace:*",
+    "@repo/tsconfig": "workspace:*",
+    "eslint": "catalog:",
+    "prettier": "catalog:",
+    "prisma": "^6.2.1",
+    "typescript": "catalog:"
+  },
+  "prettier": "@repo/prettier-config"
+}

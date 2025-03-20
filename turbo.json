@@ -11,7 +11,7 @@
     },
     "dev": {
       "cache": false,
-      "persistent": true
+      "persistent": false
     },
     "format": {
       "outputs": [".cache/.prettiercache"],
@@ -45,13 +45,19 @@
     }
   },
   "globalEnv": [
-    "POSTGRES_URL",
-    "DEPLOYMENT_ENVIRONMENT",
+    "AUTH_POSTGRES_URL",
+    "DRIVER_POSTGRES_URL",
+    "ORDER_POSTGRES_URL",
+    "INVOICE_POSTGRES_URL",
+    "NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT",
     "PORT",
-    "RABBITMQ_URL",
-    "RABBITMQ_QUEUE",
-    "RABBITMQ_USERNAME",
-    "RABBITMQ_PASSWORD"
+    "BETTER_AUTH_SECRET",
+    "TEMPORAL_NAMESPACE",
+    "TEMPORAL_SERVER",
+    "OPENAI_API_KEY",
+    "INTERNAL_COMMUNICATION_SECRET",
+    "STRIPE_SECRET_KEY",
+    "GOOGLE_MAP_API_KEY"
   ],
   "globalPassThroughEnv": [
     "NODE_ENV",

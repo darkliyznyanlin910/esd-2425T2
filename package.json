@@ -2,17 +2,17 @@
   "name": "create-t3-turbo",
   "private": true,
   "engines": {
-    "node": ">=20.18.1",
-    "pnpm": "^9.7.0"
+    "node": ">=22.14.0",
+    "pnpm": "^10.4.1"
   },
-  "packageManager": "pnpm@9.14.2",
+  "packageManager": "pnpm@10.4.1",
   "scripts": {
     "build": "turbo run build",
     "clean": "git clean -xdf node_modules",
     "clean:workspaces": "turbo run clean",
-    "db:push": "turbo -F @repo/db push",
-    "db:studio": "turbo -F @repo/db studio",
-    "dev": "turbo watch dev --continue",
+    "db:push": "turbo run push",
+    "db:studio": "turbo run studio",
+    "dev": "turbo watch dev --continue --concurrency 20",
     "dev:next": "turbo watch dev -F @repo/nextjs...",
     "format": "turbo run format --continue -- --cache --cache-location .cache/.prettiercache",
     "format:fix": "turbo run format --continue -- --write --cache --cache-location .cache/.prettiercache",

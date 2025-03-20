@@ -1,0 +1,27 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
+  output        = "../src/generated/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("INVOICE_POSTGRES_URL")
+}
+
+enum InvoiceStatus {
+  PENDING
+  CANCELLED
+  COMPLETED
+}
+
+model Invoice {
+  id         String        @id @default(uuid())
+  orderId    String
+  customerId String
+  status     InvoiceStatus
+  amount     Float
+  path       String
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+}

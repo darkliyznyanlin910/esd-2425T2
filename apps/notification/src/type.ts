@@ -1,0 +1,13 @@
+import { hc } from "hono/client";
+
+import type { Order } from "@repo/db-order/zod";
+import { getServiceBaseUrl } from "@repo/service-discovery";
+
+import type { routes } from "./app";
+
+export const HonoClient = hc<typeof routes>(getServiceBaseUrl("notification"));
+
+export interface EventHandlers {
+  broadcastOrder: (order: Order) => void;
+  invalidateOrder: (orderId: string) => void;
+}

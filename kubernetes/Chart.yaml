@@ -1,0 +1,4 @@
+apiVersion: v2
+name: esd
+description: Helm chart for ESD project
+version: 0.1.0

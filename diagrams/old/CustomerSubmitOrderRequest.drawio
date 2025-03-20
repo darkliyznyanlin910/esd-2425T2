@@ -1,0 +1,65 @@
+<mxfile host="65bd71144e">
+    <diagram name="Page-1" id="wXNHFeC1QUHLHXNkjk2t">
+        <mxGraphModel dx="797" dy="544" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="2" value="&lt;u&gt;Customer Frontend&lt;/u&gt;&lt;div&gt;- Submit Order Application&lt;/div&gt;&lt;div&gt;- View order status&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="32" y="58.75" width="216" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="Temporal" style="rounded=0;whiteSpace=wrap;html=1;fillColor=light-dark(#FFF4C3,var(--ge-dark-color, #121212));strokeColor=light-dark(#FFD966,#FFFFFF);" vertex="1" parent="1">
+                    <mxGeometry x="313" y="191" width="222" height="77" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="Order Service" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+                    <mxGeometry x="363" y="60" width="121" height="57.5" as="geometry"/>
+                </mxCell>
+                <mxCell id="6" value="Driver Service" style="rounded=0;whiteSpace=wrap;html=1;fillColor=light-dark(#FFF4C3,var(--ge-dark-color, #121212));strokeColor=light-dark(#FFD966,#FFFFFF);" vertex="1" parent="1">
+                    <mxGeometry x="252" y="357" width="120" height="57" as="geometry"/>
+                </mxCell>
+                <mxCell id="8" value="Notification Service" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=light-dark(#FFD966,#FFFFFF);fillColor=light-dark(#FFF4C3,var(--ge-dark-color, #121212));" vertex="1" parent="1">
+                    <mxGeometry x="484" y="357" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="9" value="1. Send Order Application&lt;div&gt;4. Show application successfully submitted&lt;/div&gt;&lt;div&gt;9. Update order status&amp;nbsp;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="171" y="14" width="239" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="10" value="2. Create an order record&lt;div&gt;3. Successfully created order response&lt;/div&gt;&lt;div&gt;8. Update order status as &quot;Driver Assigned&quot;&lt;/div&gt;&lt;div&gt;&amp;nbsp;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="522" y="60" width="247" height="58" as="geometry"/>
+                </mxCell>
+                <mxCell id="11" value="5. Assign driver to order&lt;div&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;7. if driver accepts the assignment, update driver status as assigned together with order ID&lt;/span&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="112" y="440" width="326.5" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="12" value="" style="endArrow=classic;html=1;rounded=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" target="4">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="424" y="309" as="sourcePoint"/>
+                        <mxPoint x="348" y="257" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="13" value="&lt;div&gt;6. Notify driver on the assigned order&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="472" y="429" width="215" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="14" value="" style="endArrow=classic;startArrow=classic;html=1;rounded=0;" edge="1" parent="1" source="2" target="5">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="359" y="307" as="sourcePoint"/>
+                        <mxPoint x="409" y="257" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="15" value="" style="endArrow=classic;startArrow=classic;html=1;rounded=0;" edge="1" parent="1" source="4">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="424" y="170.28932188134524" as="sourcePoint"/>
+                        <mxPoint x="424" y="120.28932188134524" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="16" value="" style="endArrow=classic;startArrow=classic;html=1;rounded=0;exitX=0.45;exitY=0.033;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="6" target="8">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="356" y="319" as="sourcePoint"/>
+                        <mxPoint x="406" y="269" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint x="306" y="309"/>
+                            <mxPoint x="544" y="309"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

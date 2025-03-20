@@ -1,0 +1,38 @@
+{{- range $service := list "auth" "chatbot-backend" "notification" "order" "driver" "invoice" "customer-frontend" "admin-frontend" "driver-frontend" }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "my-app.fullname" $ }}-{{ $service }}
+  labels:
+    {{- include "my-app.labels" $ | nindent 4 }}
+    app: {{ $service }}
+spec:
+  replicas: {{ index $.Values $service "replicaCount" }}
+  selector:
+    matchLabels:
+      {{- include "my-app.labels" $ | nindent 6 }}
+      app: {{ $service }}
+  template:
+    metadata:
+      labels:
+        {{- include "my-app.labels" $ | nindent 8 }}
+        app: {{ $service }}
+      annotations:
+        konghq.com/protocol: "http"
+    spec:
+      containers:
+        - name: {{ $service }}
+          image: "{{ index $.Values $service "image" "repository" }}:{{ index $.Values $service "image" "tag" }}"
+          imagePullPolicy: {{ index $.Values $service "image" "pullPolicy" | default "IfNotPresent" }}
+          envFrom:
+            - configMapRef:
+                name: common-env
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "200m"
+{{- end }}
