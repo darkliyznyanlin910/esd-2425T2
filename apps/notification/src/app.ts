@@ -3,16 +3,17 @@ import { apiReference } from "@scalar/hono-api-reference";
 import { cors } from "hono/cors";
 import { TypedEmitter } from "tiny-typed-emitter";
 
-import { getServiceBaseUrl } from "@repo/service-discovery";
+import { getServiceBaseUrl, SERVICES } from "@repo/service-discovery";
 
-import type { EventHandlers } from "./type";
+import type { AdminEventHandlers, EventHandlers } from "./type";
+import { adminRouter } from "./routers/admin";
 import { driverRouter } from "./routers/driver";
 
 const app = new OpenAPIHono();
 
 app.use(
   cors({
-    origin: "*",
+    origin: SERVICES.map((service) => getServiceBaseUrl(service)),
     allowHeaders: ["Content-Type", "Authorization"],
     allowMethods: ["POST", "GET", "OPTIONS"],
     exposeHeaders: ["Content-Length"],
@@ -22,6 +23,7 @@ app.use(
 );
 
 export const emitter = new TypedEmitter<EventHandlers>();
+export const emitterAdmin = new TypedEmitter<AdminEventHandlers>();
 
 const routes = app
   .doc("/openapi", {
@@ -40,6 +42,7 @@ const routes = app
       spec: { url: `${getServiceBaseUrl("notification")}/openapi` },
     }),
   )
-  .route("/driver", driverRouter);
+  .route("/driver", driverRouter)
+  .route("/admin", adminRouter);
 
 export { app, routes };
