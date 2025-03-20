@@ -69,9 +69,9 @@ export async function order(order: Order) {
             name: "Delivery Fee",
             description: `Order ID: ${order.displayId}
 
-From: ${[order.fromAddressLine1, order.fromAddressLine2, order.fromZipCode, order.fromCity, order.fromState, order.fromCountry].filter(Boolean).join(", ")}
+From: ${[order.fromAddressLine1, order.fromAddressLine2, order.fromZipCode].filter(Boolean).join(", ")}
 
-To: ${[order.toAddressLine1, order.toAddressLine2, order.toZipCode, order.toCity, order.toState, order.toCountry].filter(Boolean).join(", ")}
+To: ${[order.toAddressLine1, order.toAddressLine2, order.toZipCode].filter(Boolean).join(", ")}
 
 Created at: ${order.createdAt.toLocaleString()}`,
           },

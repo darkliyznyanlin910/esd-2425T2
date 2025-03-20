@@ -3,7 +3,7 @@ import { apiReference } from "@scalar/hono-api-reference";
 import { cors } from "hono/cors";
 import { TypedEmitter } from "tiny-typed-emitter";
 
-import { getServiceBaseUrl } from "@repo/service-discovery";
+import { getServiceBaseUrl, SERVICES } from "@repo/service-discovery";
 
 import type { AdminEventHandlers, EventHandlers } from "./type";
 import { adminRouter } from "./routers/admin";
@@ -13,7 +13,7 @@ const app = new OpenAPIHono();
 
 app.use(
   cors({
-    origin: "*",
+    origin: SERVICES.map((service) => getServiceBaseUrl(service)),
     allowHeaders: ["Content-Type", "Authorization"],
     allowMethods: ["POST", "GET", "OPTIONS"],
     exposeHeaders: ["Content-Length"],

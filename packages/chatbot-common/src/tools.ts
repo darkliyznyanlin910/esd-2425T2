@@ -4,20 +4,6 @@ import type { AiSdkToolSet } from "@repo/chatbot-common";
 
 const orderIdSchema = z.object({ orderId: z.string() });
 
-export interface ToolReturnTypes {
-  getOrders: string[];
-  getOrderDetails: { orderId: string; status: string };
-  getDriverDetails: {
-    orderId: string;
-    driverName: string;
-    driverPhone: string;
-  };
-  getTrackingDetails: {
-    orderId: string;
-    status: string;
-  }[];
-}
-
 export const backendTools = {
   getOrders: {
     description: "show the orders to the user",
@@ -47,14 +33,53 @@ export const backendTools = {
       "show the tracking status change history of an order to the user",
     parameters: orderIdSchema,
   },
+  selectOrder: {
+    description: "You give options to the user to select an order",
+    parameters: z.object({
+      orderIds: z.array(z.string()),
+    }),
+  },
+  getInvoice: {
+    description: "show the invoice details to the user",
+    parameters: z.object({
+      orderId: z.string(),
+    }),
+  },
 } satisfies AiSdkToolSet;
 
 export type ToolName = keyof typeof backendTools;
-export type ToolFunctionMap = {
-  [K in ToolName]: (
-    params: z.infer<(typeof backendTools)[K]["parameters"]>,
-  ) => Promise<ToolReturnTypes[K]>;
+
+export type ToolResult = {
+  [K in ToolName]: Awaited<ToolReturnTypes[K]>;
 };
+
+export type ToolFunctionMap = {
+  [K in ToolName]?: (
+    params: z.infer<(typeof backendTools)[K]["parameters"]>,
+  ) => ToolReturnTypes[K];
+};
+
+export interface ToolReturnTypes {
+  getOrders: Promise<string[]>;
+  getOrderDetails: Promise<{ orderId: string; status: string }>;
+  getDriverDetails: Promise<{
+    orderId: string;
+    driverName: string;
+    driverPhone: string;
+  }>;
+  getTrackingDetails: Promise<
+    {
+      orderId: string;
+      status: string;
+    }[]
+  >;
+  selectOrder: void;
+  getInvoice: Promise<{
+    orderId: string;
+    amount: number;
+    url: string;
+  }>;
+}
 
 export const toolFunctionMap: ToolFunctionMap = {
   getOrders: async () => {
@@ -84,5 +109,12 @@ export const toolFunctionMap: ToolFunctionMap = {
         status: "pending",
       },
     ];
+  },
+  getInvoice: async ({ orderId }) => {
+    return {
+      orderId,
+      amount: 100,
+      url: "https://knl-personal.s3.ap-southeast-1.amazonaws.com/KaungNyanLin_Resume.pdf",
+    };
   },
 };

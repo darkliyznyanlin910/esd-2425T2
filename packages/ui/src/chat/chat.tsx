@@ -162,7 +162,7 @@ export function ChatMessages({
         {children}
       </div>
 
-      <div className="flex flex-1 items-end justify-end [grid-column:1/1] [grid-row:1/1]">
+      <div className="-z-10 flex flex-1 items-end justify-end [grid-column:1/1] [grid-row:1/1]">
         {!shouldAutoScroll && (
           <div className="sticky bottom-0 left-0 flex w-full justify-end">
             <Button
