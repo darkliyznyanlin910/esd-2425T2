@@ -28,7 +28,7 @@ export default function AuthPage() {
   useEffect(() => {
     if (session) {
       console.log(session);
-      router.push("/order");
+      router.push("/home");
     }
   }, [session, router]);
 
