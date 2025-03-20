@@ -11,3 +11,7 @@ export interface EventHandlers {
   broadcastOrder: (order: Order) => void;
   invalidateOrder: (orderId: string) => void;
 }
+export interface AdminEventHandlers {
+  receiveDelay: (order: Order) => void;
+  manualAssignment: (order: Order) => void;
+}
