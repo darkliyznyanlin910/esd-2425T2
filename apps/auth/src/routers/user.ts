@@ -55,7 +55,7 @@ const userRouter = new OpenAPIHono()
       }
       const body = await c.req.json();
       try {
-        const res = await auth.api.createUser({
+        const res = await auth.api.signUpEmail({
           body: {
             password: body.password,
             email: body.email,
@@ -112,6 +112,69 @@ const userRouter = new OpenAPIHono()
         },
       });
       return c.json(user);
+    },
+  )
+  .openapi(
+    createRoute({
+      method: "post",
+      path: "/adminCreation",
+      description: "Create Admin Account",
+      request: {
+        body: {
+          content: {
+            "application/json": {
+              schema: z.object({
+                password: z.string(),
+                email: z.string(),
+                name: z.string(),
+              }),
+            },
+          },
+        },
+      },
+      middleware: [
+        authMiddleware({
+          authBased: {
+            allowedRoles: ["admin"],
+          },
+          bearer: {
+            tokens: [env.INTERNAL_COMMUNICATION_SECRET],
+          },
+        }),
+      ],
+      responses: {
+        200: {
+          content: {
+            "application/json": {
+              schema: z.object({
+                message: z.string(),
+              }),
+            },
+          },
+          description: "Test response",
+        },
+        401: {
+          description: "Unauthorized",
+        },
+      },
+    }),
+    async (c) => {
+      const body = await c.req.json();
+      try {
+        const res = await auth.api.createUser({
+          body: {
+            password: body.password,
+            email: body.email,
+            name: body.name,
+            role: "admin",
+          },
+        });
+        console.log(res.user);
+        return c.json({ message: "Admin signup successful" });
+      } catch (error) {
+        console.log(error);
+        return c.json({ message: "Admin signup failed" }, 400);
+      }
     },
   );
 
