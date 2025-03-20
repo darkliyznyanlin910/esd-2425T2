@@ -1,4 +1,7 @@
+import { Blob } from "buffer";
+import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
+import dotenv from "dotenv";
 import { z } from "zod";
 
 import type { HonoExtension } from "@repo/auth/type";
@@ -7,11 +10,104 @@ import { db } from "@repo/db-invoice";
 
 import { env } from "../env";
 
-const invoiceRouter = new OpenAPIHono<HonoExtension>()
+dotenv.config();
+
+// Configure S3 client for LocalStack
+const s3Client = new S3Client({
+  endpoint: process.env.S3_ENDPOINT ?? "",
+  region: process.env.AWS_REGION ?? "",
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID ?? "",
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY ?? "",
+  },
+  forcePathStyle: true,
+});
+
+const router = new OpenAPIHono<HonoExtension>();
+
+// Add the invoice router - keeping all the existing routes from the provided code
+const invoiceRouter = router
+  // S3 Image Upload Route
   .openapi(
     createRoute({
       method: "post",
-      path: "/",
+      path: "/invoices/upload",
+      description: "Upload an invoice image to S3",
+      request: {
+        body: {
+          content: {
+            "multipart/form-data": {
+              schema: z.object({
+                file: z.any().refine((file) => file !== undefined, {
+                  message: "PDF is required",
+                }),
+                // folder: z.string().optional().default("invoices"),
+                orderId: z.string(),
+              }),
+            },
+          },
+        },
+      },
+      responses: {
+        201: { description: "Invoice uploaded successfully" },
+        400: { description: "Failed to upload invoice" },
+      },
+    }),
+    async (c) => {
+      try {
+        const data = await c.req.parseBody();
+        const file = data.file as Blob;
+        // const folder = data.folder || "invoices";
+        const filename = `${data.orderId}-invoice(${Date.now()})`;
+
+        console.log(file, filename);
+
+        const arrayBuffer = await file.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
+
+        // const key = `${folder}/${filename}`;
+        const key = `${filename}`;
+
+        console.log("S3 Upload Command:", {
+          Bucket: process.env.S3_BUCKET_NAME || "invoice-bucket",
+          Key: key,
+          Body: buffer,
+          ContentType: file.type,
+        });
+
+        // Upload to S3
+        const res = await s3Client.send(
+          new PutObjectCommand({
+            Bucket: process.env.S3_BUCKET || "invoice-bucket",
+            Key: key,
+            Body: buffer,
+            ContentType: file.type || "application/pdf",
+          }),
+        );
+
+        console.log("S3 Upload Response:", res);
+
+        // Return the URL where the image can be accessed
+        return c.json(
+          {
+            success: true,
+            imageUrl: `http://localhost:4566/${process.env.S3_BUCKET}/${key}`, // LocalStack S3 URL
+            key,
+          },
+          201,
+        );
+      } catch (error) {
+        console.error("Error uploading image:", error);
+        return c.json({ error: "Failed to upload image" }, 500);
+      }
+    },
+  )
+
+  // Create Invoice
+  .openapi(
+    createRoute({
+      method: "post",
+      path: "/invoices",
       description: "Create a new invoice",
       middleware: [
         authMiddleware({
@@ -56,7 +152,7 @@ const invoiceRouter = new OpenAPIHono<HonoExtension>()
   .openapi(
     createRoute({
       method: "get",
-      path: "/:id",
+      path: "/invoices/:id",
       description: "Get invoice by ID",
       request: {
         params: z.object({
@@ -80,7 +176,7 @@ const invoiceRouter = new OpenAPIHono<HonoExtension>()
   .openapi(
     createRoute({
       method: "get",
-      path: "/",
+      path: "/invoices",
       description: "List all invoices",
       request: {
         query: z.object({
@@ -106,7 +202,7 @@ const invoiceRouter = new OpenAPIHono<HonoExtension>()
   .openapi(
     createRoute({
       method: "put",
-      path: "/:id",
+      path: "/invoices/:id",
       description: "Update invoice status",
       request: {
         params: z.object({
@@ -148,7 +244,7 @@ const invoiceRouter = new OpenAPIHono<HonoExtension>()
   .openapi(
     createRoute({
       method: "delete",
-      path: "/:id",
+      path: "/invoices/:id",
       description: "Delete invoice",
       request: {
         params: z.object({
@@ -175,9 +271,10 @@ const invoiceRouter = new OpenAPIHono<HonoExtension>()
           200,
         );
       } catch (error) {
+        console.error(error);
         return c.json({ error: "Invoice not found" }, 404);
       }
     },
   );
 
-export { invoiceRouter };
+export { router, invoiceRouter };
