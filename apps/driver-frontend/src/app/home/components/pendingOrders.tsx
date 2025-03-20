@@ -1,7 +1,6 @@
 import { Button } from "@repo/ui/button";
 import { Archive, CheckCircle } from "lucide-react";
 
-// Define the Order interface if not importing it
 interface Order {
   id: string;
   name: string;
