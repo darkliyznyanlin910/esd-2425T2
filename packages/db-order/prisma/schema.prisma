@@ -43,7 +43,7 @@ model Order {
   userId      String
   displayId   String
   orderStatus OrderStatus @default(PAYMENT_PENDING)
-
+  orderDetails String
   // From
   fromAddressLine1 String
   fromAddressLine2 String?
