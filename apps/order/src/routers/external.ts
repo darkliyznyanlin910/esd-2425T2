@@ -89,6 +89,59 @@ const externalRouter = new OpenAPIHono()
   )
   .openapi(
     createRoute({
+      method: "get",
+      path: "/orderTracking/:id",
+      request: {
+        params: z.object({
+          id: z.string(),
+        }),
+        headers: z.object({
+          "x-api-key": z.string(),
+          "x-user-id": z.string(),
+        }),
+      },
+      description: "Get Timestamps of order status of orderId",
+      middleware: [
+        authMiddleware({
+          bearer: {
+            tokens: [env.INTERNAL_COMMUNICATION_SECRET],
+          },
+        }),
+      ],
+      responses: {
+        200: {
+          description: "OK",
+          content: {
+            "application/json": {
+              schema: OrderSchema,
+            },
+          },
+        },
+        404: {
+          description: "Order not found",
+        },
+      },
+    }),
+    async (c) => {
+      const { id } = c.req.valid("param");
+      const { "x-user-id": userId, "x-api-key": apiKey } =
+        c.req.valid("header");
+
+      const order = await db.orderTrackingRecord.findMany({
+        where: {
+          orderId: id,
+        },
+      });
+
+      if (!order) {
+        return c.json({ error: "Order not found" }, 404);
+      }
+
+      return c.json(order);
+    },
+  )
+  .openapi(
+    createRoute({
       method: "post",
       path: "/order",
       request: {
