@@ -11,7 +11,7 @@ import { model } from "./ai";
 const chatRouter = new OpenAPIHono().openapi(
   createRoute({
     method: "post",
-    path: "/",
+    path: "/chat",
     request: {
       body: {
         content: {
