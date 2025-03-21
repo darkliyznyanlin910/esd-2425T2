@@ -11,6 +11,7 @@ import { paymentRouter } from "./routers/payment";
 const app = new OpenAPIHono();
 
 app.use(
+  "*",
   cors({
     origin: [
       ...SERVICES.map((service) => getServiceBaseUrl(service)),

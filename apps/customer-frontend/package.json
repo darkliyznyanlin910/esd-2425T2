@@ -17,6 +17,7 @@
   "dependencies": {
     "@repo/auth": "workspace:*",
     "@repo/chatbot-ui": "workspace:*",
+    "@repo/order": "workspace:*",
     "@repo/service-discovery": "workspace:*",
     "@repo/ui": "workspace:*",
     "@repo/validators": "workspace:*",
