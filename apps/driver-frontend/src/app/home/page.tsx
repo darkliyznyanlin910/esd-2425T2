@@ -1,13 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
-import {
-  Archive,
-  CheckCircle,
-  User,
-} from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Archive, CheckCircle, User } from "lucide-react";
 
+import { authClient } from "@repo/auth/client";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,9 +16,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@repo/ui/alert-dialog";
-
 import { Button } from "@repo/ui/button";
-
 import {
   Sidebar,
   SidebarContent,
@@ -31,6 +27,10 @@ import {
   SidebarProvider,
   SidebarSeparator,
 } from "@repo/ui/sidebar";
+
+import { AcceptRejectOrderWrapper } from "./components/acceptReject";
+import { PendingOrdersWrapper } from "./components/pendingOrders";
+import { ProfileManagementWrapper } from "./components/profile";
 
 interface Order {
   id: string;
@@ -47,10 +47,6 @@ interface DriverProfile {
   password: string;
   updatedAt: string;
 }
-
-import { PendingOrdersWrapper } from "./components/pendingOrders";
-import { AcceptRejectOrderWrapper } from "./components/acceptReject";
-import { ProfileManagementWrapper } from "./components/profile";
 
 export default function DriverHomepage() {
   const [selectedMenu, setSelectedMenu] = useState("pending-orders");
@@ -107,7 +103,19 @@ export default function DriverHomepage() {
   const [passwordValue, setPasswordValue] = useState("");
   const [alertOpen, setAlertOpen] = useState(false);
   const [orderToReject, setOrderToReject] = useState<string | null>(null);
+  const { useSession, signOut } = authClient;
+  const router = useRouter();
+  const { data: session } = useSession();
 
+  useEffect(() => {
+    if (!session) {
+      router.push("/auth");
+    }
+  }, [session, router]);
+  const handleSignOut = async () => {
+    await signOut();
+    router.push("/auth");
+  };
   const handleProfileUpdate = (field: "phone" | "email" | "password") => {
     const currentTime = new Date().toISOString();
 
@@ -128,7 +136,7 @@ export default function DriverHomepage() {
     } else if (field === "password" && passwordValue) {
       setDriverProfile((prev) => ({
         ...prev,
-        password: "••••••••", 
+        password: "••••••••",
         updatedAt: currentTime,
       }));
       setPasswordValue("");
@@ -255,7 +263,10 @@ export default function DriverHomepage() {
             </SidebarContent>
 
             <SidebarFooter>
-              <Button className="w-full bg-red-600 hover:bg-red-500">
+              <Button
+                onClick={handleSignOut}
+                className="w-full bg-red-600 hover:bg-red-500"
+              >
                 Sign Out
               </Button>
             </SidebarFooter>
