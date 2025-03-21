@@ -538,6 +538,9 @@ importers:
       '@repo/api':
         specifier: workspace:*
         version: link:../api
+      '@repo/driver':
+        specifier: workspace:*
+        version: link:../driver
       '@repo/eslint-config':
         specifier: workspace:*
         version: link:../../tooling/eslint

@@ -1,9 +1,10 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Archive, Bot, FilePlus } from "lucide-react";
+import { Archive, Bot, Home } from "lucide-react";
 
 import { authClient } from "@repo/auth/client";
+import { getServiceBaseUrl } from "@repo/service-discovery";
 import { Button } from "@repo/ui/button";
 import {
   Sidebar,
@@ -21,6 +22,36 @@ export function AppSidebar() {
   const router = useRouter();
 
   const handleSignOut = async () => {
+    try {
+      const session = await authClient.getSession();
+
+      if (!session) {
+        console.error("Session not found after sign-in.");
+        return;
+      }
+      const response = await fetch(
+        `${getServiceBaseUrl("driver")}/driver/${session.data?.user.id}/availability`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ availability: "OFFLINE" }),
+        },
+      );
+      console.log(session.data?.user.id);
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Error updating driver availability:", errorData);
+        return;
+      }
+
+      const data = await response.json();
+      console.log("Driver availability updated:", data);
+    } catch (error) {
+      console.error("Failed to update driver availability:", error);
+    }
     await signOut();
     router.push("/auth");
   };
@@ -43,7 +74,7 @@ export function AppSidebar() {
           <SidebarGroupLabel>Applications</SidebarGroupLabel>
           <SidebarMenuItem>
             <SidebarMenuButton>
-              <FilePlus /> Create Order
+              <Home /> Home
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
