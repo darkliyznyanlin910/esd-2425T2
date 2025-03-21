@@ -428,6 +428,4 @@ const CreateOrder = () => {
       </Form>
     </div>
   );
-};
-
-export default CreateOrder;
+}

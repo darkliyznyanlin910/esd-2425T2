@@ -69,6 +69,9 @@ importers:
       '@repo/chatbot-ui':
         specifier: workspace:*
         version: link:../../packages/chatbot-ui
+      '@repo/db-order':
+        specifier: workspace:*
+        version: link:../../packages/db-order
       '@repo/service-discovery':
         specifier: workspace:*
         version: link:../../packages/service-discovery
@@ -1171,6 +1174,9 @@ importers:
       '@repo/chatbot-common':
         specifier: workspace:*
         version: link:../chatbot-common
+      '@tanstack/react-table':
+        specifier: ^8.21.2
+        version: 8.21.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       class-variance-authority:
         specifier: ^0.7.0
         version: 0.7.1
@@ -3064,6 +3070,17 @@ packages:
     resolution: {integrity: sha512-Xepc53h+D5sqoO/MZiSH2ROVLTDfRwR+3E4C2oS71/lo9u2mwbneZIEyIGXEHvmfyQpqtbf9voghD+QwLDLzcA==}
     peerDependencies:
       react: ^18 || ^19
+
+  '@tanstack/react-table@8.21.2':
+    resolution: {integrity: sha512-11tNlEDTdIhMJba2RBH+ecJ9l1zgS2kjmexDPAraulc8jeNA4xocSNeyzextT0XJyASil4XsCYlJmf5jEWAtYg==}
+    engines: {node: '>=12'}
+    peerDependencies:
+      react: '>=16.8'
+      react-dom: '>=16.8'
+
+  '@tanstack/table-core@8.21.2':
+    resolution: {integrity: sha512-uvXk/U4cBiFMxt+p9/G7yUWI/UbHYbyghLCjlpWZ3mLeIZiUBSKcUnw9UnKkdRz7Z/N4UBuFLWQdJCjUe7HjvA==}
+    engines: {node: '>=12'}
 
   '@temporalio/activity@1.11.7':
     resolution: {integrity: sha512-8WjXmvre0He9RvipP5nPK8dDbC/EoMtllCjcdiyPI69jDiihoTxOLpiYXIXdHn9yGbf34lHa21ZiRVZNhFkeHg==}
@@ -8029,6 +8046,14 @@ snapshots:
     dependencies:
       '@tanstack/query-core': 5.66.4
       react: 18.3.1
+
+  '@tanstack/react-table@8.21.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@tanstack/table-core': 8.21.2
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+
+  '@tanstack/table-core@8.21.2': {}
 
   '@temporalio/activity@1.11.7':
     dependencies:

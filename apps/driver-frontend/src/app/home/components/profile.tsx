@@ -2,6 +2,17 @@ import { Button } from "@repo/ui/button";
 import { Input } from "@repo/ui/input";
 import { Label } from "@repo/ui/label";
 import { Edit, Lock, Mail, Phone, Save, User } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@repo/ui/alert-dialog';
+import { useState } from "react";
 
 interface DriverProfile {
   driverId: string;
@@ -48,6 +59,37 @@ export function ProfileManagementWrapper({
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleString();
+  };
+
+  // State for password confirmation dialog
+  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
+  const [currentField, setCurrentField] = useState<"phone" | "email" | "password" | null>(null);
+  const [passwordError, setPasswordError] = useState("");
+
+  // Function to handle update with confirmation for password
+  const handleFieldUpdate = (field: "phone" | "email" | "password") => {
+    if (field === "password") {
+      // Validate password
+      if (passwordValue.length < 8) {
+        setPasswordError("Password must be at least 8 characters long");
+        return;
+      }
+      setPasswordError("");
+      setCurrentField(field);
+      setIsConfirmDialogOpen(true);
+    } else {
+      // For non-password fields, proceed without confirmation
+      handleProfileUpdate(field);
+    }
+  };
+
+  // Confirm the password change
+  const confirmUpdate = () => {
+    if (currentField) {
+      handleProfileUpdate(currentField);
+      setIsConfirmDialogOpen(false);
+      setCurrentField(null);
+    }
   };
 
   return (
@@ -120,7 +162,7 @@ export function ProfileManagementWrapper({
                     </Button>
                     <Button
                       size="sm"
-                      onClick={() => handleProfileUpdate("phone")}
+                      onClick={() => handleFieldUpdate("phone")}
                     >
                       <Save size={16} className="mr-1" /> Save
                     </Button>
@@ -176,7 +218,7 @@ export function ProfileManagementWrapper({
                     </Button>
                     <Button
                       size="sm"
-                      onClick={() => handleProfileUpdate("email")}
+                      onClick={() => handleFieldUpdate("email")}
                     >
                       <Save size={16} className="mr-1" /> Save
                     </Button>
@@ -223,6 +265,9 @@ export function ProfileManagementWrapper({
                     placeholder="Enter new password"
                     autoFocus
                   />
+                  {passwordError && (
+                    <p className="mt-1 text-sm text-red-500">{passwordError}</p>
+                  )}
                   <div className="mt-2 flex justify-end space-x-2">
                     <Button
                       variant="outline"
@@ -233,7 +278,7 @@ export function ProfileManagementWrapper({
                     </Button>
                     <Button
                       size="sm"
-                      onClick={() => handleProfileUpdate("password")}
+                      onClick={() => handleFieldUpdate("password")}
                     >
                       <Save size={16} className="mr-1" /> Save
                     </Button>
@@ -243,7 +288,7 @@ export function ProfileManagementWrapper({
                 <Input
                   id="password"
                   type="password"
-                  value={profile.password}
+                  value="••••••••" // Show dots instead of actual password for security
                   disabled
                   className="border-0 bg-transparent p-0 focus-visible:ring-0"
                 />
@@ -256,6 +301,26 @@ export function ProfileManagementWrapper({
           <p>Profile last updated: {formatDate(profile.updatedAt)}</p>
         </div>
       </div>
+
+      {/* Confirmation Dialog */}
+      <AlertDialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirm Password Change</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to change your password? You'll need to use your new password the next time you log in.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setIsConfirmDialogOpen(false)}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={confirmUpdate}>
+              Confirm
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

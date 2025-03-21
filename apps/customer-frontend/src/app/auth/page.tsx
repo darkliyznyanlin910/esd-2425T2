@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { authClient } from "@repo/auth/client";
-import { getServiceBaseUrl } from "@repo/service-discovery";
+import { HonoClient } from "@repo/auth/type";
 import { Button } from "@repo/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@repo/ui/card";
 import { Input } from "@repo/ui/input";
@@ -22,18 +22,10 @@ export default function AuthPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isSignUp) {
-      const res = await fetch(`${getServiceBaseUrl("auth")}/user/signup`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          password,
-          name: "Joe",
-        }),
-        credentials: "include",
-      });
+      const res = await HonoClient.user.signup.$post(
+        { json: { email, password, name: "Joe" } },
+        { init: { credentials: "include" } },
+      );
       const data = await res.json();
       console.log(data);
     } else {

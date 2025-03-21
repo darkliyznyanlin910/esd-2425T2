@@ -18,11 +18,14 @@ import {
   SidebarSeparator,
 } from "@repo/ui/sidebar";
 
-export default function TestPage() {
+import TestNotificationPage from "./components/notifications/notification";
+import OrderTablePage from "./components/orders/order-table";
+
+export default function HomePage() {
   const { useSession, signOut } = authClient;
   const { data: session } = useSession();
   const router = useRouter();
-  const [selectedMenu, setSelectedMenu] = useState("");
+  const [selectedMenu, setSelectedMenu] = useState("orders");
 
   useEffect(() => {
     if (!session) {
@@ -35,9 +38,15 @@ export default function TestPage() {
     router.push("/auth");
   };
 
+  const menuComponents: Record<string, JSX.Element> = {
+    orders: <OrderTablePage />, //wip - add status filter
+    "driver-assignment": <OrderTablePage />, //wip
+    notifications: <OrderTablePage />, //wip
+  };
+
   return (
-    <SidebarProvider>
-      <div className="flex min-h-screen">
+    <SidebarProvider className="flex h-screen flex-col overflow-hidden">
+      <div className="flex h-screen overflow-hidden">
         <Sidebar
           logo={
             <Image
@@ -71,7 +80,13 @@ export default function TestPage() {
                     className={`flex items-center gap-2 ${selectedMenu === "driver-assignment" ? "bg-muted font-bold" : ""}`}
                     onClick={() => setSelectedMenu("driver-assignment")}
                   >
-                    <Truck size={18} /> Driver Assignment
+                    <Truck
+                      size={18}
+                      strokeWidth={
+                        selectedMenu === "driver-assignment" ? 2.5 : 2
+                      }
+                    />{" "}
+                    Driver Assignment
                   </SidebarMenuButton>
                 </SidebarMenuItem>
 
@@ -80,7 +95,11 @@ export default function TestPage() {
                     className={`flex items-center gap-2 ${selectedMenu === "notifications" ? "bg-muted font-bold" : ""}`}
                     onClick={() => setSelectedMenu("notifications")}
                   >
-                    <Bell size={18} /> Notifications
+                    <Bell
+                      size={18}
+                      strokeWidth={selectedMenu === "notifications" ? 2.5 : 2}
+                    />{" "}
+                    Notifications
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               </SidebarMenu>
@@ -96,6 +115,9 @@ export default function TestPage() {
             </SidebarFooter>
           </div>
         </Sidebar>
+        <main className="flex-1 overflow-auto p-0">
+          {menuComponents[selectedMenu]}
+        </main>
       </div>
     </SidebarProvider>
   );
