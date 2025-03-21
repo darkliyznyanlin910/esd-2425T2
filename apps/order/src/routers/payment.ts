@@ -100,7 +100,9 @@ const paymentRouter = new OpenAPIHono()
     }),
     async (c) => {
       const { orderId } = c.req.valid("param");
+
       const temporalClient = await connectToTemporal();
+      console.log("hit the endpoint");
       try {
         const paymentInformation = await temporalClient.workflow
           .getHandle(orderId)

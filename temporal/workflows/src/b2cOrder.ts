@@ -83,6 +83,7 @@ Created at: ${order.createdAt.toLocaleString()}`,
   stripeSessionStatus = session.status;
 
   setHandler(getPaymentInformationQuery, async () => {
+    console.log("Querying payment information");
     const temp = await getStripeCheckoutSession(session.id);
     if (!temp.status) {
       throw ApplicationFailure.create({
