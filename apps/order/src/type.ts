@@ -12,4 +12,4 @@ export interface GeocodingResponse {
   error?: string;
 }
 
-export const HonoClient = hc<typeof routes>(getServiceBaseUrl("driver"));
+export const HonoClient = hc<typeof routes>(getServiceBaseUrl("order"));

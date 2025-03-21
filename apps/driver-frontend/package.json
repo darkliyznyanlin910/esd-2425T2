@@ -33,6 +33,7 @@
   },
   "devDependencies": {
     "@repo/api": "workspace:*",
+    "@repo/driver": "workspace:*",
     "@repo/eslint-config": "workspace:*",
     "@repo/prettier-config": "workspace:*",
     "@repo/tailwind-config": "workspace:*",
