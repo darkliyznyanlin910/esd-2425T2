@@ -142,7 +142,7 @@ export default function CreateOrderPage() {
                       id="orderDetails"
                       {...field}
                       type="text"
-                      placeholder="Order Details"
+                      placeholder="Enter Your Order Details!"
                       className="h-12 w-full rounded-md border border-gray-300 p-2"
                     />
                   </FormControl>

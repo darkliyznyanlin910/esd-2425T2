@@ -64,7 +64,7 @@ const userRouter = new OpenAPIHono()
           },
         });
         console.log(res.user);
-        return c.json({ message: "User signup successful" });
+        return c.json(res.user);
       } catch (error) {
         console.log(error);
         return c.json({ message: "User signup failed" }, 400);

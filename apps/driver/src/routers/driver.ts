@@ -18,16 +18,6 @@ const driverRouter = new OpenAPIHono<HonoExtension>()
     createRoute({
       method: "post",
       path: "/",
-      middleware: [
-        authMiddleware({
-          authBased: {
-            allowedRoles: ["client"],
-          },
-          bearer: {
-            tokens: [env.INTERNAL_COMMUNICATION_SECRET],
-          },
-        }),
-      ],
       description: "Create new driver",
       request: {
         body: {
@@ -85,7 +75,7 @@ const driverRouter = new OpenAPIHono<HonoExtension>()
     }),
     async (c) => {
       const { id } = c.req.valid("param");
-      const driver = await db.driver.findUnique({ where: { id } });
+      const driver = await db.driver.findUnique({ where: { userId: id } });
       if (!driver) return c.json({ message: "Driver not found" }, 404);
       return c.json(driver);
     },
@@ -126,10 +116,10 @@ const driverRouter = new OpenAPIHono<HonoExtension>()
   .openapi(
     createRoute({
       method: "put",
-      path: "/:id/availability",
+      path: "/:userId/availability",
       description: "Update driver availability",
       request: {
-        params: z.object({ id: z.string() }),
+        params: z.object({ userId: z.string() }),
         body: {
           content: {
             "application/json": {
@@ -146,10 +136,10 @@ const driverRouter = new OpenAPIHono<HonoExtension>()
       },
     }),
     async (c) => {
-      const { id } = c.req.valid("param");
+      const { userId } = c.req.valid("param");
       const { availability } = c.req.valid("json");
       const updatedDriver = await db.driver.update({
-        where: { id },
+        where: { userId },
         data: { availability },
       });
       return c.json({
@@ -160,9 +150,62 @@ const driverRouter = new OpenAPIHono<HonoExtension>()
   )
   .openapi(
     createRoute({
+      method: "get",
+      path: "/",
+      description: "Get all drivers",
+      request: {
+        query: z.object({
+          take: z.number().default(10),
+          page: z.number().default(1),
+        }),
+      },
+      responses: {
+        200: {
+          content: {
+            "application/json": {
+              schema: z.array(
+                z.object({
+                  id: z.string(),
+                  name: z.string(),
+                  phone: z.string().optional(),
+                  email: z.string().optional(),
+                  availability: z.enum(["AVAILABLE", "ON_DELIVERY", "OFFLINE"]),
+                  createdAt: z.string(),
+                  updatedAt: z.string(),
+                }),
+              ),
+            },
+          },
+          description: "Get all drivers",
+        },
+        401: {
+          description: "Unauthorized",
+        },
+        404: {
+          description: "Drivers not found",
+        },
+      },
+    }),
+    async (c) => {
+      const { take, page } = c.req.valid("query");
+
+      const drivers = await db.driver.findMany({
+        take,
+        skip: (page - 1) * take,
+      });
+
+      if (!drivers || drivers.length === 0) {
+        return c.json({ error: "Drivers not found" }, 404);
+      }
+
+      return c.json(drivers);
+    },
+  )
+  .openapi(
+    createRoute({
       method: "delete",
       path: "/:id",
-      description: "Delete driver by id",
+      description: "Delete driver by userId",
       request: { params: z.object({ id: z.string() }) },
       responses: {
         200: { description: "Driver deleted" },
@@ -209,21 +252,23 @@ const driverRouter = new OpenAPIHono<HonoExtension>()
     createRoute({
       method: "get",
       path: "/assignments/:id",
-      description: "Get order assignment by id",
+      description: "Get all order assignment to userId",
       request: { params: z.object({ id: z.string() }) },
       responses: {
         200: {
           description: "Order assignment details",
           content: {
             "application/json": {
-              schema: z.object({
-                id: z.string(),
-                driverId: z.string(),
-                orderId: z.string(),
-                paymentAmount: z.number(),
-                createdAt: z.string(),
-                updatedAt: z.string(),
-              }),
+              schema: z.array(
+                z.object({
+                  id: z.string(),
+                  driverId: z.string(),
+                  orderId: z.string(),
+                  paymentAmount: z.number(),
+                  createdAt: z.string(),
+                  updatedAt: z.string(),
+                }),
+              ),
             },
           },
         },
@@ -232,8 +277,13 @@ const driverRouter = new OpenAPIHono<HonoExtension>()
     }),
     async (c) => {
       const { id } = c.req.valid("param");
+      const driverResult = await db.driver.findUnique({
+        where: { userId: id },
+      });
+      if (driverResult === null)
+        return c.json({ message: "Driver not found" }, 404);
       const assignment = await db.orderAssignment.findUnique({
-        where: { id },
+        where: { id: driverResult.id },
       });
       if (!assignment) return c.json({ message: "Assignment not found" }, 404);
       return c.json(assignment);
