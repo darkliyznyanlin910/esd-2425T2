@@ -80,16 +80,16 @@ const userRouter = new OpenAPIHono()
           id: z.string(),
         }),
       },
-      middleware: [
-        authMiddleware({
-          authBased: {
-            allowedRoles: ["admin"],
-          },
-          bearer: {
-            tokens: [env.INTERNAL_COMMUNICATION_SECRET],
-          },
-        }),
-      ],
+      // middleware: [
+      //   authMiddleware({
+      //     authBased: {
+      //       allowedRoles: ["admin"],
+      //     },
+      //     bearer: {
+      //       tokens: [env.INTERNAL_COMMUNICATION_SECRET],
+      //     },
+      //   }),
+      // ],
       responses: {
         200: {
           content: {

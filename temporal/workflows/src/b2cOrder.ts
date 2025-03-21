@@ -15,12 +15,12 @@ import type {
   StripeSessionStatus,
 } from "@repo/temporal-common";
 
-export const ORDER_DEFAULT_UNIT_AMOUNT = 5;
+export const ORDER_DEFAULT_UNIT_AMOUNT = 5000;
 export const PAYMENT_TIMEOUT = "5m";
 
-export const getPaymentInformationQuery = defineQuery<
-  Promise<z.infer<typeof paymentInformationSchema>>
->("getPaymentInformation");
+export const getPaymentInformationQuery = defineQuery<z.infer<
+  typeof paymentInformationSchema
+> | null>("getPaymentInformation");
 
 export const paymentSucceededSignal =
   defineSignal<[string]>("paymentSucceeded");
@@ -45,37 +45,34 @@ const {
 });
 
 export async function order(order: Order) {
-  setHandler(getPaymentInformationQuery, async () => {
+  let stripeSessionStatus: StripeSessionStatus | null = null;
+  setHandler(getPaymentInformationQuery, () => {
     console.log("Querying payment information");
-    const temp = await getStripeCheckoutSession(session.id);
-    if (!temp.status) {
-      throw ApplicationFailure.create({
-        nonRetryable: true,
-        message: "Stripe session status is null",
-      });
+    if (!stripeSessionStatus) {
+      return null;
     }
 
     const status =
-      temp.status === "open"
+      stripeSessionStatus === "open"
         ? "open"
-        : temp.status === "complete"
-          ? temp.status
+        : stripeSessionStatus === "complete"
+          ? stripeSessionStatus
           : "expired";
 
     if (status === "open") {
       return {
         status,
-        sessionId: temp.id,
-        sessionUrl: temp.url!,
+        sessionId: session.id,
+        sessionUrl: session.url!,
       };
     }
 
     return {
       status,
-      sessionId: temp.id,
+      sessionId: session.id,
     };
   });
-
+  console.log("Ordering", order);
   const user = await getUser(order.userId);
   let stripeCustomerId = user.stripeCustomerId;
 
@@ -83,8 +80,6 @@ export async function order(order: Order) {
     const customer = await createStripeCustomer(user.email);
     stripeCustomerId = customer.id;
   }
-
-  let stripeSessionStatus: StripeSessionStatus | null = null;
 
   const session = await createStripeCheckoutSession(
     stripeCustomerId,
