@@ -12,11 +12,12 @@ import { Label } from "@repo/ui/label";
 
 export default function AuthPage() {
   const router = useRouter();
-  const { useSession, signIn, signUp } = authClient;
+  const { useSession, signIn } = authClient;
   const { data: session } = useSession();
   const [email, setEmail] = useState("");
+  const [role] = useState("client");
   const [password, setPassword] = useState("");
-  const [isSignUp, setIsSignUp] = useState(false);
+  const [isSignUp, setIsSignUp] = useState<boolean | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
