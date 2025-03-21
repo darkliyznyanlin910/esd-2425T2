@@ -108,6 +108,8 @@ const paymentRouter = new OpenAPIHono()
           .getHandle(orderId)
           .query(getPaymentInformationQuery);
 
+        console.log(paymentInformation);
+
         return c.json(paymentInformation);
       } catch (error) {
         console.error(error);

@@ -17,16 +17,27 @@ export async function createStripeCheckoutSession(
   orderId: string,
   lineItems: Stripe.Checkout.SessionCreateParams.LineItem[],
 ) {
+  const updatedLineItems = lineItems.map((item) => ({
+    ...item,
+    quantity: item.quantity ?? 1,
+  }));
+  console.log(
+    "Creating Stripe Checkout Session with Line Items:",
+    updatedLineItems,
+  );
+
   const session = await stripeClient.checkout.sessions.create({
     customer: customerId,
     mode: "payment",
-    line_items: lineItems,
+    line_items: updatedLineItems,
     success_url: `${getServiceBaseUrl("order")}/payment/${orderId}?status=success&sessionId={CHECKOUT_SESSION_ID}`,
     cancel_url: `${getServiceBaseUrl("order")}/payment/${orderId}?status=failed&sessionId={CHECKOUT_SESSION_ID}`,
     invoice_creation: {
       enabled: true,
     },
   });
+
+  console.log("Stripe Checkout Session Created:", session.id);
   return session;
 }
 
