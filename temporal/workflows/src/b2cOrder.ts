@@ -18,9 +18,9 @@ import type {
 export const ORDER_DEFAULT_UNIT_AMOUNT = 5;
 export const PAYMENT_TIMEOUT = "5m";
 
-export const getPaymentInformationQuery = defineQuery<
-  z.infer<typeof paymentInformationSchema>
->("getPaymentInformation");
+export const getPaymentInformationQuery = defineQuery<z.infer<
+  typeof paymentInformationSchema
+> | null>("getPaymentInformation");
 
 export const paymentSucceededSignal =
   defineSignal<[string]>("paymentSucceeded");
@@ -83,10 +83,7 @@ Created at: ${order.createdAt.toLocaleString()}`,
   setHandler(getPaymentInformationQuery, () => {
     console.log("Querying payment information");
     if (!stripeSessionStatus) {
-      throw ApplicationFailure.create({
-        nonRetryable: true,
-        message: "Stripe session status is null",
-      });
+      return null;
     }
 
     const status =
