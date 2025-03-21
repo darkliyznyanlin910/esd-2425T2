@@ -52,6 +52,8 @@ export default function CreateOrderPage() {
   });
   const [isPolling, setIsPolling] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(null);
+  const [paymentInfo, setPaymentInfo] = useState<any | null>(null);
+  const [paymentStatus, setPaymentStatus] = useState<string | null>(null);
   const onSubmit = async (values: z.infer<typeof orderSchema>) => {
     try {
       const response = await hc<AppType>(
@@ -87,8 +89,6 @@ export default function CreateOrderPage() {
   useEffect(() => {
     if (!orderId || !isPolling) return;
 
-    let interval: NodeJS.Timeout;
-
     const fetchOrderStatus = async () => {
       try {
         const response = await fetch(
@@ -119,8 +119,11 @@ export default function CreateOrderPage() {
       }
     };
 
-    interval = setInterval(fetchOrderStatus, 5000);
-    fetchOrderStatus();
+    const interval = setInterval(() => {
+      fetchOrderStatus().catch(console.error);
+    }, 5000);
+
+    fetchOrderStatus().catch(console.error);
 
     return () => clearInterval(interval);
   }, [isPolling, orderId]);
