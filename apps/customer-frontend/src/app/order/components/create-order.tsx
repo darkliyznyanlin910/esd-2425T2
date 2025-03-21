@@ -1,10 +1,9 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { hc } from "hono/client";
 import { z } from "zod";
 
-import { authClient } from "@repo/auth/client";
 import { AppType } from "@repo/order/type";
 import { getServiceBaseUrl } from "@repo/service-discovery";
 import { Button } from "@repo/ui/button";
@@ -17,6 +16,7 @@ import {
 } from "@repo/ui/form";
 
 const orderSchema = z.object({
+  orderDetails: z.string().min(1, "Required"),
   fromAddressLine1: z.string().min(1, "Required"),
   fromAddressLine2: z.string().optional(),
   fromCity: z.string().min(1, "Required"),
@@ -32,10 +32,10 @@ const orderSchema = z.object({
 });
 
 const CreateOrder = () => {
-  const { useSession } = authClient;
   const form = useForm({
     schema: orderSchema,
     defaultValues: {
+      orderDetails: "",
       fromAddressLine1: "",
       fromAddressLine2: "",
       fromCity: "",
@@ -50,16 +50,10 @@ const CreateOrder = () => {
       toCountry: "",
     },
   });
-
+  const [isPolling, setIsPolling] = useState(false);
+  const [orderId, setOrderId] = useState<string | null>(null);
   const onSubmit = async (values: z.infer<typeof orderSchema>) => {
     try {
-      // const response = await fetch("http://localhost:3005/order", {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify({ order: values, userId: session?.user.id ?? "" }),
-      // });
       const response = await hc<AppType>(
         getServiceBaseUrl("order"),
       ).order.$post(
@@ -77,6 +71,9 @@ const CreateOrder = () => {
       console.log(response);
       if (response.ok) {
         alert("Order created successfully!");
+        const orderData = await response.json();
+        setOrderId(orderData.id);
+        setIsPolling(true);
         form.reset();
       } else {
         alert("Failed to create order.");
@@ -87,15 +84,75 @@ const CreateOrder = () => {
       alert("An error occurred. Please try again.");
     }
   };
+  useEffect(() => {
+    if (!orderId || !isPolling) return;
+
+    let interval: NodeJS.Timeout;
+
+    const fetchOrderStatus = async () => {
+      try {
+        const response = await fetch(`${getServiceBaseUrl("order")}/payment/${orderId}`, {
+          method: "GET",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+        });
+
+        if (!response.ok) {
+          console.error("Failed to get payment information");
+          return;
+        }
+
+        const data = await response.json();
+        console.log("Payment Info:", data);
+
+        if (data && data.status === "open") {
+          setPaymentInfo(data);
+          setPaymentStatus(data.status);
+          setIsPolling(false);
+          clearInterval(interval);
+        }
+      } catch (error) {
+        console.error("Error fetching payment status:", error);
+      }
+    };
+
+    interval = setInterval(fetchOrderStatus, 5000); // Poll every 5 seconds
+    fetchOrderStatus(); // Fetch immediately
+
+    return () => clearInterval(interval); // Cleanup on unmount
+  }, [isPolling, orderId]);
 
   return (
     <div className="mx-auto max-w-4xl p-6">
       <h2 className="mb-6 text-2xl font-semibold">Create Order</h2>
       <Form {...form}>
+        <form className="mb-5">
+          <div className="grid gap-4 rounded-lg border bg-white p-5 shadow-md">
+            <h3 className="text-lg font-medium">Order details</h3>
+            <FormField
+              name="orderDetails"
+              control={form.control}
+              render={({ field }) => (
+                <>
+                  <FormControl>
+                    <input
+                      id="orderDetails"
+                      {...field}
+                      type="text"
+                      placeholder="Order Details"
+                      className="h-12 w-full rounded-md border border-gray-300 p-2"
+                    />
+                  </FormControl>
+                </>
+              )}
+            />
+          </div>
+        </form>
+
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6">
             {/* From Address */}
-            <div className="grid gap-4 rounded-lg border bg-white p-6 shadow-md">
+            <div className="grid gap-4 rounded-lg border bg-white p-5 shadow-md">
               <h3 className="mb-4 text-lg font-medium md:col-span-2">
                 From Address
               </h3>
@@ -228,7 +285,7 @@ const CreateOrder = () => {
             </div>
 
             {/* To Address */}
-            <div className="grid gap-4 rounded-lg border bg-white p-6 shadow-md">
+            <div className="grid gap-4 rounded-lg border bg-white p-5 shadow-md">
               <h3 className="mb-4 text-lg font-medium md:col-span-2">
                 To Address
               </h3>
@@ -308,7 +365,7 @@ const CreateOrder = () => {
                         id="toState"
                         {...field}
                         type="text"
-                        placeholder="State (Optional)"
+                        placeholder="State"
                         className="h-12 w-full rounded-md border border-gray-300 p-2"
                       />
                     </FormControl>
