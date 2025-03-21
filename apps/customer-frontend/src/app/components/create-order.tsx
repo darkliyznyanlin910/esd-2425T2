@@ -13,23 +13,23 @@ import {
   useForm,
 } from "@repo/ui/form";
 
-const orderSchema = z.object({
-  fromAddressLine1: z.string().min(1, "Required"),
-  fromAddressLine2: z.string().optional(),
-  fromCity: z.string().min(1, "Required"),
-  fromState: z.string().optional(),
-  fromZipCode: z.string().min(1, "Required"),
-  fromCountry: z.string().min(1, "Required"),
-  toAddressLine1: z.string().min(1, "Required"),
-  toAddressLine2: z.string().optional(),
-  toCity: z.string().min(1, "Required"),
-  toState: z.string().optional(),
-  toZipCode: z.string().min(1, "Required"),
-  toCountry: z.string().min(1, "Required"),
-  userId: z.string().min(1, "Required"),
-});
+export default function CreateOrderPage() {
+  const orderSchema = z.object({
+    fromAddressLine1: z.string().min(1, "Required"),
+    fromAddressLine2: z.string().optional(),
+    fromCity: z.string().min(1, "Required"),
+    fromState: z.string().optional(),
+    fromZipCode: z.string().min(1, "Required"),
+    fromCountry: z.string().min(1, "Required"),
+    toAddressLine1: z.string().min(1, "Required"),
+    toAddressLine2: z.string().optional(),
+    toCity: z.string().min(1, "Required"),
+    toState: z.string().optional(),
+    toZipCode: z.string().min(1, "Required"),
+    toCountry: z.string().min(1, "Required"),
+    userId: z.string().min(1, "Required"),
+  });
 
-const CreateOrder = () => {
   const { useSession } = authClient;
   const { data: session } = useSession();
   const user_id = session?.user.id ?? "";
@@ -356,6 +356,4 @@ const CreateOrder = () => {
       </Form>
     </div>
   );
-};
-
-export default CreateOrder;
+}
