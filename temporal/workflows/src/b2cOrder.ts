@@ -19,7 +19,7 @@ export const ORDER_DEFAULT_UNIT_AMOUNT = 5;
 export const PAYMENT_TIMEOUT = "5m";
 
 export const getPaymentInformationQuery = defineQuery<
-  Promise<z.infer<typeof paymentInformationSchema>>
+  z.infer<typeof paymentInformationSchema>
 >("getPaymentInformation");
 
 export const paymentSucceededSignal =
@@ -45,37 +45,6 @@ const {
 });
 
 export async function order(order: Order) {
-  setHandler(getPaymentInformationQuery, async () => {
-    console.log("Querying payment information");
-    const temp = await getStripeCheckoutSession(session.id);
-    if (!temp.status) {
-      throw ApplicationFailure.create({
-        nonRetryable: true,
-        message: "Stripe session status is null",
-      });
-    }
-
-    const status =
-      temp.status === "open"
-        ? "open"
-        : temp.status === "complete"
-          ? temp.status
-          : "expired";
-
-    if (status === "open") {
-      return {
-        status,
-        sessionId: temp.id,
-        sessionUrl: temp.url!,
-      };
-    }
-
-    return {
-      status,
-      sessionId: temp.id,
-    };
-  });
-
   const user = await getUser(order.userId);
   let stripeCustomerId = user.stripeCustomerId;
 
@@ -110,6 +79,36 @@ Created at: ${order.createdAt.toLocaleString()}`,
   );
 
   stripeSessionStatus = session.status;
+
+  setHandler(getPaymentInformationQuery, () => {
+    console.log("Querying payment information");
+    if (!stripeSessionStatus) {
+      throw ApplicationFailure.create({
+        nonRetryable: true,
+        message: "Stripe session status is null",
+      });
+    }
+
+    const status =
+      stripeSessionStatus === "open"
+        ? "open"
+        : stripeSessionStatus === "complete"
+          ? stripeSessionStatus
+          : "expired";
+
+    if (status === "open") {
+      return {
+        status,
+        sessionId: session.id,
+        sessionUrl: session.url!,
+      };
+    }
+
+    return {
+      status,
+      sessionId: session.id,
+    };
+  });
 
   setHandler(paymentSucceededSignal, async (sessionId) => {
     const temp = await getStripeCheckoutSession(sessionId);
