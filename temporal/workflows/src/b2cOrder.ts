@@ -15,7 +15,7 @@ import type {
   StripeSessionStatus,
 } from "@repo/temporal-common";
 
-export const ORDER_DEFAULT_UNIT_AMOUNT = 5;
+export const ORDER_DEFAULT_UNIT_AMOUNT = 5000;
 export const PAYMENT_TIMEOUT = "5m";
 
 export const getPaymentInformationQuery = defineQuery<z.infer<
@@ -45,41 +45,7 @@ const {
 });
 
 export async function order(order: Order) {
-  const user = await getUser(order.userId);
-  let stripeCustomerId = user.stripeCustomerId;
-
-  if (!stripeCustomerId) {
-    const customer = await createStripeCustomer(user.email);
-    stripeCustomerId = customer.id;
-  }
-
   let stripeSessionStatus: StripeSessionStatus | null = null;
-
-  const session = await createStripeCheckoutSession(
-    stripeCustomerId,
-    order.id,
-    [
-      {
-        price_data: {
-          currency: "SGD",
-          unit_amount: ORDER_DEFAULT_UNIT_AMOUNT,
-          product_data: {
-            name: "Delivery Fee",
-            description: `Order ID: ${order.displayId}
-
-From: ${[order.fromAddressLine1, order.fromAddressLine2, order.fromZipCode].filter(Boolean).join(", ")}
-
-To: ${[order.toAddressLine1, order.toAddressLine2, order.toZipCode].filter(Boolean).join(", ")}
-
-Created at: ${order.createdAt.toLocaleString()}`,
-          },
-        },
-      },
-    ],
-  );
-
-  stripeSessionStatus = session.status;
-
   setHandler(getPaymentInformationQuery, () => {
     console.log("Querying payment information");
     if (!stripeSessionStatus) {
@@ -106,6 +72,39 @@ Created at: ${order.createdAt.toLocaleString()}`,
       sessionId: session.id,
     };
   });
+  console.log("Ordering", order);
+  const user = await getUser(order.userId);
+  let stripeCustomerId = user.stripeCustomerId;
+
+  if (!stripeCustomerId) {
+    const customer = await createStripeCustomer(user.email);
+    stripeCustomerId = customer.id;
+  }
+
+  const session = await createStripeCheckoutSession(
+    stripeCustomerId,
+    order.id,
+    [
+      {
+        price_data: {
+          currency: "SGD",
+          unit_amount: ORDER_DEFAULT_UNIT_AMOUNT,
+          product_data: {
+            name: "Delivery Fee",
+            description: `Order ID: ${order.displayId}
+
+From: ${[order.fromAddressLine1, order.fromAddressLine2, order.fromZipCode].filter(Boolean).join(", ")}
+
+To: ${[order.toAddressLine1, order.toAddressLine2, order.toZipCode].filter(Boolean).join(", ")}
+
+Created at: ${order.createdAt.toLocaleString()}`,
+          },
+        },
+      },
+    ],
+  );
+
+  stripeSessionStatus = session.status;
 
   setHandler(paymentSucceededSignal, async (sessionId) => {
     const temp = await getStripeCheckoutSession(sessionId);
