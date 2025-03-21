@@ -31,7 +31,7 @@ const orderSchema = z.object({
   toCountry: z.string().min(1, "Required"),
 });
 
-const CreateOrder = () => {
+export default function CreateOrderPage() {
   const form = useForm({
     schema: orderSchema,
     defaultValues: {
@@ -91,11 +91,14 @@ const CreateOrder = () => {
 
     const fetchOrderStatus = async () => {
       try {
-        const response = await fetch(`${getServiceBaseUrl("order")}/payment/${orderId}`, {
-          method: "GET",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-        });
+        const response = await fetch(
+          `${getServiceBaseUrl("order")}/payment/${orderId}`,
+          {
+            method: "GET",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+          },
+        );
 
         if (!response.ok) {
           console.error("Failed to get payment information");
@@ -116,10 +119,10 @@ const CreateOrder = () => {
       }
     };
 
-    interval = setInterval(fetchOrderStatus, 5000); // Poll every 5 seconds
-    fetchOrderStatus(); // Fetch immediately
+    interval = setInterval(fetchOrderStatus, 5000);
+    fetchOrderStatus();
 
-    return () => clearInterval(interval); // Cleanup on unmount
+    return () => clearInterval(interval);
   }, [isPolling, orderId]);
 
   return (
