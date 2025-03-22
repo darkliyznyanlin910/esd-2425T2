@@ -2,6 +2,7 @@ import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
 import { z } from "zod";
 
 import { authMiddleware } from "@repo/auth/auth";
+import { getServiceBaseUrl } from "@repo/service-discovery";
 import { paymentInformationSchema } from "@repo/temporal-common";
 import { connectToTemporal } from "@repo/temporal-common/temporal-client";
 import {
@@ -28,16 +29,16 @@ const paymentRouter = new OpenAPIHono()
           sessionId: z.string().optional(),
         }),
       },
-      middleware: [
-        authMiddleware({
-          authBased: {
-            allowedRoles: ["client"],
-          },
-          bearer: {
-            tokens: [env.INTERNAL_COMMUNICATION_SECRET],
-          },
-        }),
-      ],
+      // middleware: [
+      //   authMiddleware({
+      //     authBased: {
+      //       allowedRoles: ["client"],
+      //     },
+      //     // bearer: {
+      //     //   tokens: [env.INTERNAL_COMMUNICATION_SECRET],
+      //     // },
+      //   }),
+      // ],
       responses: {
         200: {
           content: {
@@ -55,6 +56,7 @@ const paymentRouter = new OpenAPIHono()
     async (c) => {
       const { orderId } = c.req.valid("param");
       const { status, sessionId } = c.req.valid("query");
+      console.log(" sue hit the endpoint in payment : " + status);
 
       const temporalClient = await connectToTemporal();
 
@@ -75,6 +77,43 @@ const paymentRouter = new OpenAPIHono()
       return c.json(paymentInformation);
     },
   )
+  // .openapi(
+  //   createRoute({
+  //     method: "get",
+  //     path: "/redirect",
+  //     request: {
+  //       query: z.object({
+  //         orderId: z.string(),
+  //         status: z.enum(["success", "failed"]),
+  //         sessionId: z.string().optional(),
+  //       }),
+  //     },
+  //     responses: {
+  //       302: { description: "Redirecting to frontend" },
+  //     },
+  //   }),
+  //   async (c) => {
+  //     const { orderId, status, sessionId } = c.req.valid("query");
+  //     const temporalClient = await connectToTemporal();
+
+  //     if (status === "success") {
+  //       await temporalClient.workflow
+  //         .getHandle(orderId)
+  //         .signal(paymentSucceededSignal, sessionId);
+  //     } else {
+  //       await temporalClient.workflow
+  //         .getHandle(orderId)
+  //         .signal(paymentFailedSignal, sessionId);
+  //     }
+
+  //     const frontendRedirectUrl =
+  //       status === "success"
+  //         ? `${getServiceBaseUrl("customer-frontend")}/order-success?orderId=${orderId}`
+  //         : `${getServiceBaseUrl("customer-frontend")}/order-failed`;
+
+  //     return c.redirect(frontendRedirectUrl, 302);
+  //   },
+  // )
   .openapi(
     createRoute({
       method: "get",
@@ -108,7 +147,7 @@ const paymentRouter = new OpenAPIHono()
           .getHandle(orderId)
           .query(getPaymentInformationQuery);
 
-        console.log(paymentInformation);
+        console.log("sue paymentinformation : " + JSON.stringify(paymentInformation));
 
         return c.json(paymentInformation);
       } catch (error) {

@@ -52,8 +52,7 @@ export default function CreateOrderPage() {
   });
   const [isPolling, setIsPolling] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(null);
-  const [paymentInfo, setPaymentInfo] = useState<any | null>(null);
-  const [paymentStatus, setPaymentStatus] = useState<string | null>(null);
+
   const onSubmit = async (values: z.infer<typeof orderSchema>) => {
     try {
       const response = await hc<AppType>(
@@ -70,9 +69,10 @@ export default function CreateOrderPage() {
           },
         },
       );
+
       console.log(response);
+
       if (response.ok) {
-        alert("Order created successfully!");
         const orderData = await response.json();
         setOrderId(orderData.id);
         setIsPolling(true);
@@ -109,10 +109,13 @@ export default function CreateOrderPage() {
         console.log("Payment Info:", data);
 
         if (data && data.status === "open") {
-          setPaymentInfo(data);
-          setPaymentStatus(data.status);
           setIsPolling(false);
           clearInterval(interval);
+          if (data.sessionUrl) {
+            window.location.href = data.sessionUrl;
+          } else {
+            alert("Session URL not found.");
+          }
         }
       } catch (error) {
         console.error("Error fetching payment status:", error);
