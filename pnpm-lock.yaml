@@ -44,6 +44,10 @@ catalogs:
 importers:
 
   .:
+    dependencies:
+      '@radix-ui/react-separator':
+        specifier: ^1.1.2
+        version: 1.1.2(@types/react-dom@18.3.5(@types/react@18.3.18))(@types/react@18.3.18)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
     devDependencies:
       '@repo/prettier-config':
         specifier: workspace:*
@@ -69,9 +73,18 @@ importers:
       '@repo/chatbot-ui':
         specifier: workspace:*
         version: link:../../packages/chatbot-ui
+      '@repo/db-driver':
+        specifier: workspace:*
+        version: link:../../packages/db-driver
       '@repo/db-order':
         specifier: workspace:*
         version: link:../../packages/db-order
+      '@repo/driver':
+        specifier: workspace:*
+        version: link:../driver
+      '@repo/order':
+        specifier: workspace:*
+        version: link:../order
       '@repo/service-discovery':
         specifier: workspace:*
         version: link:../../packages/service-discovery
@@ -1023,6 +1036,9 @@ importers:
       zod:
         specifier: 'catalog:'
         version: 3.24.1
+      zod-prisma-types:
+        specifier: ^3.2.4
+        version: 3.2.4(@prisma/client@6.3.1(prisma@6.3.1(typescript@5.7.3))(typescript@5.7.3))(prisma@6.3.1(typescript@5.7.3))
     devDependencies:
       '@repo/eslint-config':
         specifier: workspace:*
@@ -1060,6 +1076,9 @@ importers:
       zod:
         specifier: 'catalog:'
         version: 3.24.1
+      zod-prisma-types:
+        specifier: ^3.2.4
+        version: 3.2.4(@prisma/client@6.3.1(prisma@6.3.1(typescript@5.7.3))(typescript@5.7.3))(prisma@6.3.1(typescript@5.7.3))
     devDependencies:
       '@repo/eslint-config':
         specifier: workspace:*

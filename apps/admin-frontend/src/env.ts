@@ -16,6 +16,7 @@ export const env = createEnv({
    */
   server: {
     AUTH_POSTGRES_URL: z.string().url(),
+    INTERNAL_COMMUNICATION_SECRET: z.string(),
   },
 
   /**
