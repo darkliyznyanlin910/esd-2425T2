@@ -12,6 +12,7 @@ import { driverRouter } from "./routers/driver";
 const app = new OpenAPIHono();
 
 app.use(
+  "*",
   cors({
     origin: SERVICES.map((service) => getServiceBaseUrl(service)),
     allowHeaders: ["Content-Type", "Authorization"],
