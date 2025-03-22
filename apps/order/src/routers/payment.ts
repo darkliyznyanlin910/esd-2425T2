@@ -54,10 +54,14 @@ const paymentRouter = new OpenAPIHono()
       },
     }),
     async (c) => {
+      console.log("hit the endpoint to send signal");
+      // let paymentInformation = null;
+      // let attempts = 0;
+      // const maxAttempts = 10;
       const { orderId } = c.req.valid("param");
       const { status, sessionId } = c.req.valid("query");
-      console.log(" sue hit the endpoint in payment : " + status);
-
+      console.log("Status : " + status);
+      console.log("Session Id : " + sessionId);
       const temporalClient = await connectToTemporal();
 
       if (status === "success") {
@@ -147,7 +151,9 @@ const paymentRouter = new OpenAPIHono()
           .getHandle(orderId)
           .query(getPaymentInformationQuery);
 
-        console.log("sue paymentinformation : " + JSON.stringify(paymentInformation));
+        console.log(
+          "sue paymentinformation : " + JSON.stringify(paymentInformation),
+        );
 
         return c.json(paymentInformation);
       } catch (error) {
