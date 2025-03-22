@@ -175,9 +175,9 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
       method: "post",
       path: "/:id",
       description: "[Internal] Update order status",
-      middleware: [
-        bearerAuth({ token: env.INTERNAL_COMMUNICATION_SECRET }),
-      ] as const,
+      // middleware: [
+      //   bearerAuth({ token: env.INTERNAL_COMMUNICATION_SECRET }),
+      // ] as const,
       request: {
         params: z.object({
           id: z.string(),
