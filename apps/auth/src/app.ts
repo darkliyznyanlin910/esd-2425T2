@@ -15,7 +15,7 @@ app.use(
   cors({
     origin: SERVICES.map((service) => getServiceBaseUrl(service)),
     allowHeaders: ["Content-Type", "Authorization"],
-    allowMethods: ["POST", "GET", "OPTIONS"],
+    allowMethods: ["POST", "GET", "PUT", "OPTIONS"],
     exposeHeaders: ["Content-Length"],
     maxAge: 600,
     credentials: true,
@@ -45,7 +45,7 @@ const routes = app
     }),
   )
   .route("/user", userRouter)
-  .on(["POST", "GET"], "/auth/**", async (c) => {
+  .on(["POST", "GET", "PUT"], "/auth/**", async (c) => {
     return auth.handler(c.req.raw);
   });
 

@@ -154,7 +154,7 @@ export async function getUser(userId: string): Promise<User> {
       id: userId,
     },
   });
-  console.log("Got user", res);
+
   if (!res.ok) {
     throw ApplicationFailure.create({
       nonRetryable: true,
@@ -163,4 +163,32 @@ export async function getUser(userId: string): Promise<User> {
   }
   const data = await res.json();
   return UserSchema.parse(data);
+}
+
+export async function updateUser(
+  userId: string,
+  updateData: { stripeCustomerId: string },
+): Promise<void> {
+  console.log("Updating user:", userId, "with data:", updateData);
+
+  const res = await fetch(
+    `${getServiceBaseUrl("auth")}/user/${userId}/stripeCustomerId`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(updateData),
+    },
+  );
+  console.log(" sue response : " + JSON.stringify(res));
+
+  if (!res.ok) {
+    throw ApplicationFailure.create({
+      nonRetryable: true,
+      message: `Failed to update user ${userId} with Stripe customer ID ${updateData.stripeCustomerId} - ${res.status}}`,
+    });
+  }
+
+  console.log("Successfully updated user with stripeCustomerId:", userId);
 }

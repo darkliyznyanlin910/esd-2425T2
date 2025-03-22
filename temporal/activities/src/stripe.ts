@@ -22,10 +22,10 @@ export async function createStripeCheckoutSession(
     quantity: item.quantity ?? 1,
   }));
   console.log(
-    "Creating Stripe Checkout Session with Line Items:",
+    " sue Creating Stripe Checkout Session with Line Items:",
     updatedLineItems,
   );
-
+  console.log("customer ID" + customerId);
   const session = await stripeClient.checkout.sessions.create({
     customer: customerId,
     mode: "payment",
@@ -37,7 +37,7 @@ export async function createStripeCheckoutSession(
     },
   });
 
-  console.log("Stripe Checkout Session Created:", session.id);
+  console.log(" sue Stripe Checkout Session Created:", session.id);
   return session;
 }
 

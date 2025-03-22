@@ -29,6 +29,7 @@ export const paymentFailedSignal = defineSignal<[string]>("paymentFailed");
 
 const {
   getUser,
+  updateUser,
   createStripeCustomer,
   createStripeCheckoutSession,
   getStripeCheckoutSession,
@@ -47,7 +48,11 @@ const {
 export async function order(order: Order) {
   let stripeSessionStatus: StripeSessionStatus | null = null;
   setHandler(getPaymentInformationQuery, () => {
-    console.log("Querying payment information");
+    console.log(
+      "sue Querying stripe session status in getpaymentinformationquery" +
+        stripeSessionStatus,
+    );
+
     if (!stripeSessionStatus) {
       return null;
     }
@@ -66,6 +71,7 @@ export async function order(order: Order) {
         sessionUrl: session.url!,
       };
     }
+    console.log(" sue payment status : ", status);
 
     return {
       status,
@@ -74,12 +80,15 @@ export async function order(order: Order) {
   });
   console.log("Ordering", order);
   const user = await getUser(order.userId);
+
   let stripeCustomerId = user.stripeCustomerId;
 
   if (!stripeCustomerId) {
     const customer = await createStripeCustomer(user.email);
     stripeCustomerId = customer.id;
+    await updateUser(user.id, { stripeCustomerId });
   }
+  console.log("Stripe customer ID", stripeCustomerId);
 
   const session = await createStripeCheckoutSession(
     stripeCustomerId,
@@ -107,6 +116,7 @@ Created at: ${order.createdAt.toLocaleString()}`,
   stripeSessionStatus = session.status;
 
   setHandler(paymentSucceededSignal, async (sessionId) => {
+    console.log("sue Payment succeeded signal received");
     const temp = await getStripeCheckoutSession(sessionId);
     if (!temp.status) {
       throw ApplicationFailure.create({
@@ -122,6 +132,7 @@ Created at: ${order.createdAt.toLocaleString()}`,
   });
 
   setHandler(paymentFailedSignal, async (sessionId) => {
+    console.log(" sue Payment failed signal received");
     const temp = await getStripeCheckoutSession(sessionId);
     if (!temp.status) {
       throw ApplicationFailure.create({
