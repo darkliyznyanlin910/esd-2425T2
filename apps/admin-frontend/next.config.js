@@ -17,6 +17,8 @@ const config = {
     "@repo/ui",
     "@repo/validators",
     "@repo/db-order",
+    "@repo/db-driver",
+    "@repo/order",
   ],
 
   /** We already do linting and typechecking as separate tasks in CI */

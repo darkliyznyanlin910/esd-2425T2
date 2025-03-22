@@ -1,10 +1,25 @@
 "use client";
 
+import { useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
+import { hc } from "hono/client";
 import { ArrowUpDown } from "lucide-react";
 
 import { Order } from "@repo/db-order/zod";
+import { AppType as DriverAppType } from "@repo/driver/type";
+import { AppType as OrderAppType } from "@repo/order/type";
+import { getServiceBaseUrl } from "@repo/service-discovery";
 import { Button } from "@repo/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@repo/ui/dialog";
+
+import { useOrders } from "./assign-context";
+import { SelectionTable } from "./driver-selection";
 
 export const columns: ColumnDef<Order>[] = [
   {
@@ -60,6 +75,136 @@ export const columns: ColumnDef<Order>[] = [
           Updated At
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
+      );
+    },
+  },
+  {
+    accessorKey: "assign",
+    header: "Assign",
+    cell: ({ row }) => {
+      const [open, setOpen] = useState(false);
+      const { orders, setOrders } = useOrders();
+
+      const handleAssign = async (
+        driverId: string,
+        userId: string,
+        orderId: string,
+        paymentAmount: number,
+      ) => {
+        try {
+          console.log(`Order ${orderId} assigned to driver ${driverId}`);
+          setOpen(false);
+
+          const assignResponse = await hc<DriverAppType>(
+            getServiceBaseUrl("driver"),
+          ).driver.assign.$post(
+            {
+              json: {
+                driverId,
+                orderId,
+                paymentAmount,
+              },
+            },
+            {
+              init: { credentials: "include" },
+            },
+          );
+
+          if (!assignResponse.ok) {
+            throw new Error("Assign driver failed");
+          }
+
+          const availabilityResponse = await hc<DriverAppType>(
+            getServiceBaseUrl("driver"),
+          ).driver[":userId"].availability.$put(
+            {
+              param: { userId },
+              json: {
+                availability: "ON_DELIVERY",
+              },
+            },
+            {
+              init: { credentials: "include" },
+            },
+          );
+
+          if (!availabilityResponse.ok) {
+            throw new Error("Update availability failed");
+          }
+
+          console.log(`Driver ${userId} successfully assigned and updated.`);
+
+          const state = "DRIVER_FOUND";
+
+          const updateOrder = await hc<OrderAppType>(
+            getServiceBaseUrl("order"),
+          ).order[":id"].$post(
+            {
+              param: { id: orderId },
+              json: {
+                orderStatus: state,
+              },
+            },
+            {
+              init: {
+                credentials: "include",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+              },
+            },
+          );
+
+          if (!updateOrder.ok) {
+            throw new Error("Update order failed");
+          }
+
+          console.log("Order state updated to DRIVER_FOUND");
+
+          setOrders((prevOrders: Order[]) =>
+            prevOrders.filter((order: Order) => order.id !== orderId),
+          );
+
+          // const updateTemporal = await hc<DriverAppType>(
+          //   getServiceBaseUrl("driver"),
+          // ).driver[":state"].$post(
+          //   {
+          //     param: { state },
+          //     json: { orderId, driverId },
+          //   },
+          //   {
+          //     init: { credentials: "include" },
+          //   },
+          // );
+
+          // if (!updateTemporal.ok) {
+          //   throw new Error("Update temporal failed");
+          // }
+
+          // console.log("Order state updated to DRIVER_FOUND");
+        } catch (error) {
+          console.error("Error in handleAssign:", error);
+        }
+      };
+      return (
+        <div>
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+              <Button onClick={() => setOpen(true)}>Assign</Button>
+            </DialogTrigger>
+            <DialogContent aria-describedby={undefined}>
+              <DialogHeader>
+                <DialogTitle>Assign Driver</DialogTitle>
+              </DialogHeader>
+              <p>Assigning order ID: {row.original.id}</p>
+              <SelectionTable
+                orderId={row.original.id}
+                onAssign={handleAssign}
+                paymentAmount={5}
+              />
+            </DialogContent>
+          </Dialog>
+        </div>
       );
     },
   },
