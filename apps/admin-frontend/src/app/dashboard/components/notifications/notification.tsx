@@ -2,6 +2,9 @@
 
 import { useEffect, useState } from "react";
 
+import { Alert, AlertDescription, AlertTitle } from "@repo/ui/alert";
+import { Button } from "@repo/ui/button";
+
 export default function TestNotificationPage() {
   const [data, setData] = useState<string>("test");
 
@@ -28,12 +31,11 @@ export default function TestNotificationPage() {
   }, []);
 
   return (
-    <div className="container mx-auto h-screen py-6">
-      <div className="text-xl font-semibold">Notifications</div>
-      <div>Current data: {data}</div>
-      <pre>
-        {typeof data === "string" ? data : JSON.stringify(data, null, 2)}
-      </pre>
+    <div className="p-4">
+      <Alert className="h-20">
+        <AlertTitle>Notification</AlertTitle>
+        <AlertDescription>{data}</AlertDescription>
+      </Alert>
     </div>
   );
 }
