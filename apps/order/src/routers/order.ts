@@ -293,9 +293,9 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
           authBased: {
             allowedRoles: ["client", "admin"],
           },
-          bearer: {
-            tokens: [env.INTERNAL_COMMUNICATION_SECRET],
-          },
+          // bearer: {
+          //   tokens: [env.INTERNAL_COMMUNICATION_SECRET],
+          // },
         }),
       ] as const,
       request: {
