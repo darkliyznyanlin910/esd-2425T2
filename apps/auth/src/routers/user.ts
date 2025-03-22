@@ -71,6 +71,7 @@ const userRouter = new OpenAPIHono()
       }
     },
   )
+
   .openapi(
     createRoute({
       method: "get",
@@ -114,6 +115,7 @@ const userRouter = new OpenAPIHono()
       return c.json(user);
     },
   )
+
   .openapi(
     createRoute({
       method: "post",
@@ -174,6 +176,66 @@ const userRouter = new OpenAPIHono()
       } catch (error) {
         console.log(error);
         return c.json({ message: "Admin signup failed" }, 400);
+      }
+    },
+  )
+
+  .openapi(
+    createRoute({
+      method: "put",
+      path: "/:id/stripeCustomerId",
+      description: "Update Stripe Customer ID for a user",
+      request: {
+        params: z.object({
+          id: z.string(),
+        }),
+        body: {
+          content: {
+            "application/json": {
+              schema: z.object({
+                stripeCustomerId: z.string(),
+              }),
+            },
+          },
+        },
+      },
+      responses: {
+        200: {
+          content: {
+            "application/json": {
+              schema: z.object({
+                message: z.string(),
+              }),
+            },
+          },
+          description: "Stripe Customer ID updated",
+        },
+        400: {
+          description: "Bad request",
+        },
+        404: {
+          description: "User not found",
+        },
+      },
+    }),
+    async (c) => {
+      const id = c.req.valid("param").id;
+      const { stripeCustomerId } = await c.req.json();
+
+      try {
+        const user = await db.user.update({
+          where: { id },
+          data: { stripeCustomerId },
+        });
+
+        if (!user) {
+          return c.json({ message: "User not found" }, 404);
+        }
+
+        return c.json({ message: "Stripe Customer ID updated successfully" });
+      } catch (error) {
+        console.log(error);
+        return c.json({ message: "Failed to update Stripe Customer ID" }, 400);
       }
     },
   );
