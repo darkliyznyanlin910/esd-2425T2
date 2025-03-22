@@ -116,7 +116,7 @@ Created at: ${order.createdAt.toLocaleString()}`,
   stripeSessionStatus = session.status;
 
   setHandler(paymentSucceededSignal, async (sessionId) => {
-    console.log("sue Payment succeeded signal received");
+    console.log("Sending payment succeeded signal");
     const temp = await getStripeCheckoutSession(sessionId);
     if (!temp.status) {
       throw ApplicationFailure.create({
@@ -132,7 +132,7 @@ Created at: ${order.createdAt.toLocaleString()}`,
   });
 
   setHandler(paymentFailedSignal, async (sessionId) => {
-    console.log(" sue Payment failed signal received");
+    console.log(" sending payment failed signal");
     const temp = await getStripeCheckoutSession(sessionId);
     if (!temp.status) {
       throw ApplicationFailure.create({
