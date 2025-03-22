@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Archive, Bot, Home } from "lucide-react";
+import { Archive, Home, User2 } from "lucide-react";
 
 import { authClient } from "@repo/auth/client";
 import { getServiceBaseUrl } from "@repo/service-discovery";
@@ -73,18 +73,18 @@ export function AppSidebar() {
         <SidebarMenu>
           <SidebarGroupLabel>Applications</SidebarGroupLabel>
           <SidebarMenuItem>
-            <SidebarMenuButton>
+            <SidebarMenuButton onClick={() => router.push("/home")}>
               <Home /> Home
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
-            <SidebarMenuButton>
+            <SidebarMenuButton onClick={() => router.push("/orders")}>
               <Archive /> Orders
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
-            <SidebarMenuButton>
-              <Bot /> ChatBot
+            <SidebarMenuButton onClick={() => router.push("/account")}>
+              <User2 /> Account
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

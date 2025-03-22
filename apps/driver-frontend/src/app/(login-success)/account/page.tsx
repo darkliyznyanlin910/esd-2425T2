@@ -5,9 +5,7 @@ import { useRouter } from "next/navigation";
 
 import { authClient } from "@repo/auth/client";
 
-import DriverDashboard from "~/app/components/driverDashboard";
-
-export default function home() {
+export default function account() {
   const { useSession } = authClient;
   const { data: session } = useSession();
   const router = useRouter();
@@ -17,9 +15,5 @@ export default function home() {
       router.push("/auth");
     }
   }, [session, router]);
-  return (
-    <main className="flex-1 p-0">
-      <DriverDashboard />
-    </main>
-  );
+  return <main className="flex-1 p-0"></main>;
 }
