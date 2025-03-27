@@ -133,7 +133,21 @@ export default function CreateOrderPage() {
 
   return (
     <div className="mx-auto max-w-4xl p-6">
+      {isPolling && (
+        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black bg-opacity-50">
+          <div className="rounded-lg bg-accent p-6 text-center shadow-lg">
+            <div className="mb-4 flex justify-center">
+              <div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" />
+            </div>
+            <p className="mb-2 text-lg font-medium">
+              Redirecting to payment page...
+            </p>
+            <p className="text-sm">Please do not close this window.</p>
+          </div>
+        </div>
+      )}
       <h2 className="mb-6 text-2xl font-semibold">Create Order</h2>
+
       <Form {...form}>
         <form className="mb-5">
           <div className="grid gap-4 rounded-lg border bg-background p-5 shadow-md">
