@@ -10,7 +10,7 @@ import { authMiddleware } from "@repo/auth/auth";
 import { OrderSchema } from "@repo/db-order/zod";
 
 import type { AdminEventHandlers } from "../type";
-import { emitterAdmin as emitter } from "../app";
+import { emitterAdmin } from "../app";
 import { env } from "../env";
 import { useSSE } from "../middlewares";
 
@@ -47,7 +47,7 @@ const adminRouter = new OpenAPIHono()
     }),
     (c) => {
       const input = c.req.valid("json");
-      emitter.emit("receiveDelay", input);
+      emitterAdmin.emit("receiveDelay", input);
       return c.json({ success: true });
     },
   )
@@ -73,7 +73,7 @@ const adminRouter = new OpenAPIHono()
     }),
     async (c) => {
       const input = c.req.valid("json");
-      emitter.emit("manualAssignment", input);
+      emitterAdmin.emit("manualAssignment", input);
       return c.json({ success: true });
     },
   )
@@ -110,8 +110,11 @@ const adminRouter = new OpenAPIHono()
           };
 
         stream.onAbort(() => {
-          emitter.removeListener("receiveDelay", eventHandler("receiveDelay"));
-          emitter.removeListener(
+          emitterAdmin.removeListener(
+            "receiveDelay",
+            eventHandler("receiveDelay"),
+          );
+          emitterAdmin.removeListener(
             "manualAssignment",
             eventHandler("manualAssignment"),
           );
@@ -119,8 +122,8 @@ const adminRouter = new OpenAPIHono()
           isAborted = true;
         });
 
-        emitter.on("receiveDelay", eventHandler("receiveDelay"));
-        emitter.on("manualAssignment", eventHandler("manualAssignment"));
+        emitterAdmin.on("receiveDelay", eventHandler("receiveDelay"));
+        emitterAdmin.on("manualAssignment", eventHandler("manualAssignment"));
 
         while (!isAborted) {
           await stream.sleep(500);

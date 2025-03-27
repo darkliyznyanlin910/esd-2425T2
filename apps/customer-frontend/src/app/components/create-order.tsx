@@ -136,7 +136,7 @@ export default function CreateOrderPage() {
       <h2 className="mb-6 text-2xl font-semibold">Create Order</h2>
       <Form {...form}>
         <form className="mb-5">
-          <div className="grid gap-4 rounded-lg border bg-white p-5 shadow-md">
+          <div className="grid gap-4 rounded-lg border bg-background p-5 shadow-md">
             <h3 className="text-lg font-medium">Order details</h3>
             <FormField
               name="orderDetails"
@@ -161,7 +161,7 @@ export default function CreateOrderPage() {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6">
             {/* From Address */}
-            <div className="grid gap-4 rounded-lg border bg-white p-5 shadow-md">
+            <div className="grid gap-4 rounded-lg border bg-background p-5 shadow-md">
               <h3 className="mb-4 text-lg font-medium md:col-span-2">
                 From Address
               </h3>
@@ -294,7 +294,7 @@ export default function CreateOrderPage() {
             </div>
 
             {/* To Address */}
-            <div className="grid gap-4 rounded-lg border bg-white p-5 shadow-md">
+            <div className="grid gap-4 rounded-lg border bg-background p-5 shadow-md">
               <h3 className="mb-4 text-lg font-medium md:col-span-2">
                 To Address
               </h3>
