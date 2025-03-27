@@ -2,7 +2,7 @@
 
 import React from "react";
 
-const OrderTable = () => {
+export default function OrderTable() {
   const orders = [
     { id: 1, item: "Laptop", quantity: 1, status: "Delivered" },
     { id: 2, item: "Phone", quantity: 2, status: "Processing" },
@@ -33,6 +33,4 @@ const OrderTable = () => {
       </table>
     </div>
   );
-};
-
-export default OrderTable;
+}
