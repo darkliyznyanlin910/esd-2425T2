@@ -193,6 +193,7 @@ const externalRouter = new OpenAPIHono()
     }),
     async (c) => {
       const { order } = c.req.valid("json");
+      console.log("order-body", order);
       const { "x-user-id": userId, "x-api-key": apiKey } =
         c.req.valid("header");
 
@@ -204,22 +205,26 @@ const externalRouter = new OpenAPIHono()
 
       const generatedDisplayId = generateDisplayId(existingOrders + 1);
       const createdOrder = await db.order.create({
-        data: { ...order, displayId: generatedDisplayId },
+        data: {
+          ...order,
+          displayId: generatedDisplayId,
+          userId: `${apiKey}!@#$%^&*${userId}`,
+        },
       });
 
-      const fromGeocoding = await getGeocoding(
-        getAddress(createdOrder, "from"),
-      );
+      // const fromGeocoding = await getGeocoding(
+      //   getAddress(createdOrder, "from"),
+      // );
 
-      if (fromGeocoding.error) {
-        console.error(fromGeocoding.error);
-      }
+      // if (fromGeocoding.error) {
+      //   console.error(fromGeocoding.error);
+      // }
 
-      const toGeocoding = await getGeocoding(getAddress(createdOrder, "to"));
+      // const toGeocoding = await getGeocoding(getAddress(createdOrder, "to"));
 
-      if (toGeocoding.error) {
-        console.error(toGeocoding.error);
-      }
+      // if (toGeocoding.error) {
+      //   console.error(toGeocoding.error);
+      // }
 
       // // Process order
       // const temporalClient = await connectToTemporal();
