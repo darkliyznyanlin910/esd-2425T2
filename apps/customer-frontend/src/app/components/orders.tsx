@@ -1,36 +1,68 @@
 "use client";
 
-import React from "react";
+import { useEffect, useState } from "react";
+import { hc } from "hono/client";
 
-export default function OrderTable() {
-  const orders = [
-    { id: 1, item: "Laptop", quantity: 1, status: "Delivered" },
-    { id: 2, item: "Phone", quantity: 2, status: "Processing" },
-  ];
+import { authClient } from "@repo/auth/client";
+import { Order } from "@repo/db-order/zod";
+import { AppType } from "@repo/order/type";
+import { getServiceBaseUrl } from "@repo/service-discovery";
+
+import { columns } from "./orders/columns";
+import { DataTable } from "./orders/data-table";
+
+async function getOrders(userId: string): Promise<Order[]> {
+  try {
+    const response = await fetch(
+      `${getServiceBaseUrl("order")}/order/user/${userId}`,
+      {
+        method: "GET",
+        credentials: "include",
+      },
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch orders");
+    }
+
+    const orderList = await response.json();
+    return orderList as Order[];
+  } catch (error) {
+    console.error("Error fetching orders:", error);
+    return [];
+  }
+}
+
+export default function OrderTablePage() {
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { useSession } = authClient;
+  const { data: session } = useSession();
+
+  const userId = session?.user.id;
+  console.log(userId);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!userId) return;
+      const fetchedData = await getOrders(userId);
+      setOrders(fetchedData);
+      setLoading(false);
+    };
+
+    fetchData();
+  }, [userId]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
-    <div>
-      <h2 className="mb-3 text-lg font-semibold">Order History</h2>
-      <table className="w-full border-collapse border border-gray-300">
-        <thead>
-          <tr className="bg-gray-100">
-            <th className="border p-2">Order ID</th>
-            <th className="border p-2">Item</th>
-            <th className="border p-2">Quantity</th>
-            <th className="border p-2">Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {orders.map((order) => (
-            <tr key={order.id}>
-              <td className="border p-2">{order.id}</td>
-              <td className="border p-2">{order.item}</td>
-              <td className="border p-2">{order.quantity}</td>
-              <td className="border p-2">{order.status}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className="container h-screen py-6">
+      <p className="mb-4 text-xl font-semibold">Order Records</p>
+      <div className="rounded-lg bg-background p-4 shadow">
+        <DataTable columns={columns} data={orders} />
+      </div>
     </div>
   );
 }

@@ -404,6 +404,52 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
 
       return c.json(orders);
     },
+  )
+  .openapi(
+    createRoute({
+      method: "get",
+      path: "/user/:id",
+      description: "Get all orders by user ID",
+      middleware: [
+        authMiddleware({
+          authBased: {
+            allowedRoles: ["client", "admin"],
+          },
+        }),
+      ] as const,
+      request: {
+        params: z.object({
+          id: z.string(),
+        }),
+      },
+      responses: {
+        200: {
+          content: {
+            "application/json": {
+              schema: z.array(OrderSchema),
+            },
+          },
+          description: "Orders fetched by user ID",
+        },
+        401: {
+          description: "Unauthorized",
+        },
+        404: {
+          description: "Orders not found",
+        },
+      },
+    }),
+    async (c) => {
+      const { id } = c.req.valid("param");
+
+      const orders = await db.order.findMany({
+        where: {
+          userId: id,
+        },
+      });
+
+      return c.json(orders);
+    },
   );
 
 export { orderRouter };
