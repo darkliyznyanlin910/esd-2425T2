@@ -15,6 +15,7 @@
     "with-env-k8s": "dotenv -e ../../kubernetes/.env.k8s --"
   },
   "dependencies": {
+    "@react-nano/use-event-source": "^0.16.0",
     "@repo/auth": "workspace:*",
     "@repo/chatbot-ui": "workspace:*",
     "@repo/db-order": "workspace:*",

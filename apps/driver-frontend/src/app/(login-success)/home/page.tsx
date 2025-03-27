@@ -1,11 +1,15 @@
 "use client";
 
 import { useEffect } from "react";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 
 import { authClient } from "@repo/auth/client";
 
-import DriverDashboard from "~/app/components/driverDashboard";
+const DriverDashboard = dynamic(
+  () => import("../../components/driverDashboard"),
+  { ssr: false },
+);
 
 export default function home() {
   const { useSession } = authClient;
