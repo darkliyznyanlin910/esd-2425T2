@@ -17,7 +17,7 @@ const paymentRouter = new OpenAPIHono()
   .openapi(
     createRoute({
       method: "get",
-      path: "/:orderId/:stripeSessionId",
+      path: "/:orderId",
       description:
         "Callback for stripe payment or Endpoint for getting payment information",
       request: {
@@ -64,6 +64,7 @@ const paymentRouter = new OpenAPIHono()
       console.log("Session Id : " + sessionId);
       const temporalClient = await connectToTemporal();
 
+      console.log(status);
       if (status === "success") {
         await temporalClient.workflow
           .getHandle(orderId)
