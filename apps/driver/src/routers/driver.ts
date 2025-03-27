@@ -327,13 +327,15 @@ const driverRouter = new OpenAPIHono<HonoExtension>()
       const temporalClient = await connectToTemporal();
       if (state === "DRIVER_FOUND") {
         await temporalClient.workflow
-          .getHandle(orderId)
+          .getHandle(`${orderId}-delivery`)
           .signal(driverFoundSignal, driverId);
       } else if (state === "PICKED_UP") {
-        await temporalClient.workflow.getHandle(orderId).signal(pickedUpSignal);
+        await temporalClient.workflow
+          .getHandle(`${orderId}-delivery`)
+          .signal(pickedUpSignal);
       } else {
         await temporalClient.workflow
-          .getHandle(orderId)
+          .getHandle(`${orderId}-delivery`)
           .signal(deliveredSignal);
       }
       return c.json({ message: "ok" });
