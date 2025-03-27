@@ -1,6 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import {
+  useEventSource,
+  useEventSourceListener,
+} from "@react-nano/use-event-source";
 
 import { authClient } from "@repo/auth/client";
 import { Order } from "@repo/db-order/zod";
@@ -41,70 +45,36 @@ export default function DriverDashboard() {
     }
   };
 
+  const [eventSource, eventSourceStatus] = useEventSource(
+    `${getServiceBaseUrl("notification")}/driver/sse`,
+    true,
+  );
+
   useEffect(() => {
-    const fetchFindingDriverOrders = async () => {
-      try {
-        const response = await fetch(
-          `${getServiceBaseUrl("order")}/order/order/finding`,
-          {
-            method: "GET",
-            credentials: "include",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          },
-        );
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          console.error("Error fetching finding driver orders:", errorData);
-          return;
-        }
-
-        const data: Order[] = await response.json();
-        console.log("Updated orders:", data);
-        setOrders(data);
-      } catch (error) {
-        console.error("Failed to fetch finding driver orders:", error);
+    console.log("eventSource", eventSource);
+    if (eventSource) {
+      eventSource.addEventListener("broadcastOrder", (e) => {
+        console.log("broadcastOrder", e);
+      });
+      eventSource.addEventListener("invalidateOrder", (e) => {
+        console.log("invalidateOrder", e);
+      });
+      eventSource.onmessage = (e) => {
+        console.log("onmessage", e);
+      };
+    }
+    return () => {
+      if (eventSource) {
+        eventSource.removeEventListener("broadcastOrder", (e) => {
+          console.log("broadcastOrder", e);
+        });
+        eventSource.removeEventListener("invalidateOrder", (e) => {
+          console.log("invalidateOrder", e);
+        });
+        eventSource.close();
       }
     };
-    fetchFindingDriverOrders();
-    const intervalId = setInterval(fetchFindingDriverOrders, 5000);
-
-    return () => clearInterval(intervalId);
-  }, []);
-
-  useEffect(() => {
-    const eventSource = new EventSource(
-      `${getServiceBaseUrl("notification")}/driver/sse`,
-      { withCredentials: true },
-    );
-
-    eventSource.addEventListener("broadcastOrder", (event) => {
-      const newOrder: Order = JSON.parse(event.data);
-      console.log("New order received:", newOrder);
-      // setOrders((prevOrders) => [...prevOrders, newOrder]);
-    });
-
-    eventSource.addEventListener("invalidateOrder", (event) => {
-      const invalidOrderId: string = event.data;
-      console.log(`Order invalidated: ${invalidOrderId}`);
-
-      // setOrders((prevOrders) =>
-      //   prevOrders.filter((order) => order.id !== invalidOrderId),
-      // );
-    });
-
-    eventSource.onerror = (error) => {
-      console.error("SSE error:", error);
-      eventSource.close();
-    };
-
-    return () => {
-      eventSource.close();
-      console.log("SSE connection closed");
-    };
-  }, []);
+  }, [eventSource]);
 
   return (
     <div className="flex flex-col items-center">
