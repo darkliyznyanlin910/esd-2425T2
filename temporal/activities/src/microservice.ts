@@ -1,4 +1,6 @@
 import { ApplicationFailure, log } from "@temporalio/activity";
+import axios from "axios";
+import FormData from "form-data";
 
 import type { User } from "@repo/db-auth/zod";
 import type { Invoice, Order, OrderStatus } from "@repo/temporal-common";
@@ -115,20 +117,93 @@ export async function generateInvoice(
   order: Order,
   amount: number,
   stripeInvoiceUrl?: string,
+  stripeInvoiceId?: string,
 ): Promise<Invoice> {
   let invoiceUrl = "";
   let status: Invoice["status"] = "PENDING";
+
   if (stripeInvoiceUrl) {
     console.log("Stripe invoice URL provided");
     invoiceUrl = stripeInvoiceUrl;
     status = "COMPLETED";
+
+    try {
+      const response = await axios.get(stripeInvoiceUrl, {
+        responseType: "arraybuffer",
+      });
+      const pdfBuffer = Buffer.from(response.data);
+
+      const formData = new FormData();
+      formData.append("file", pdfBuffer, {
+        filename: `${order.id}-invoice.pdf`,
+        contentType: "application/pdf",
+      });
+      formData.append("orderId", order.id);
+
+      const uploadResponse = await axios.post(
+        `${getServiceBaseUrl("invoice")}/invoices/upload`,
+        formData,
+        {
+          headers: {
+            ...formData.getHeaders(),
+          },
+        },
+      );
+
+      if (uploadResponse.data.success) {
+        invoiceUrl = uploadResponse.data.imageUrl;
+
+        const invoicePayload = {
+          orderId: order.id,
+          customerId: order.userId,
+          status: "PENDING",
+          path: invoiceUrl,
+          amount: amount,
+        };
+
+        const updateInvoice = await fetch(
+          `${getServiceBaseUrl("invoice")}/invoices`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(invoicePayload),
+          },
+        );
+
+        if (!updateInvoice.ok) {
+          console.error("Failed to update invoice:", updateInvoice.status);
+          throw ApplicationFailure.create({
+            nonRetryable: true,
+            message: `Failed to update invoice ${invoiceUrl} for order ID ${order.id}`,
+          });
+        }
+      } else {
+        console.error("Failed to upload invoice:", uploadResponse.data.error);
+        throw ApplicationFailure.create({
+          nonRetryable: true,
+          message: `Failed to process invoice ${invoiceUrl} for order ID ${order.id}`,
+        });
+      }
+    } catch (error) {
+      console.error("Error processing invoice:", error);
+      throw ApplicationFailure.create({
+        nonRetryable: true,
+        message: `Failed to process invoice for order ID ${order.id}`,
+      });
+    }
   } else {
     console.log("No stripe invoice URL provided");
     invoiceUrl = "https://example.com/invoice";
+    throw ApplicationFailure.create({
+      nonRetryable: true,
+      message: `Failed to generate invoice at ${invoiceUrl} for order ID ${order.id}`,
+    });
   }
 
-  const temp: Invoice = {
-    id: "1",
+  return {
+    id: stripeInvoiceId as unknown as string,
     orderId: order.id,
     customerId: order.userId,
     status,
@@ -137,8 +212,6 @@ export async function generateInvoice(
     createdAt: new Date(),
     updatedAt: new Date(),
   };
-
-  return temp;
 }
 
 export async function sendInvoiceToCustomer(invoice: Invoice): Promise<void> {
