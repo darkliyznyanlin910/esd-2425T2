@@ -20,14 +20,19 @@ const invoiceRouter = router
   // S3 Image Upload Route
   .openapi(
     createRoute({
-      method: "get",
+      method: "post",
       path: "/invoices/uploadURL",
       description: "Generate a pre-signed URL for invoice upload to S3",
       request: {
-        query: z.object({
-          orderId: z.string(),
-          fileType: z.string().optional().default("application/pdf"),
-        }),
+        body: {
+          content: {
+            "application/json": {
+              schema: z.object({
+                orderId: z.string(),
+              }),
+            },
+          },
+        },
       },
       responses: {
         200: { description: "Pre-signed URL generated successfully" },
@@ -36,12 +41,10 @@ const invoiceRouter = router
     }),
     async (c) => {
       try {
-        // Correctly extract query parameters
-        const { orderId, fileType = "application/pdf" } = c.req.query();
+        const { orderId } = c.req.query();
 
-        // Initialize S3 client
         const s3Client = new S3Client({
-          region: process.env.AWS_REGION || "us-east-1",
+          region: process.env.AWS_REGION || "ap-southeast-1",
           credentials: {
             accessKeyId: process.env.AWS_ACCESS_KEY_ID || "test",
             secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "test",
@@ -56,7 +59,7 @@ const invoiceRouter = router
         const command = new PutObjectCommand({
           Bucket: process.env.S3_BUCKET || "invoice-bucket",
           Key: key,
-          ContentType: fileType,
+          ContentType: "application/pdf",
         });
 
         const uploadUrl = await getSignedUrl(s3Client, command, {
@@ -75,6 +78,41 @@ const invoiceRouter = router
         console.error("Error generating pre-signed URL:", error);
         return c.json({ error: "Failed to generate pre-signed URL" }, 400);
       }
+    },
+  )
+
+  // Create Invoice
+  .openapi(
+    createRoute({
+      method: "post",
+      path: "/invoices",
+      description: "Create a new invoice",
+      request: {
+        body: {
+          content: {
+            "application/json": {
+              schema: z.object({
+                orderId: z.string(),
+                customerId: z.string(),
+                status: z
+                  .enum(["PENDING", "CANCELLED", "COMPLETED"])
+                  .default("PENDING"),
+                path: z.string(),
+                amount: z.number(),
+              }),
+            },
+          },
+        },
+      },
+      responses: {
+        201: { description: "Invoice created successfully" },
+        400: { description: "Invalid input" },
+      },
+    }),
+    async (c) => {
+      const data = c.req.valid("json");
+      const createdInvoice = await db.invoice.create({ data });
+      return c.json(createdInvoice, 201);
     },
   )
 
