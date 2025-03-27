@@ -2,8 +2,10 @@
 
 import { useEffect, useState } from "react";
 
+import { authClient } from "@repo/auth/client";
 import { Order } from "@repo/db-order/zod";
 import { getServiceBaseUrl } from "@repo/service-discovery";
+import { Button } from "@repo/ui/button";
 import {
   Table,
   TableBody,
@@ -15,34 +17,62 @@ import {
 
 export default function DriverDashboard() {
   const [orders, setOrders] = useState<Order[]>([]);
-  const handleAcceptOrder = async (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Accept order");
-    // try{
-    //   const response = await fetch(
-    //     `${getServiceBaseUrl("order")}/order/order/finding`,
-    //     {
-    //       method: "GET",
-    //       headers: {
-    //         "Content-Type": "application/json",
-    //       },
-    //       body: JSON.stringify({ availability: "AVAILABLE" }),
-    //     },
-    //   );
-    //   console.log(updatedSession.data?.user.id);
-
-    //   if (!response.ok) {
-    //     const errorData = await response.json();
-    //     console.error("Error updating driver availability:", errorData);
-    //     return;
-    //   }
-
-    //   const data = await response.json();
-    //   console.log("Driver availability updated:", data);
-    // } catch (error) {
-    //   console.error("Failed to update driver availability:", error);
-    // }
+  const { useSession } = authClient;
+  const { data: session } = useSession();
+  const handleAcceptOrder = async (orderId: string) => {
+    try {
+      const response = await fetch(
+        `${getServiceBaseUrl("driver")}/driver/state/DRIVER_FOUND`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            orderId: orderId,
+            driverId: session?.user.id,
+          }),
+        },
+      );
+      console.log("Order accepted:", response);
+    } catch (error) {
+      console.error("Failed to accept order:", error);
+    }
   };
+
+  useEffect(() => {
+    const fetchFindingDriverOrders = async () => {
+      try {
+        const response = await fetch(
+          `${getServiceBaseUrl("order")}/order/order/finding`,
+          {
+            method: "GET",
+            credentials: "include",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          },
+        );
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error("Error fetching finding driver orders:", errorData);
+          return;
+        }
+
+        const data: Order[] = await response.json();
+        console.log("Updated orders:", data);
+        setOrders(data);
+      } catch (error) {
+        console.error("Failed to fetch finding driver orders:", error);
+      }
+    };
+    fetchFindingDriverOrders();
+    const intervalId = setInterval(fetchFindingDriverOrders, 5000);
+
+    return () => clearInterval(intervalId);
+  }, []);
 
   useEffect(() => {
     const eventSource = new EventSource(
@@ -53,16 +83,16 @@ export default function DriverDashboard() {
     eventSource.addEventListener("broadcastOrder", (event) => {
       const newOrder: Order = JSON.parse(event.data);
       console.log("New order received:", newOrder);
-      setOrders((prevOrders) => [...prevOrders, newOrder]);
+      // setOrders((prevOrders) => [...prevOrders, newOrder]);
     });
 
     eventSource.addEventListener("invalidateOrder", (event) => {
       const invalidOrderId: string = event.data;
       console.log(`Order invalidated: ${invalidOrderId}`);
 
-      setOrders((prevOrders) =>
-        prevOrders.filter((order) => order.id !== invalidOrderId),
-      );
+      // setOrders((prevOrders) =>
+      //   prevOrders.filter((order) => order.id !== invalidOrderId),
+      // );
     });
 
     eventSource.onerror = (error) => {
@@ -97,25 +127,21 @@ export default function DriverDashboard() {
               </TableCell>
             </TableRow>
           ) : (
-            orders.map((order) => (
-              <TableRow key={order.id}>
-                <TableCell>{order.id}</TableCell>
+            orders.map((data) => (
+              <TableRow key={data.id}>
+                <TableCell>{data.id}</TableCell>
                 <TableCell>
-                  {order.fromAddressLine1}, {order.fromAddressLine2},{" "}
-                  {order.fromZipCode}
+                  {data.fromAddressLine1}, {data.fromAddressLine2},{" "}
+                  {data.fromZipCode}
                 </TableCell>
                 <TableCell>
-                  {order.toAddressLine1}, {order.toAddressLine2},{" "}
-                  {order.toZipCode}
+                  {data.toAddressLine1}, {data.toAddressLine2}, {data.toZipCode}
                 </TableCell>
-                <TableCell>{order.orderStatus}</TableCell>
+                <TableCell>{data.orderStatus}</TableCell>
                 <TableCell>
-                  <button
-                    className="text-blue-500 underline hover:text-blue-700"
-                    onClick={handleAcceptOrder}
-                  >
+                  <Button onClick={() => handleAcceptOrder(data.id)}>
                     Accept Order
-                  </button>
+                  </Button>
                 </TableCell>
               </TableRow>
             ))
