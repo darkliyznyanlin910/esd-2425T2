@@ -173,7 +173,7 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
   .openapi(
     createRoute({
       method: "post",
-      path: "/:id",
+      path: "/updateStatus/:id",
       description: "[Internal] Update order status",
       // middleware: [
       //   bearerAuth({ token: env.INTERNAL_COMMUNICATION_SECRET }),
@@ -207,9 +207,13 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
       },
     }),
     async (c) => {
+      console.log("hit the endpoint to update order status");
       const input = c.req.valid("json");
       const { id } = c.req.valid("param");
 
+      console.log(input);
+      const body = await c.req.parseBody();
+      console.log(body);
       const order = await db.order.update({
         where: {
           id,

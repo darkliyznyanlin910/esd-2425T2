@@ -15,13 +15,20 @@ export async function updateOrderStatus(
   orderId: Order["id"],
   status: OrderStatus,
 ): Promise<void> {
-  const res = await fetch(`${getServiceBaseUrl("order")}/order/${orderId}`, {
-    method: "POST",
-    body: JSON.stringify({ orderStatus: status }),
-    headers: {
-      Authorization: `Bearer ${env.INTERNAL_COMMUNICATION_SECRET}`,
+  const res = await fetch(
+    `${getServiceBaseUrl("order")}/order/updateStatus/${orderId}`,
+    {
+      method: "POST",
+      body: {
+        orderStatus: status,
+      },
+      headers: {
+        Authorization: `Bearer ${env.INTERNAL_COMMUNICATION_SECRET}`,
+        "Content-Type": "application/json",
+      },
     },
-  });
+  );
+
   if (!res.ok) {
     throw ApplicationFailure.create({
       nonRetryable: true,
