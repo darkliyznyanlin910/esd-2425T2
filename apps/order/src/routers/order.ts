@@ -5,6 +5,7 @@ import { z } from "zod";
 import type { HonoExtension } from "@repo/auth/type";
 import { authMiddleware } from "@repo/auth/auth";
 import { db } from "@repo/db-order";
+import { OrderStatus } from "@repo/db-order/client";
 import { OrderSchema } from "@repo/db-order/zod";
 import { taskQueue } from "@repo/temporal-common";
 import { connectToTemporal } from "@repo/temporal-common/temporal-client";
@@ -129,6 +130,7 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
       request: {
         params: z.object({
           id: z.string(),
+          manualAssignDriverId: z.string().optional(),
         }),
       },
       responses: {
@@ -144,7 +146,7 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
       },
     }),
     async (c) => {
-      const { id } = c.req.valid("param");
+      const { id, manualAssignDriverId } = c.req.valid("param");
 
       const order = await db.order.findUnique({
         where: {
@@ -167,7 +169,7 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
 
       await temporalClient.workflow.start(delivery, {
         workflowId: `${order.id}-delivery`,
-        args: [order],
+        args: [order, manualAssignDriverId],
         taskQueue,
       });
 
@@ -353,7 +355,7 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
   .openapi(
     createRoute({
       method: "get",
-      path: "/order/finding",
+      path: "/order/finding/:orderStatus",
       description: "Get all orders by orderStatus",
       middleware: [
         authMiddleware({
@@ -363,6 +365,9 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
         }),
       ] as const,
       request: {
+        params: z.object({
+          orderStatus: z.enum(["FINDING_DRIVER", "DRIVER_FOUND", "PICKED_UP"]),
+        }),
         query: z.object({
           take: z.number().default(10),
           page: z.number().default(1),
@@ -387,11 +392,11 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
     }),
     async (c) => {
       const { take, page } = c.req.valid("query");
-
+      const { orderStatus } = c.req.valid("param");
       // Query orders by orderStatus only
       const orders = await db.order.findMany({
         where: {
-          orderStatus: "FINDING_DRIVER",
+          orderStatus,
         },
         take,
         skip: (page - 1) * take,

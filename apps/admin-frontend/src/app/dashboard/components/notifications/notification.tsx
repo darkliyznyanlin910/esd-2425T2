@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 
+import { getServiceBaseUrl } from "@repo/service-discovery";
 import { Alert, AlertDescription, AlertTitle } from "@repo/ui/alert";
 import { Button } from "@repo/ui/button";
 
@@ -10,9 +11,12 @@ export default function TestNotificationPage() {
 
   useEffect(() => {
     console.log("Establishing SSE connection...");
-    const eventSource = new EventSource("http://localhost:3004/admin/sse", {
-      withCredentials: false, // explicitly disable credentials
-    });
+    const eventSource = new EventSource(
+      `${getServiceBaseUrl("notification")}/admin/sse`,
+      {
+        withCredentials: false,
+      },
+    );
 
     eventSource.addEventListener("receiveDelay", (e) => {
       console.log("Delay Notification received:", e);

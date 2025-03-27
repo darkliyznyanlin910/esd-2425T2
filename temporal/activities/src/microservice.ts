@@ -140,28 +140,32 @@ export async function generateInvoice(
       });
       const pdfBuffer = Buffer.from(response.data);
 
-      console.log("PDF exists", pdfBuffer.length);
-
-      const formData = new FormData();
-      formData.append("file", pdfBuffer, {
-        filename: `${order.id}-invoice.pdf`,
-        contentType: "application/pdf",
+      const params = new URLSearchParams({
+        orderId: order.id,
+        fileType: "application/pdf",
       });
-      formData.append("orderId", order.id);
 
-      const uploadResponse = await axios.post(
-        `${getServiceBaseUrl("invoice")}/invoices/upload`,
-        formData,
+      const urlResponse = await fetch(
+        `${getServiceBaseUrl("invoice")}/invoices/uploadURL?${params}`,
         {
-          headers: {
-            ...formData.getHeaders(),
-            Authorization: `Bearer ${env.INTERNAL_COMMUNICATION_SECRET}`,
-          },
+          method: "GET",
         },
       );
 
+      if (!urlResponse.ok) {
+        throw new Error(`Failed to get upload URL: ${urlResponse.status}`);
+      }
+
+      const { uploadUrl } = (await urlResponse.json()) as { uploadUrl: string };
+
+      const uploadResponse = await axios.put(uploadUrl, pdfBuffer, {
+        headers: {
+          "Content-Type": "application/pdf",
+        },
+      });
+
       if (uploadResponse.data.success) {
-        invoiceUrl = uploadResponse.data.imageUrl;
+        invoiceUrl = uploadResponse.data.key;
 
         const invoicePayload = {
           orderId: order.id,
