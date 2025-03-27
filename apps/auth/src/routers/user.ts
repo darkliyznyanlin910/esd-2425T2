@@ -60,7 +60,14 @@ const userRouter = new OpenAPIHono()
             password: body.password,
             email: body.email,
             name: body.name,
-            role: role,
+          },
+        });
+        await db.user.update({
+          where: {
+            id: res.user.id,
+          },
+          data: {
+            role,
           },
         });
         console.log(res.user);
