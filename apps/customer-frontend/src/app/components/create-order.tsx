@@ -92,7 +92,7 @@ export default function CreateOrderPage() {
     const fetchOrderStatus = async () => {
       try {
         const response = await fetch(
-          `${getServiceBaseUrl("order")}/payment/${orderId}`,
+          `${getServiceBaseUrl("order")}/payment/order/${orderId}`,
           {
             method: "GET",
             credentials: "include",
