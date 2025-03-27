@@ -74,14 +74,11 @@ const paymentRouter = new OpenAPIHono()
           .signal(paymentFailedSignal, sessionId);
       }
 
-      const paymentInformation = await temporalClient.workflow
+      await temporalClient.workflow
         .getHandle(orderId)
         .query(getPaymentInformationQuery);
 
-      const frontendRedirectUrl =
-        status === "success"
-          ? `${getServiceBaseUrl("customer-frontend")}/orders`
-          : `${getServiceBaseUrl("customer-frontend")}/order`;
+      const frontendRedirectUrl = `${getServiceBaseUrl("customer-frontend")}/orders`;
 
       return c.redirect(frontendRedirectUrl, 302);
     },
