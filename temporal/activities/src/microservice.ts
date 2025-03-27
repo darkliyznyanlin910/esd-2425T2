@@ -190,7 +190,7 @@ export async function generateInvoice(
         console.error("Failed to upload invoice:", uploadResponse.data.error);
         throw ApplicationFailure.create({
           nonRetryable: true,
-          message: `Failed to process invoice ${invoiceUrl} for order ID ${order.id}`,
+          message: `Failed to upload invoice ${invoiceUrl} for order ID ${order.id}`,
         });
       }
     } catch (error) {
