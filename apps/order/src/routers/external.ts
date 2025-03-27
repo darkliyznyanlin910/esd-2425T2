@@ -6,6 +6,11 @@ import { db } from "@repo/db-order";
 import { OrderSchema } from "@repo/db-order/zod";
 import { getServiceBaseUrl } from "@repo/service-discovery";
 
+// import { taskQueue } from "@repo/temporal-common";
+
+// import { connectToTemporal } from "@repo/temporal-common/temporal-client";
+// import { delivery } from "@repo/temporal-workflows";
+
 import { env } from "../env";
 import {
   generateDisplayId,
@@ -215,6 +220,14 @@ const externalRouter = new OpenAPIHono()
       if (toGeocoding.error) {
         console.error(toGeocoding.error);
       }
+
+      // // Process order
+      // const temporalClient = await connectToTemporal();
+      // await temporalClient.workflow.start(delivery, {
+      //   workflowId: createdOrder.id,
+      //   args: [createdOrder],
+      //   taskQueue,
+      // });
 
       return c.json({ order: createdOrder });
     },
