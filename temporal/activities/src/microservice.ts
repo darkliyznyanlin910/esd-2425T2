@@ -140,6 +140,8 @@ export async function generateInvoice(
       });
       const pdfBuffer = Buffer.from(response.data);
 
+      console.log("PDF exists", pdfBuffer.length);
+
       const formData = new FormData();
       formData.append("file", pdfBuffer, {
         filename: `${order.id}-invoice.pdf`,
@@ -153,6 +155,7 @@ export async function generateInvoice(
         {
           headers: {
             ...formData.getHeaders(),
+            Authorization: `Bearer ${env.INTERNAL_COMMUNICATION_SECRET}`,
           },
         },
       );
@@ -197,7 +200,7 @@ export async function generateInvoice(
       console.error("Error processing invoice:", error);
       throw ApplicationFailure.create({
         nonRetryable: true,
-        message: `Failed to process invoice for order ID ${order.id}`,
+        message: `Failed to process invoice for order ID ${order.id} - ${error}`,
       });
     }
   } else {
