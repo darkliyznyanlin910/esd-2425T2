@@ -38,6 +38,7 @@ const {
   getStripeInvoice,
   generateInvoice,
   sendInvoiceToCustomer,
+  startDeliveryProcess,
 } = proxyActivities<typeof activities>({
   startToCloseTimeout: "1m",
   retry: {
@@ -165,6 +166,7 @@ Created at: ${order.createdAt.toLocaleString()}`,
       stripeInvoice.id,
     );
     await sendInvoiceToCustomer(invoice);
+    await startDeliveryProcess(order);
   } else {
     await updateOrderStatus(order.id, "PAYMENT_FAILED");
   }

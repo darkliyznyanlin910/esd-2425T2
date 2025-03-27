@@ -42,17 +42,17 @@ export function AppSidebar() {
         <SidebarMenu>
           <SidebarGroupLabel>Applications</SidebarGroupLabel>
           <SidebarMenuItem>
-            <SidebarMenuButton>
+            <SidebarMenuButton onClick={() => router.push("/order")}>
               <FilePlus /> Create Order
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
-            <SidebarMenuButton>
+            <SidebarMenuButton onClick={() => router.push("/orders")}>
               <Archive /> Orders
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
-            <SidebarMenuButton>
+            <SidebarMenuButton onClick={() => router.push("/chat")}>
               <Bot /> ChatBot
             </SidebarMenuButton>
           </SidebarMenuItem>

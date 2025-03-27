@@ -1,8 +1,8 @@
 import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
 import { z } from "zod";
 
-import { authMiddleware } from "@repo/auth/auth";
-import { getServiceBaseUrl } from "@repo/service-discovery";
+// import { authMiddleware } from "@repo/auth/auth";
+// import { getServiceBaseUrl } from "@repo/service-discovery";
 import { paymentInformationSchema } from "@repo/temporal-common";
 import { connectToTemporal } from "@repo/temporal-common/temporal-client";
 import {
@@ -11,13 +11,13 @@ import {
   paymentSucceededSignal,
 } from "@repo/temporal-workflows";
 
-import { env } from "../env";
+// import { env } from "../env";
 
 const paymentRouter = new OpenAPIHono()
   .openapi(
     createRoute({
       method: "get",
-      path: "/:orderId/:stripeSessionId",
+      path: "/:orderId",
       description:
         "Callback for stripe payment or Endpoint for getting payment information",
       request: {
@@ -55,15 +55,14 @@ const paymentRouter = new OpenAPIHono()
     }),
     async (c) => {
       console.log("hit the endpoint to send signal");
-      // let paymentInformation = null;
-      // let attempts = 0;
-      // const maxAttempts = 10;
+
       const { orderId } = c.req.valid("param");
       const { status, sessionId } = c.req.valid("query");
       console.log("Status : " + status);
       console.log("Session Id : " + sessionId);
       const temporalClient = await connectToTemporal();
 
+      console.log(status);
       if (status === "success") {
         await temporalClient.workflow
           .getHandle(orderId)
