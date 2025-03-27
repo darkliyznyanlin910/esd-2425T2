@@ -117,10 +117,14 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
   .openapi(
     createRoute({
       method: "get",
-      path: "/:id/process",
+      path: "/process/:id",
       description: "[Internal] Start Delivery Process",
       middleware: [
-        bearerAuth({ token: env.INTERNAL_COMMUNICATION_SECRET }),
+        authMiddleware({
+          bearer: {
+            tokens: [env.INTERNAL_COMMUNICATION_SECRET],
+          },
+        }),
       ] as const,
       request: {
         params: z.object({
@@ -162,7 +166,7 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
       const temporalClient = await connectToTemporal();
 
       await temporalClient.workflow.start(delivery, {
-        workflowId: order.id,
+        workflowId: `${order.id}-delivery`,
         args: [order],
         taskQueue,
       });
@@ -338,6 +342,56 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
       const orders = await db.order.findMany({
         where: {
           userId,
+        },
+        take,
+        skip: (page - 1) * take,
+      });
+
+      return c.json(orders);
+    },
+  )
+  .openapi(
+    createRoute({
+      method: "get",
+      path: "/order/finding",
+      description: "Get all orders by orderStatus",
+      middleware: [
+        authMiddleware({
+          authBased: {
+            allowedRoles: ["driver", "admin"],
+          },
+        }),
+      ] as const,
+      request: {
+        query: z.object({
+          take: z.number().default(10),
+          page: z.number().default(1),
+        }),
+      },
+      responses: {
+        200: {
+          content: {
+            "application/json": {
+              schema: z.array(OrderSchema),
+            },
+          },
+          description: "Get all orders by orderStatus",
+        },
+        401: {
+          description: "Unauthorized",
+        },
+        404: {
+          description: "Order for finding not found",
+        },
+      },
+    }),
+    async (c) => {
+      const { take, page } = c.req.valid("query");
+
+      // Query orders by orderStatus only
+      const orders = await db.order.findMany({
+        where: {
+          orderStatus: "FINDING_DRIVER",
         },
         take,
         skip: (page - 1) * take,
