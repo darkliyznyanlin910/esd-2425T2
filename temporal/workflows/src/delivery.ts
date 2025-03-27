@@ -33,7 +33,7 @@ export async function delivery(
   order: Order,
   manualAssignDriverId?: string,
 ): Promise<void> {
-  if (order.orderStatus == "PROCESSING") {
+  if (order.orderStatus == "PAYMENT_SUCCESSFUL") {
     await updateOrderStatus(order.id, "FINDING_DRIVER");
   }
 

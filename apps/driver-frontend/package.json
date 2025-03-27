@@ -17,10 +17,10 @@
   "dependencies": {
     "@repo/auth": "workspace:*",
     "@repo/chatbot-ui": "workspace:*",
+    "@repo/db-order": "workspace:*",
     "@repo/service-discovery": "workspace:*",
     "@repo/ui": "workspace:*",
     "@repo/validators": "workspace:*",
-    "@repo/db-order": "workspace:*",
     "@t3-oss/env-nextjs": "^0.11.1",
     "@tanstack/react-query": "catalog:",
     "better-auth": "^1.1.15",
