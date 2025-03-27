@@ -292,7 +292,7 @@ const driverRouter = new OpenAPIHono<HonoExtension>()
   .openapi(
     createRoute({
       method: "post",
-      path: "/:state",
+      path: "/state/:state",
       middleware: [
         authMiddleware({
           authBased: {
