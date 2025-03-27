@@ -134,7 +134,7 @@ export const columns: ColumnDef<Order>[] = [
 
           // console.log(`Driver ${userId} successfully assigned and updated.`);
 
-          // const state = "DRIVER_FOUND";
+          const state = "DRIVER_FOUND";
 
           // const updateOrder = await hc<OrderAppType>(
           //   getServiceBaseUrl("order"),
@@ -165,27 +165,26 @@ export const columns: ColumnDef<Order>[] = [
             prevOrders.filter((order: Order) => order.id !== orderId),
           );
 
-      //     const updateTemporal = await hc<DriverAppType>(
-      //       getServiceBaseUrl("order"),
-      //     ).process.$get(
-      //       {
-      //         param: { state },
-      //         json: { orderId, driverId },
-      //       },
-      //       {
-      //         init: { credentials: "include" },
-      //       },
-      //     );
+          const updateTemporal = await hc<OrderAppType>(
+            getServiceBaseUrl("order"),
+          ).order.process[":id"].$get(
+            {
+              param: { id: orderId, manualAssignDriverId: driverId },
+            },
+            {
+              init: { credentials: "include" },
+            },
+          );
 
-      //     if (!updateTemporal.ok) {
-      //       throw new Error("Update temporal failed");
-      //     }
+          if (!updateTemporal.ok) {
+            throw new Error("Update temporal failed");
+          }
 
-      //     console.log("Order state updated to DRIVER_FOUND");
-      //   } catch (error) {
-      //     console.error("Error in handleAssign:", error);
-      //   }
-      // };
+          console.log("Order state updated to DRIVER_FOUND");
+        } catch (error) {
+          console.error("Error in handleAssign:", error);
+        }
+      };
       return (
         <div>
           <Dialog open={open} onOpenChange={setOpen}>
