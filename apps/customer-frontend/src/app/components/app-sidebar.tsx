@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Archive, Bot, FilePlus } from "lucide-react";
 
 import { authClient } from "@repo/auth/client";
@@ -19,6 +19,7 @@ import {
 export function AppSidebar() {
   const { signOut } = authClient;
   const router = useRouter();
+  const pathname = usePathname();
 
   const handleSignOut = async () => {
     await signOut();
@@ -42,17 +43,26 @@ export function AppSidebar() {
         <SidebarMenu>
           <SidebarGroupLabel>Applications</SidebarGroupLabel>
           <SidebarMenuItem>
-            <SidebarMenuButton onClick={() => router.push("/order")}>
+            <SidebarMenuButton
+              isActive={pathname === "/order"}
+              onClick={() => router.push("/order")}
+            >
               <FilePlus /> Create Order
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
-            <SidebarMenuButton onClick={() => router.push("/orders")}>
+            <SidebarMenuButton
+              isActive={pathname === "/orders"}
+              onClick={() => router.push("/orders")}
+            >
               <Archive /> Orders
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
-            <SidebarMenuButton onClick={() => router.push("/chat")}>
+            <SidebarMenuButton
+              onClick={() => router.push("/chat")}
+              isActive={pathname === "/chat"}
+            >
               <Bot /> ChatBot
             </SidebarMenuButton>
           </SidebarMenuItem>
