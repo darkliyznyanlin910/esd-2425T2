@@ -14,7 +14,7 @@ export default function DriverDashboard() {
 
   useEffect(() => {
     const eventSource = new EventSource(
-      `${getServiceBaseUrl("driver")}/driver/sse`,
+      `${getServiceBaseUrl("notification")}/driver/sse`,
       { withCredentials: true },
     );
 
@@ -24,7 +24,6 @@ export default function DriverDashboard() {
       setOrders((prevOrders) => [...prevOrders, newOrder]);
     });
 
-    // Handle "invalidateOrder" events
     eventSource.addEventListener("invalidateOrder", (event) => {
       const invalidOrderId: string = event.data;
       console.log(`Order invalidated: ${invalidOrderId}`);
@@ -34,13 +33,11 @@ export default function DriverDashboard() {
       );
     });
 
-    // Handle connection errors
     eventSource.onerror = (error) => {
       console.error("SSE error:", error);
       eventSource.close();
     };
 
-    // Cleanup on component unmount
     return () => {
       eventSource.close();
       console.log("SSE connection closed");
