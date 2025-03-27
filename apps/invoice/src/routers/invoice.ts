@@ -1,5 +1,6 @@
 import { Blob } from "buffer";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
 import dotenv from "dotenv";
 import { z } from "zod";
@@ -12,17 +13,6 @@ import { env } from "../env";
 
 dotenv.config();
 
-// Configure S3 client for LocalStack
-const s3Client = new S3Client({
-  endpoint: process.env.S3_ENDPOINT ?? "",
-  region: process.env.AWS_REGION ?? "",
-  credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID ?? "",
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY ?? "",
-  },
-  forcePathStyle: true,
-});
-
 const router = new OpenAPIHono<HonoExtension>();
 
 // Add the invoice router - keeping all the existing routes from the provided code
@@ -30,121 +20,61 @@ const invoiceRouter = router
   // S3 Image Upload Route
   .openapi(
     createRoute({
-      method: "post",
-      path: "/invoices/upload",
-      description: "Upload an invoice image to S3",
+      method: "get",
+      path: "/invoices/uploadURL",
+      description: "Generate a pre-signed URL for invoice upload to S3",
       request: {
-        body: {
-          content: {
-            "multipart/form-data": {
-              schema: z.object({
-                file: z.any().refine((file) => file !== undefined, {
-                  message: "PDF is required",
-                }),
-                // folder: z.string().optional().default("invoices"),
-                orderId: z.string(),
-              }),
-            },
-          },
-        },
+        query: z.object({
+          orderId: z.string(),
+          fileType: z.string().optional().default("application/pdf"),
+        }),
       },
       responses: {
-        201: { description: "Invoice uploaded successfully" },
-        400: { description: "Failed to upload invoice" },
+        200: { description: "Pre-signed URL generated successfully" },
+        400: { description: "Failed to generate pre-signed URL" },
       },
     }),
     async (c) => {
       try {
-        const data = await c.req.parseBody();
-        const file = data.file as Blob;
-        // const folder = data.folder || "invoices";
-        const filename = `${data.orderId}-invoice(${Date.now()})`;
+        // Correctly extract query parameters
+        const { orderId, fileType = "application/pdf" } = c.req.query();
 
-        console.log(file, filename);
-
-        const arrayBuffer = await file.arrayBuffer();
-        const buffer = Buffer.from(arrayBuffer);
-
-        // const key = `${folder}/${filename}`;
-        const key = `${filename}`;
-
-        console.log("S3 Upload Command:", {
-          Bucket: process.env.S3_BUCKET_NAME || "invoice-bucket",
-          Key: key,
-          Body: buffer,
-          ContentType: file.type,
+        // Initialize S3 client
+        const s3Client = new S3Client({
+          region: process.env.AWS_REGION || "us-east-1",
+          credentials: {
+            accessKeyId: process.env.AWS_ACCESS_KEY_ID || "test",
+            secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "test",
+          },
+          endpoint: process.env.AWS_S3_ENDPOINT || undefined,
+          forcePathStyle: true,
         });
 
-        // Upload to S3
-        const res = await s3Client.send(
-          new PutObjectCommand({
-            Bucket: process.env.S3_BUCKET || "invoice-bucket",
-            Key: key,
-            Body: buffer,
-            ContentType: file.type || "application/pdf",
-          }),
-        );
+        const filename = `invoice-${Date.now()}.pdf`;
+        const key = `${orderId}/${filename}`;
 
-        console.log("S3 Upload Response:", res);
+        const command = new PutObjectCommand({
+          Bucket: process.env.S3_BUCKET || "invoice-bucket",
+          Key: key,
+          ContentType: fileType,
+        });
 
-        // Return the URL where the image can be accessed
+        const uploadUrl = await getSignedUrl(s3Client, command, {
+          expiresIn: 300,
+        });
+
         return c.json(
           {
-            success: true,
-            imageUrl: `http://localhost:4566/${process.env.S3_BUCKET}/${key}`, // LocalStack S3 URL
+            uploadUrl,
             key,
+            bucket: process.env.S3_BUCKET || "invoice-bucket",
           },
-          201,
+          200,
         );
       } catch (error) {
-        console.error("Error uploading image:", error);
-        return c.json({ error: "Failed to upload image" }, 500);
+        console.error("Error generating pre-signed URL:", error);
+        return c.json({ error: "Failed to generate pre-signed URL" }, 400);
       }
-    },
-  )
-
-  // Create Invoice
-  .openapi(
-    createRoute({
-      method: "post",
-      path: "/invoices",
-      description: "Create a new invoice",
-      middleware: [
-        authMiddleware({
-          authBased: {
-            allowedRoles: ["admin"],
-          },
-          bearer: {
-            tokens: [env.INTERNAL_COMMUNICATION_SECRET],
-          },
-        }),
-      ],
-      request: {
-        body: {
-          content: {
-            "application/json": {
-              schema: z.object({
-                orderId: z.string(),
-                customerId: z.string(),
-                status: z
-                  .enum(["PENDING", "CANCELLED", "COMPLETED"])
-                  .default("PENDING"),
-                path: z.string(),
-                amount: z.number(),
-              }),
-            },
-          },
-        },
-      },
-      responses: {
-        201: { description: "Invoice created successfully" },
-        400: { description: "Invalid input" },
-      },
-    }),
-    async (c) => {
-      const data = c.req.valid("json");
-      const createdInvoice = await db.invoice.create({ data });
-      return c.json(createdInvoice, 201);
     },
   )
 

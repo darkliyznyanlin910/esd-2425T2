@@ -130,6 +130,7 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
       request: {
         params: z.object({
           id: z.string(),
+          manualAssignDriverId: z.string().optional(),
         }),
       },
       responses: {
@@ -145,7 +146,7 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
       },
     }),
     async (c) => {
-      const { id } = c.req.valid("param");
+      const { id, manualAssignDriverId } = c.req.valid("param");
 
       const order = await db.order.findUnique({
         where: {
@@ -168,7 +169,7 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
 
       await temporalClient.workflow.start(delivery, {
         workflowId: `${order.id}-delivery`,
-        args: [order],
+        args: [order, manualAssignDriverId],
         taskQueue,
       });
 
