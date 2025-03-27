@@ -1,6 +1,7 @@
 import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
 import { z } from "zod";
 
+import { getServiceBaseUrl } from "@repo/service-discovery";
 // import { authMiddleware } from "@repo/auth/auth";
 // import { getServiceBaseUrl } from "@repo/service-discovery";
 import { paymentInformationSchema } from "@repo/temporal-common";
@@ -77,7 +78,12 @@ const paymentRouter = new OpenAPIHono()
         .getHandle(orderId)
         .query(getPaymentInformationQuery);
 
-      return c.json(paymentInformation);
+      const frontendRedirectUrl =
+        status === "success"
+          ? `${getServiceBaseUrl("customer-frontend")}/orders`
+          : `${getServiceBaseUrl("customer-frontend")}/order`;
+
+      return c.redirect(frontendRedirectUrl, 302);
     },
   )
   // .openapi(
@@ -120,7 +126,7 @@ const paymentRouter = new OpenAPIHono()
   .openapi(
     createRoute({
       method: "get",
-      path: "/:orderId",
+      path: "/order/:orderId",
       request: {
         params: z.object({
           orderId: z.string(),
