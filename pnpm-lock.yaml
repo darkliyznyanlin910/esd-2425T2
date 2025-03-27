@@ -508,6 +508,9 @@ importers:
       '@repo/chatbot-ui':
         specifier: workspace:*
         version: link:../../packages/chatbot-ui
+      '@repo/db-order':
+        specifier: workspace:*
+        version: link:../../packages/db-order
       '@repo/service-discovery':
         specifier: workspace:*
         version: link:../../packages/service-discovery

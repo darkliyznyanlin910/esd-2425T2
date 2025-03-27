@@ -19,9 +19,9 @@ export async function updateOrderStatus(
     `${getServiceBaseUrl("order")}/order/updateStatus/${orderId}`,
     {
       method: "POST",
-      body: {
+      body: JSON.stringify({
         orderStatus: status,
-      },
+      }),
       headers: {
         Authorization: `Bearer ${env.INTERNAL_COMMUNICATION_SECRET}`,
         "Content-Type": "application/json",
@@ -198,4 +198,29 @@ export async function updateUser(
   }
 
   console.log("Successfully updated user with stripeCustomerId:", userId);
+}
+
+export async function startDeliveryProcess(order: Order): Promise<void> {
+  log.info("Starting delivery process", {
+    order: JSON.stringify(order, null, 2),
+  });
+  const res = await fetch(
+    `${getServiceBaseUrl("order")}/order/process/${order.id}`,
+    {
+      headers: {
+        Authorization: `Bearer ${env.INTERNAL_COMMUNICATION_SECRET}`,
+      },
+    },
+  );
+  if (!res.ok) {
+    console.error("Failed to start delivery process", res.status);
+    throw ApplicationFailure.create({
+      nonRetryable: true,
+      message: "Failed to start delivery process",
+    });
+  } else {
+    log.info("Successfully started delivery process", {
+      order: JSON.stringify(order, null, 2),
+    });
+  }
 }
