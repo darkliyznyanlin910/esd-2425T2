@@ -163,6 +163,7 @@ Created at: ${order.createdAt.toLocaleString()}`,
       order,
       stripeInvoice.amount_due / 100,
       stripeInvoice.hosted_invoice_url ?? undefined,
+      stripeInvoice.id,
     );
     await sendInvoiceToCustomer(invoice);
     await startDeliveryProcess(order);
