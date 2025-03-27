@@ -27,7 +27,8 @@
   },
   "prettier": "@repo/prettier-config",
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.772.0",
+    "@aws-sdk/client-s3": "^3.775.0",
+    "@aws-sdk/s3-request-presigner": "^3.775.0",
     "@hono/node-server": "^1.13.8",
     "@hono/zod-validator": "^0.4.2",
     "@repo/auth": "workspace:*",
