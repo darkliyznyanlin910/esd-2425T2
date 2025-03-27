@@ -171,7 +171,18 @@ clear_cluster() {
   
   # Remove loaded Docker images from the cluster
   echo "Removing Docker images from cluster..."
-  docker exec "$CLUSTER_NAME-control-plane" crictl rmi esd-api:latest 2>/dev/null || true
+  # Backend
+  docker exec "$CLUSTER_NAME-control-plane" crictl rmi esd-auth:latest 2>/dev/null || true
+  docker exec "$CLUSTER_NAME-control-plane" crictl rmi esd-chatbot-backend:latest 2>/dev/null || true
+  docker exec "$CLUSTER_NAME-control-plane" crictl rmi esd-notification:latest 2>/dev/null || true
+  docker exec "$CLUSTER_NAME-control-plane" crictl rmi esd-order:latest 2>/dev/null || true
+  docker exec "$CLUSTER_NAME-control-plane" crictl rmi esd-driver:latest 2>/dev/null || true
+  docker exec "$CLUSTER_NAME-control-plane" crictl rmi esd-invoice:latest 2>/dev/null || true
+  
+  # Frontend
+  docker exec "$CLUSTER_NAME-control-plane" crictl rmi esd-driver-frontend:latest 2>/dev/null || true
+  docker exec "$CLUSTER_NAME-control-plane" crictl rmi esd-customer-frontend:latest 2>/dev/null || true
+  docker exec "$CLUSTER_NAME-control-plane" crictl rmi esd-admin-frontend:latest 2>/dev/null || true
   
   if [ "$2" == "--all" ]; then
     echo "Deleting cluster: $CLUSTER_NAME"
