@@ -157,15 +157,15 @@ Created at: ${order.createdAt.toLocaleString()}`,
 
   if (isPaymentSuccessful) {
     await updateOrderStatus(order.id, "PAYMENT_SUCCESSFUL");
-    // const invoiceId = await getStripeInvoiceIdFromSessionId(session.id);
-    // const stripeInvoice = await getStripeInvoice(invoiceId);
-    // const invoice = await generateInvoice(
-    //   order,
-    //   stripeInvoice.amount_due / 100,
-    //   stripeInvoice.invoice_pdf ?? undefined,
-    //   stripeInvoice.id,
-    // );
-    // await sendInvoiceToCustomer(invoice);
+    const invoiceId = await getStripeInvoiceIdFromSessionId(session.id);
+    const stripeInvoice = await getStripeInvoice(invoiceId);
+    const invoice = await generateInvoice(
+      order,
+      stripeInvoice.amount_due / 100,
+      stripeInvoice.invoice_pdf ?? undefined,
+      stripeInvoice.id,
+    );
+    await sendInvoiceToCustomer(invoice);
     await startDeliveryProcess(order);
   } else {
     await updateOrderStatus(order.id, "PAYMENT_FAILED");
