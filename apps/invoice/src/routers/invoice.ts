@@ -21,7 +21,7 @@ const invoiceRouter = router
   .openapi(
     createRoute({
       method: "post",
-      path: "/invoices/uploadURL",
+      path: "/uploadURL",
       description: "Generate a pre-signed URL for invoice upload to S3",
       request: {
         body: {
@@ -41,7 +41,7 @@ const invoiceRouter = router
     }),
     async (c) => {
       try {
-        const { orderId } = c.req.query();
+        const { orderId } = c.req.valid("json");
 
         const s3Client = new S3Client({
           region: process.env.AWS_REGION || "ap-southeast-1",
