@@ -147,7 +147,7 @@ export async function generateInvoice(
 
     // Get S3 Upload URL
     const urlResponse = await fetch(
-      `${getServiceBaseUrl("invoice")}/invoices/uploadURL`,
+      `${getServiceBaseUrl("invoice")}/invoice/uploadURL`,
       {
         method: "POST",
         headers: {
