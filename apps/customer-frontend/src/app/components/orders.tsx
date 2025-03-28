@@ -1,11 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { hc } from "hono/client";
 
 import { authClient } from "@repo/auth/client";
 import { Order } from "@repo/db-order/zod";
-import { AppType } from "@repo/order/type";
 import { getServiceBaseUrl } from "@repo/service-discovery";
 
 import { columns } from "./orders/columns";
