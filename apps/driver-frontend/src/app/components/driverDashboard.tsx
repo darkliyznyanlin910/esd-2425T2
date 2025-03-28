@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import {
   useEventSource,
   useEventSourceListener,
@@ -21,6 +21,8 @@ import {
 
 export default function DriverDashboard() {
   const [orders, setOrders] = useState<Order[]>([]);
+  const [pickupOrder, setPickupOrder] = useState<Order[]>([]);
+  const [deliveryOrder, setDeliveryOrder] = useState<Order[]>([]);
   const { useSession } = authClient;
   const { data: session } = useSession();
   const handleAcceptOrder = async (orderId: string) => {
@@ -44,48 +46,141 @@ export default function DriverDashboard() {
       console.error("Failed to accept order:", error);
     }
   };
-
-  const [eventSource, eventSourceStatus] = useEventSource(
-    `${getServiceBaseUrl("notification")}/driver/sse`,
-    true,
-  );
+  const handlePickupOrder = async (orderId: string) => {
+    try {
+      const response = await fetch(
+        `${getServiceBaseUrl("driver")}/driver/state/PICKED_UP`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            orderId: orderId,
+            driverId: session?.user.id,
+          }),
+        },
+      );
+      console.log("Order accepted:", response);
+    } catch (error) {
+      console.error("Failed to accept order:", error);
+    }
+  };
+  const handleDeliveryOrder = async (orderId: string) => {
+    try {
+      const response = await fetch(
+        `${getServiceBaseUrl("driver")}/driver/state/DELIVERED`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            orderId: orderId,
+            driverId: session?.user.id,
+          }),
+        },
+      );
+      console.log("Order accepted:", response);
+    } catch (error) {
+      console.error("Failed to accept order:", error);
+    }
+  };
 
   useEffect(() => {
-    console.log("eventSource", eventSource);
-    if (eventSource) {
-      eventSource.addEventListener("broadcastOrder", (e) => {
-        console.log("broadcastOrder", e);
-      });
-      eventSource.addEventListener("invalidateOrder", (e) => {
-        console.log("invalidateOrder", e);
-      });
-      eventSource.onmessage = (e) => {
-        console.log("onmessage", e);
-      };
-    }
-    return () => {
-      if (eventSource) {
-        eventSource.removeEventListener("broadcastOrder", (e) => {
-          console.log("broadcastOrder", e);
-        });
-        eventSource.removeEventListener("invalidateOrder", (e) => {
-          console.log("invalidateOrder", e);
-        });
-        eventSource.close();
+    const fetchOrders = async () => {
+      try {
+        const response = await fetch(
+          `${getServiceBaseUrl("order")}/order/finding/FINDING_DRIVER`,
+          {
+            method: "GET",
+            credentials: "include",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          },
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setOrders(data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch orders:", error);
       }
     };
-  }, [eventSource]);
+    fetchOrders();
+    const fetchPickupOrder = async () => {
+      try {
+        const response = await fetch(
+          `${getServiceBaseUrl("order")}/order/finding/DRIVER_FOUND`,
+          {
+            method: "GET",
+            credentials: "include",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          },
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setPickupOrder(data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch orders:", error);
+      }
+    };
+    fetchPickupOrder();
+    const fetchDeliveryOrder = async () => {
+      try {
+        const response = await fetch(
+          `${getServiceBaseUrl("order")}/order/finding/PICKED_UP`,
+          {
+            method: "GET",
+            credentials: "include",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          },
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setDeliveryOrder(data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch orders:", error);
+      }
+    };
+    fetchDeliveryOrder();
+    const intervalId = setInterval(fetchOrders, 2000);
+    const intervalId2 = setInterval(fetchPickupOrder, 2000);
+    const intervalId3 = setInterval(fetchDeliveryOrder, 2000);
+    return () => {
+      clearInterval(intervalId);
+      clearInterval(intervalId2);
+      clearInterval(intervalId3);
+    };
+  }, []);
 
   return (
     <div className="flex flex-col items-center">
-      <h1 className="text-2xl font-bold">Driver Dashboard</h1>
+      <h1 className="mb-5 text-2xl font-bold">Driver Dashboard</h1>
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead
+              className="text-center text-xl text-amber-400"
+              colSpan={4}
+            >
+              Available Orders
+            </TableHead>
+          </TableRow>
+          <TableRow>
             <TableHead>Order ID</TableHead>
+            <TableHead>Order Details</TableHead>
             <TableHead>From Address</TableHead>
             <TableHead>To Address</TableHead>
-            <TableHead>Status</TableHead>
             <TableHead>Action</TableHead>
           </TableRow>
         </TableHeader>
@@ -100,6 +195,7 @@ export default function DriverDashboard() {
             orders.map((data) => (
               <TableRow key={data.id}>
                 <TableCell>{data.id}</TableCell>
+                <TableCell>{data.orderDetails}</TableCell>
                 <TableCell>
                   {data.fromAddressLine1}, {data.fromAddressLine2},{" "}
                   {data.fromZipCode}
@@ -107,10 +203,103 @@ export default function DriverDashboard() {
                 <TableCell>
                   {data.toAddressLine1}, {data.toAddressLine2}, {data.toZipCode}
                 </TableCell>
-                <TableCell>{data.orderStatus}</TableCell>
                 <TableCell>
                   <Button onClick={() => handleAcceptOrder(data.id)}>
                     Accept Order
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))
+          )}
+        </TableBody>
+      </Table>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead
+              className="text-center text-xl text-amber-500"
+              colSpan={4}
+            >
+              Orders to Pick Up
+            </TableHead>
+          </TableRow>
+          <TableRow>
+            <TableHead>Order ID</TableHead>
+            <TableHead>Order Details</TableHead>
+            <TableHead>From Address</TableHead>
+            <TableHead>To Address</TableHead>
+            <TableHead>Action</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {pickupOrder.length === 0 ? (
+            <TableRow>
+              <TableCell className="text-center text-lg" colSpan={5}>
+                No new orders yet.
+              </TableCell>
+            </TableRow>
+          ) : (
+            pickupOrder.map((data) => (
+              <TableRow key={data.id}>
+                <TableCell>{data.id}</TableCell>
+                <TableCell>{data.orderDetails}</TableCell>
+                <TableCell>
+                  {data.fromAddressLine1}, {data.fromAddressLine2},{" "}
+                  {data.fromZipCode}
+                </TableCell>
+                <TableCell>
+                  {data.toAddressLine1}, {data.toAddressLine2}, {data.toZipCode}
+                </TableCell>
+                <TableCell>
+                  <Button onClick={() => handlePickupOrder(data.id)}>
+                    Picked Up
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))
+          )}
+        </TableBody>
+      </Table>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead
+              className="text-center text-xl text-amber-600"
+              colSpan={4}
+            >
+              Orders to Deliver
+            </TableHead>
+          </TableRow>
+          <TableRow>
+            <TableHead>Order ID</TableHead>
+            <TableHead>Order Details</TableHead>
+            <TableHead>From Address</TableHead>
+            <TableHead>To Address</TableHead>
+            <TableHead>Action</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {deliveryOrder.length === 0 ? (
+            <TableRow>
+              <TableCell className="text-center text-lg" colSpan={5}>
+                No new orders yet.
+              </TableCell>
+            </TableRow>
+          ) : (
+            deliveryOrder.map((data) => (
+              <TableRow key={data.id}>
+                <TableCell>{data.id}</TableCell>
+                <TableCell>{data.orderDetails}</TableCell>
+                <TableCell>
+                  {data.fromAddressLine1}, {data.fromAddressLine2},{" "}
+                  {data.fromZipCode}
+                </TableCell>
+                <TableCell>
+                  {data.toAddressLine1}, {data.toAddressLine2}, {data.toZipCode}
+                </TableCell>
+                <TableCell>
+                  <Button onClick={() => handleDeliveryOrder(data.id)}>
+                    Delivered
                   </Button>
                 </TableCell>
               </TableRow>
