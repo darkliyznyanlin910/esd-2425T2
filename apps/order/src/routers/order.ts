@@ -59,7 +59,7 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
           description: "User ID is required",
         },
         403: {
-          description: "Unauthorized",
+          description: "Unauthorized to create user",
         },
       },
     }),
@@ -69,7 +69,7 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
       const user = c.get("user");
 
       if (!user) {
-        return c.json({ error: "Unauthorized" }, 403);
+        return c.json({ error: "Unauthorized, not signed in" }, 403);
       }
 
       console.log(db);
@@ -138,7 +138,7 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
           description: "Process order",
         },
         401: {
-          description: "Unauthorized",
+          description: "Unauthorized to process order",
         },
         404: {
           description: "Order not found",
@@ -208,7 +208,7 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
           description: "Update order status",
         },
         401: {
-          description: "Unauthorized",
+          description: "Unauthorized to update order status",
         },
       },
     }),
@@ -262,7 +262,7 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
           description: "Get order by id",
         },
         403: {
-          description: "Unauthorized",
+          description: "Unauthorized to get order by id",
         },
         404: {
           description: "Order not found",
@@ -324,7 +324,7 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
           description: "Get all orders",
         },
         401: {
-          description: "Unauthorized",
+          description: "Unauthorized to get all orders",
         },
         404: {
           description: "Order not found",
@@ -355,7 +355,7 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
   .openapi(
     createRoute({
       method: "get",
-      path: "/order/finding/:orderStatus",
+      path: "/finding/:orderStatus",
       description: "Get all orders by orderStatus",
       middleware: [
         authMiddleware({
@@ -383,7 +383,7 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
           description: "Get all orders by orderStatus",
         },
         401: {
-          description: "Unauthorized",
+          description: "Unauthorized to view orders by orderStatus",
         },
         404: {
           description: "Order for finding not found",
@@ -432,7 +432,7 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
           description: "Orders fetched by user ID",
         },
         401: {
-          description: "Unauthorized",
+          description: "Unauthorized to fetch orders by user ID",
         },
         404: {
           description: "Orders not found",
