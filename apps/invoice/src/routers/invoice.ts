@@ -49,7 +49,7 @@ const invoiceRouter = router
             accessKeyId: process.env.AWS_ACCESS_KEY_ID || "test",
             secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "test",
           },
-          endpoint: process.env.AWS_S3_ENDPOINT || undefined,
+          endpoint: process.env.S3_ENDPOINT || undefined,
           forcePathStyle: true,
         });
 
