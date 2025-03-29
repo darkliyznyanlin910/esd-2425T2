@@ -44,7 +44,7 @@ const invoiceRouter = router
         const { orderId } = c.req.valid("json");
 
         const s3Client = new S3Client({
-          region: process.env.AWS_REGION || "ap-southeast-1",
+          region: process.env.AWS_REGION || "ap-south-1",
           credentials: {
             accessKeyId: process.env.AWS_ACCESS_KEY_ID || "test",
             secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "test",
