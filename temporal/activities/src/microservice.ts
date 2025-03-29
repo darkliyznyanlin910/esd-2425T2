@@ -82,7 +82,25 @@ export async function sendOrderToDrivers(order: Order): Promise<void> {
 }
 
 export async function notifyAdmin(order: Order): Promise<void> {
-  log.info("Notifying admin", { order: JSON.stringify(order, null, 2) });
+  const res = await NotificationClient.admin.sendReassignment.$post(
+    {
+      json: order,
+    },
+    {
+      init: {
+        headers: {
+          Authorization: `Bearer ${env.INTERNAL_COMMUNICATION_SECRET}`,
+        },
+      },
+    },
+  );
+  if (!res.ok) {
+    throw ApplicationFailure.create({
+      nonRetryable: true,
+      message: "Failed to send reassignment request to admin",
+    });
+  }
+  log.info("Sent reassignment request to admin", { res });
 }
 
 export async function assignOrderToDriver(
@@ -138,11 +156,16 @@ export async function generateInvoice(
     // Download PDF from Stripe
     const response = await axios.get(stripeInvoiceUrl, {
       responseType: "arraybuffer",
+      maxRedirects: 5,
     });
     const pdfBuffer = Buffer.from(response.data);
 
     if (!pdfBuffer) {
-      throw new Error("Failed to download PDF from Stripe");
+      // throw new Error("Failed to download PDF from Stripe");
+      throw ApplicationFailure.create({
+        nonRetryable: true,
+        message: `Failed to download pdf from stripe`,
+      });
     }
 
     // Get S3 Upload URL
@@ -158,7 +181,11 @@ export async function generateInvoice(
     );
 
     if (!urlResponse.ok) {
-      throw new Error(`Failed to get upload URL: ${urlResponse.status}`);
+      // throw new Error(`Failed to get upload URL: ${urlResponse.status}`);
+      throw ApplicationFailure.create({
+        nonRetryable: true,
+        message: `Failed to get upload url pdf to stripe`,
+      });
     }
 
     const { uploadUrl, key } = (await urlResponse.json()) as {
@@ -173,7 +200,11 @@ export async function generateInvoice(
     });
 
     if (uploadResponse.status !== 200) {
-      throw new Error(`Failed to upload PDF to S3: ${uploadResponse.status}`);
+      // throw new Error(`Failed to upload PDF to S3: ${uploadResponse.status}`);
+      throw ApplicationFailure.create({
+        nonRetryable: true,
+        message: `Failed to upload PDF to S3`,
+      });
     }
 
     // Create Invoice Record
@@ -197,9 +228,13 @@ export async function generateInvoice(
     );
 
     if (!createInvoiceResponse.ok) {
-      throw new Error(
-        `Failed to create invoice: ${createInvoiceResponse.status}`,
-      );
+      // throw new Error(
+      //   `Failed to create invoice: ${createInvoiceResponse.status}`,
+      // );
+      throw ApplicationFailure.create({
+        nonRetryable: true,
+        message: `Failed to create invoice`,
+      });
     }
 
     return {
