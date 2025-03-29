@@ -18,7 +18,7 @@ const adminRouter = new OpenAPIHono()
   .openapi(
     createRoute({
       method: "post",
-      path: "/send-delay",
+      path: "/sendDelay",
       middleware: [bearerAuth({ token: env.INTERNAL_COMMUNICATION_SECRET })],
       request: {
         body: {
@@ -54,7 +54,7 @@ const adminRouter = new OpenAPIHono()
   .openapi(
     createRoute({
       method: "post",
-      path: "/send-reassignment",
+      path: "/sendReassignment",
       middleware: [bearerAuth({ token: env.INTERNAL_COMMUNICATION_SECRET })],
       request: {
         body: {
