@@ -52,7 +52,7 @@ aws_secret_access_key=anything
 [profile localstack]
 output = json
 endpoint_url = http://localhost:4566
-region = ap-southeast-1
+region = ap-south-1
 ```
 
 3. Run docker command
