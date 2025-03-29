@@ -217,7 +217,7 @@ export async function generateInvoice(
     };
 
     const createInvoiceResponse = await fetch(
-      `${getServiceBaseUrl("invoice")}/invoices`,
+      `${getServiceBaseUrl("invoice")}/invoice/invoices`,
       {
         method: "POST",
         headers: {
