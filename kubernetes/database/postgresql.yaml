@@ -5,10 +5,10 @@ metadata:
 spec:
   bootstrap:
     # initdb:
-    #   database: esd
-    #   owner: esd
+    #   database: app
+    #   owner: app
     #   postInitSQL:
-    #     - ALTER USER "esd" WITH CREATEDB;
+    #     - ALTER USER "app" WITH CREATEDB;
     #     - CREATE DATABASE auth_database;
     #     - CREATE DATABASE order_database;
     #     - CREATE DATABASE driver_database;
