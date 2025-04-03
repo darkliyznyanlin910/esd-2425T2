@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: esd-driver
+  labels:
+    app: esd-driver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: esd-driver
+  template:
+    metadata:
+      labels:
+        app: esd-driver
+    spec:
+      containers:
+        - name: esd-driver
+          image: esd-driver:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 3006
+          env:
+            - name: PGUSER
+              valueFrom:
+                secretKeyRef:
+                  key: username
+                  name: postgres-app
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: postgres-app
+            - name: DRIVER_POSTGRES_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: database-connection-strings
+                  key: DRIVER_POSTGRES_URL
+          envFrom:
+            - configMapRef:
+                name: app-environment
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi

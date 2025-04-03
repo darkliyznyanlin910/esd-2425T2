@@ -1,25 +1,28 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: esd-invoice
+  name: esd-notification
   labels:
-    app: esd-invoice
+    app: esd-notification
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: esd-invoice
+      app: esd-notification
   template:
     metadata:
       labels:
-        app: esd-invoice
+        app: esd-notification
     spec:
       containers:
-        - name: esd-invoice
-          image: esd-invoice:latest
+        - name: esd-notification
+          image: esd-notification:latest
           imagePullPolicy: Never
           ports:
-            - containerPort: 3007
+            - containerPort: 3004
+          envFrom:
+            - configMapRef:
+                name: app-environment
           resources:
             limits:
               cpu: 500m

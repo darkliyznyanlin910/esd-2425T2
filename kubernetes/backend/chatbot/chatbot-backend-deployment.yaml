@@ -20,6 +20,9 @@ spec:
           imagePullPolicy: Never
           ports:
             - containerPort: 3003
+          envFrom:
+            - configMapRef:
+                name: app-environment
           resources:
             limits:
               cpu: 500m

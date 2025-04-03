@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: esd-auth
+  labels:
+    app: esd-auth
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: esd-auth
+  template:
+    metadata:
+      labels:
+        app: esd-auth
+    spec:
+      containers:
+        - name: esd-auth
+          image: esd-auth:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 3002
+          env:
+            - name: PGUSER
+              valueFrom:
+                secretKeyRef:
+                  key: username
+                  name: postgres-app
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: postgres-app
+            - name: AUTH_POSTGRES_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: database-connection-strings
+                  key: AUTH_POSTGRES_URL
+          envFrom:
+            - configMapRef:
+                name: app-environment
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi

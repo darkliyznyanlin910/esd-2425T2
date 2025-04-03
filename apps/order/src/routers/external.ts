@@ -1,6 +1,7 @@
 import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
 import { z } from "zod";
 
+import { authMiddleware } from "@repo/auth/auth";
 import { db } from "@repo/db-order";
 import { OrderSchema } from "@repo/db-order/zod";
 import { getServiceBaseUrl } from "@repo/service-discovery";
@@ -51,13 +52,13 @@ const externalRouter = new OpenAPIHono()
         }),
       },
       description: "Get order by id",
-      // middleware: [
-      //   authMiddleware({
-      //     bearer: {
-      //       tokens: [env.INTERNAL_COMMUNICATION_SECRET],
-      //     },
-      //   }),
-      // ],
+      middleware: [
+        authMiddleware({
+          bearer: {
+            tokens: [env.INTERNAL_COMMUNICATION_SECRET],
+          },
+        }),
+      ],
       responses: {
         200: {
           description: "OK",
@@ -105,13 +106,13 @@ const externalRouter = new OpenAPIHono()
         }),
       },
       description: "Get Timestamps of order status of orderId",
-      // middleware: [
-      //   authMiddleware({
-      //     bearer: {
-      //       tokens: [env.INTERNAL_COMMUNICATION_SECRET],
-      //     },
-      //   }),
-      // ],
+      middleware: [
+        authMiddleware({
+          bearer: {
+            tokens: [env.INTERNAL_COMMUNICATION_SECRET],
+          },
+        }),
+      ],
       responses: {
         200: {
           description: "OK",
@@ -172,13 +173,13 @@ const externalRouter = new OpenAPIHono()
           "x-user-id": z.string(),
         }),
       },
-      // middleware: [
-      //   authMiddleware({
-      //     bearer: {
-      //       tokens: [env.INTERNAL_COMMUNICATION_SECRET],
-      //     },
-      //   }),
-      // ],
+      middleware: [
+        authMiddleware({
+          bearer: {
+            tokens: [env.INTERNAL_COMMUNICATION_SECRET],
+          },
+        }),
+      ],
       description: "Create order",
       responses: {
         200: {
@@ -256,13 +257,13 @@ const externalRouter = new OpenAPIHono()
           byApiKey: z.enum(["true", "false"]).default("false"),
         }),
       },
-      // middleware: [
-      //   authMiddleware({
-      //     bearer: {
-      //       tokens: [env.INTERNAL_COMMUNICATION_SECRET],
-      //     },
-      //   }),
-      // ],
+      middleware: [
+        authMiddleware({
+          bearer: {
+            tokens: [env.INTERNAL_COMMUNICATION_SECRET],
+          },
+        }),
+      ],
       description: "Get orders",
       responses: {
         200: {
@@ -322,13 +323,13 @@ const externalRouter = new OpenAPIHono()
           "x-user-id": z.string(),
         }),
       },
-      // middleware: [
-      //   authMiddleware({
-      //     bearer: {
-      //       tokens: [env.INTERNAL_COMMUNICATION_SECRET],
-      //     },
-      //   }),
-      // ],
+      middleware: [
+        authMiddleware({
+          bearer: {
+            tokens: [env.INTERNAL_COMMUNICATION_SECRET],
+          },
+        }),
+      ],
       description: "Route order: returns orders in optimal order",
       responses: {
         200: {
