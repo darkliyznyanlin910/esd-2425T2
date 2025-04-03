@@ -107,9 +107,16 @@ export async function assignOrderToDriver(
   order: Order,
   driverId: string,
 ): Promise<void> {
-  log.info("Assigning order to driver", {
-    order: JSON.stringify(order, null, 2),
-    driverId,
+  await fetch(`${getServiceBaseUrl("driver")}/driver/assign`, {
+    method: "POST",
+    body: JSON.stringify({
+      orderId: order.id,
+      driverId,
+    }),
+    headers: {
+      Authorization: `Bearer ${env.INTERNAL_COMMUNICATION_SECRET}`,
+      "Content-Type": "application/json",
+    },
   });
 }
 
