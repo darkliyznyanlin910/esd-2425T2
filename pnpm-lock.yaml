@@ -449,6 +449,9 @@ importers:
       '@repo/db-driver':
         specifier: workspace:*
         version: link:../../packages/db-driver
+      '@repo/db-order':
+        specifier: workspace:*
+        version: link:../../packages/db-order
       '@repo/service-discovery':
         specifier: workspace:*
         version: link:../../packages/service-discovery

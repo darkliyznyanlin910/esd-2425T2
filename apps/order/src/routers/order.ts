@@ -228,6 +228,12 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
           orderStatus: input.orderStatus,
         },
       });
+      await db.orderTrackingRecord.create({
+        data: {
+          orderId: id,
+          status: input.orderStatus,
+        },
+      });
 
       return c.json(order);
     },
@@ -355,8 +361,8 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
   .openapi(
     createRoute({
       method: "get",
-      path: "/finding/:orderStatus",
-      description: "Get all orders by orderStatus",
+      path: "/finding/initialOrders",
+      description: "Get all orders by that don't have a driver assigned",
       middleware: [
         authMiddleware({
           authBased: {
@@ -365,9 +371,6 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
         }),
       ] as const,
       request: {
-        params: z.object({
-          orderStatus: z.enum(["FINDING_DRIVER", "DRIVER_FOUND", "PICKED_UP"]),
-        }),
         query: z.object({
           take: z.number().default(10),
           page: z.number().default(1),
@@ -392,11 +395,10 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
     }),
     async (c) => {
       const { take, page } = c.req.valid("query");
-      const { orderStatus } = c.req.valid("param");
       // Query orders by orderStatus only
       const orders = await db.order.findMany({
         where: {
-          orderStatus,
+          orderStatus: "FINDING_DRIVER",
         },
         take,
         skip: (page - 1) * take,
