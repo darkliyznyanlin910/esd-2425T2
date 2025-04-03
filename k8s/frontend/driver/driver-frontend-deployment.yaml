@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: esd-driver-frontend
+  labels:
+    app: esd-driver-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: esd-driver-frontend
+  template:
+    metadata:
+      labels:
+        app: esd-driver-frontend
+    spec:
+      containers:
+        - name: esd-driver-frontend
+          image: esd-driver-frontend:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 6600
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
