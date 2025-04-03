@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Bell, Notebook, Truck } from "lucide-react";
 
@@ -21,7 +20,7 @@ import {
 
 import { OrderProvider } from "./components/driver/assign-context";
 import AssignTablePage from "./components/driver/driver-table";
-import TestNotificationPage from "./components/notifications/notification";
+import NotificationComponent from "./components/notifications/notification";
 import OrderTablePage from "./components/orders/order-table";
 
 export default function HomePage() {
@@ -42,13 +41,13 @@ export default function HomePage() {
   };
 
   const menuComponents: Record<string, JSX.Element> = {
-    orders: <OrderTablePage />, //wip - add status filter
+    orders: <OrderTablePage />,
     toAssign: (
       <OrderProvider>
         <AssignTablePage />
       </OrderProvider>
-    ), //wip
-    notifications: <TestNotificationPage />, //wip
+    ),
+    notifications: <NotificationComponent showComponent={true} />,
   };
 
   return (

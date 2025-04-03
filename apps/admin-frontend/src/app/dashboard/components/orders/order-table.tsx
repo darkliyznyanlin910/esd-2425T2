@@ -7,6 +7,7 @@ import type { Order } from "@repo/db-order/zod";
 import type { AppType } from "@repo/order/type";
 import { getServiceBaseUrl } from "@repo/service-discovery";
 
+import NotificationComponent from "../notifications/notification";
 import { columns } from "./columns";
 import { DataTable } from "./data-table";
 
@@ -57,6 +58,7 @@ export default function OrderTablePage() {
 
   return (
     <div className="container h-screen py-6">
+      <NotificationComponent showComponent={false} />
       <div className="text-xl font-semibold">Order Records</div>
       <DataTable columns={columns} data={orders} />{" "}
     </div>
