@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 
-import { authClient } from "@repo/auth/client";
 import type { Order } from "@repo/db-order/zod";
+import { authClient } from "@repo/auth/client";
 import { getServiceBaseUrl } from "@repo/service-discovery";
 
 import { columns } from "./orders/columns";
@@ -40,7 +40,20 @@ export default function OrderTablePage() {
   const userId = session?.user.id;
   console.log(userId);
 
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     if (!userId) return;
+  //     const fetchedData = await getOrders(userId);
+  //     setOrders(fetchedData);
+  //     setLoading(false);
+  //   };
+
+  //   void fetchData();
+  // }, [userId]);
+
   useEffect(() => {
+    let interval: NodeJS.Timeout;
+
     const fetchData = async () => {
       if (!userId) return;
       const fetchedData = await getOrders(userId);
@@ -48,7 +61,12 @@ export default function OrderTablePage() {
       setLoading(false);
     };
 
-    void fetchData();
+    if (userId) {
+      fetchData();
+      interval = setInterval(fetchData, 5000);
+    }
+
+    return () => clearInterval(interval);
   }, [userId]);
 
   if (loading) {
