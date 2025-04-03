@@ -102,7 +102,6 @@ export const columns: ColumnDef<Order>[] = [
           //     json: {
           //       driverId,
           //       orderId,
-          //       paymentAmount,
           //     },
           //   },
           //   {
