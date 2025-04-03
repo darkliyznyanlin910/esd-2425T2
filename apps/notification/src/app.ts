@@ -44,4 +44,4 @@ const routes = app
   .route("/driver", driverRouter)
   .route("/admin", adminRouter);
 
-export { routes };
+export { routes, app };

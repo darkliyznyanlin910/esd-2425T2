@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: esd-chatbot-backend
+  labels:
+    app: esd-chatbot-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: esd-chatbot-backend
+  template:
+    metadata:
+      labels:
+        app: esd-chatbot-backend
+    spec:
+      containers:
+        - name: esd-chatbot-backend
+          image: esd-chatbot-backend:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 3003
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
