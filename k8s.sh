@@ -36,7 +36,7 @@ case $1 in
     "up")
         case $2 in
             "app")
-                kubectl create configmap app-environment --from-file=.env=kubernetes/.env.k8s -o yaml --dry-run=client | kubectl apply -f -
+                kubectl create secret generic app-environment --from-env-file=kubernetes/.env.k8s
                 kubectl apply -k kubernetes/backend
                 kubectl apply -k kubernetes/frontend
                 ;;
