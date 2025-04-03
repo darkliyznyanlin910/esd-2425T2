@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: esd-notification
+  labels:
+    app: esd-notification
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 3004
+      protocol: TCP
+      name: http
+  selector:
+    app: esd-notification

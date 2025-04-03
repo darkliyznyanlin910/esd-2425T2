@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: esd-driver-frontend
+  labels:
+    app: esd-driver-frontend
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 6600
+      protocol: TCP
+      name: http
+  selector:
+    app: esd-driver-frontend
