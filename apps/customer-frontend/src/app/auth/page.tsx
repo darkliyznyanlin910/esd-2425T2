@@ -16,7 +16,7 @@ export default function AuthPage() {
   const { useSession, signIn } = authClient;
   const { data: session } = useSession();
   const [email, setEmail] = useState("");
-  const [role] = useState("client");
+
   const [password, setPassword] = useState("");
   const [isSignUp, setIsSignUp] = useState<boolean | null>(null);
 
