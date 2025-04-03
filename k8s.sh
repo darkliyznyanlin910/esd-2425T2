@@ -47,8 +47,11 @@ case $1 in
             "ingress")
                 kubectl apply -f kubernetes/ingress.yaml
                 ;;
+            "nginx")
+                kubectl apply -k kubernetes/nginx
+                ;;
             *)
-                echo "Usage: $0 up {app|db|ingress}"
+                echo "Usage: $0 up {app|db|ingress|all}"
                 exit 1
                 ;;
         esac
@@ -65,8 +68,11 @@ case $1 in
             "ingress")
                 kubectl delete -f kubernetes/ingress.yaml
                 ;;
+            "nginx")
+                kubectl delete -k kubernetes/nginx
+                ;;
             *)
-                echo "Usage: $0 up {app|db|ingress}"
+                echo "Usage: $0 down {app|db|ingress|nginx|all}"
                 exit 1
                 ;;
         esac

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Bell, Notebook, Truck } from "lucide-react";
 
-import { authClient } from "@repo/auth/client";
+import { authClient } from "@repo/auth-client";
 import { Button } from "@repo/ui/button";
 import {
   Sidebar,

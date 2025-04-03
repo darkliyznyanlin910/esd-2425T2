@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-import { authClient } from "@repo/auth/client";
+import { authClient } from "@repo/auth-client";
 
 import CreateOrderPage from "~/app/components/create-order";
 

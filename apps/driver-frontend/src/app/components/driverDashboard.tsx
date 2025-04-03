@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-import { authClient } from "@repo/auth/client";
+import { authClient } from "@repo/auth-client";
 import { Order } from "@repo/db-order/zod";
 import { getServiceBaseUrl } from "@repo/service-discovery";
 import { Button } from "@repo/ui/button";

@@ -14,7 +14,7 @@
     "with-env": "dotenv -e ../../service-env/.env --"
   },
   "dependencies": {
-    "@repo/auth": "workspace:*",
+    "@repo/auth-client": "workspace:*",
     "@repo/chatbot-ui": "workspace:*",
     "@repo/service-discovery": "workspace:*",
     "@repo/ui": "workspace:*",

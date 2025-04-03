@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { authClient } from "@repo/auth/client";
+import { authClient } from "@repo/auth-client";
 import { HonoClient } from "@repo/auth/type";
 import { getServiceBaseUrl } from "@repo/service-discovery";
 import { Button } from "@repo/ui/button";
