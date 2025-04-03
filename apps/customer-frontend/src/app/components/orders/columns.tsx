@@ -1,9 +1,9 @@
 "use client";
 
-import { ColumnDef } from "@tanstack/react-table";
+import type { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
 
-import { Order } from "@repo/db-order/zod";
+import type { Order } from "@repo/db-order/zod";
 import { Button } from "@repo/ui/button";
 
 export const columns: ColumnDef<Order>[] = [

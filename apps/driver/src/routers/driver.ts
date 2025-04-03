@@ -4,10 +4,13 @@ import { z } from "zod";
 import type { HonoExtension } from "@repo/auth/type";
 import { authMiddleware } from "@repo/auth/auth";
 import { db } from "@repo/db-driver";
+import { db as orderDb } from "@repo/db-order";
+import { OrderSchema } from "@repo/db-order/zod";
 import { connectToTemporal } from "@repo/temporal-common/temporal-client";
 import {
   deliveredSignal,
   driverFoundSignal,
+  order,
   pickedUpSignal,
 } from "@repo/temporal-workflows";
 
@@ -138,8 +141,10 @@ const driverRouter = new OpenAPIHono<HonoExtension>()
     async (c) => {
       const { userId } = c.req.valid("param");
       const { availability } = c.req.valid("json");
+      const driver = await db.driver.findUnique({ where: { userId } });
+      if (!driver) return c.json({ message: "Driver not found" }, 404);
       const updatedDriver = await db.driver.update({
-        where: { userId },
+        where: { id: driver.id },
         data: { availability },
       });
       return c.json({
@@ -222,7 +227,7 @@ const driverRouter = new OpenAPIHono<HonoExtension>()
     createRoute({
       method: "post",
       path: "/assign",
-      description: "Assign a driver to an order (including payment)",
+      description: "Assign a driver to an order",
       request: {
         body: {
           content: {
@@ -230,7 +235,6 @@ const driverRouter = new OpenAPIHono<HonoExtension>()
               schema: z.object({
                 driverId: z.string(),
                 orderId: z.string(),
-                paymentAmount: z.number(),
               }),
             },
           },
@@ -241,10 +245,11 @@ const driverRouter = new OpenAPIHono<HonoExtension>()
       },
     }),
     async (c) => {
-      const assignmentData = c.req.valid("json");
+      const { driverId, orderId } = c.req.valid("json");
       const newAssignment = await db.orderAssignment.create({
-        data: assignmentData,
+        data: { driverId, orderId },
       });
+      console.log("New Assignment", newAssignment);
       return c.json({ id: newAssignment.id, message: "Order assigned" }, 201);
     },
   )
@@ -252,11 +257,15 @@ const driverRouter = new OpenAPIHono<HonoExtension>()
     createRoute({
       method: "get",
       path: "/assignments/:id",
-      description: "Get all order assignment to userId",
-      request: { params: z.object({ id: z.string() }) },
+      description: "Get all order assignments to userId",
+      request: {
+        params: z.object({ id: z.string() }),
+        query: z.object({
+          status: z.enum(["DRIVER_FOUND", "PICKED_UP", "DELIVERED"]).optional(),
+        }),
+      },
       responses: {
         200: {
-          description: "Order assignment details",
           content: {
             "application/json": {
               schema: z.array(
@@ -264,29 +273,72 @@ const driverRouter = new OpenAPIHono<HonoExtension>()
                   id: z.string(),
                   driverId: z.string(),
                   orderId: z.string(),
-                  paymentAmount: z.number(),
+                  orderStatus: z.enum([
+                    "DRIVER_FOUND",
+                    "PICKED_UP",
+                    "DELIVERED",
+                  ]),
                   createdAt: z.string(),
                   updatedAt: z.string(),
+                  orderDetails: OrderSchema.optional(),
                 }),
               ),
             },
           },
+          description: "Get all orders of driver by orderStatus",
         },
         404: { description: "Assignment not found" },
       },
     }),
     async (c) => {
       const { id } = c.req.valid("param");
-      const driverResult = await db.driver.findUnique({
+      const { status } = c.req.valid("query");
+
+      // Find the driver by userId
+      const driver = await db.driver.findUnique({
         where: { userId: id },
       });
-      if (driverResult === null)
-        return c.json({ message: "Driver not found" }, 404);
-      const assignment = await db.orderAssignment.findUnique({
-        where: { id: driverResult.id },
+
+      if (!driver) return c.json({ message: "Driver not found" }, 404);
+
+      // Build the query based on whether status is provided
+      const whereClause = status
+        ? { driverId: driver.id, orderStatus: status }
+        : { driverId: driver.id };
+
+      // Get all assignments for this driver
+      const driverAssignments = await db.orderAssignment.findMany({
+        where: whereClause,
       });
-      if (!assignment) return c.json({ message: "Assignment not found" }, 404);
-      return c.json(assignment);
+
+      if (!driverAssignments || driverAssignments.length === 0) {
+        return c.json({ message: "Assignment not found" }, 404);
+      }
+
+      // Extract order IDs from the assignments
+      const orderIds = driverAssignments.map(
+        (assignment) => assignment.orderId,
+      );
+
+      // Get the order details from the order database
+      const orderDetails = await orderDb.order.findMany({
+        where: {
+          id: { in: orderIds },
+        },
+      });
+
+      // Combine the assignment data with the order details
+      const combinedResults = driverAssignments.map((assignment) => {
+        const matchingOrder = orderDetails.find(
+          (order) => order.id === assignment.orderId,
+        );
+        return {
+          ...assignment,
+          orderDetails: matchingOrder || null,
+        };
+      });
+
+      return c.json(combinedResults);
     },
   )
   .openapi(
@@ -310,7 +362,7 @@ const driverRouter = new OpenAPIHono<HonoExtension>()
             "application/json": {
               schema: z.object({
                 orderId: z.string(),
-                driverId: z.string().optional(),
+                driverId: z.string(),
               }),
             },
           },
@@ -329,16 +381,44 @@ const driverRouter = new OpenAPIHono<HonoExtension>()
         await temporalClient.workflow
           .getHandle(`${orderId}-delivery`)
           .signal(driverFoundSignal, driverId);
+        const driver = await db.driver.findUnique({
+          where: { userId: driverId },
+        });
+        if (!driver) return c.json({ message: "Driver not found" }, 404);
+        const newAssignment = await db.orderAssignment.create({
+          data: { driverId: driver.id, orderId },
+        });
+        return c.json({ id: newAssignment.id, message: "Order assigned" }, 201);
       } else if (state === "PICKED_UP") {
         await temporalClient.workflow
           .getHandle(`${orderId}-delivery`)
           .signal(pickedUpSignal);
+        const driver = await db.driver.findUnique({
+          where: { userId: driverId },
+        });
+        console.log("input ID", driverId);
+        if (!driver) return c.json({ message: "Driver not found" }, 404);
+        console.log("Driver ID", driver.id);
+
+        await db.orderAssignment.updateMany({
+          where: { orderId, driverId: driver.id },
+          data: { orderStatus: "PICKED_UP" },
+        });
+        return c.json({ message: "Order picked up" }, 201);
       } else {
         await temporalClient.workflow
           .getHandle(`${orderId}-delivery`)
           .signal(deliveredSignal);
+        const driver = await db.driver.findUnique({
+          where: { userId: driverId },
+        });
+        if (!driver) return c.json({ message: "Driver not found" }, 404);
+        await db.orderAssignment.updateMany({
+          where: { orderId, driverId: driver.id },
+          data: { orderStatus: "DELIVERED" },
+        });
+        return c.json({ message: "Order delivered" }, 201);
       }
-      return c.json({ message: "ok" });
     },
   );
 

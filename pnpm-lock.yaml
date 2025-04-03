@@ -352,6 +352,12 @@ importers:
       '@repo/chatbot-ui':
         specifier: workspace:*
         version: link:../../packages/chatbot-ui
+      '@repo/db-auth':
+        specifier: workspace:*
+        version: link:../../packages/db-auth
+      '@repo/db-order':
+        specifier: workspace:*
+        version: link:../../packages/db-order
       '@repo/order':
         specifier: workspace:*
         version: link:../order
@@ -452,6 +458,9 @@ importers:
       '@repo/db-driver':
         specifier: workspace:*
         version: link:../../packages/db-driver
+      '@repo/db-order':
+        specifier: workspace:*
+        version: link:../../packages/db-order
       '@repo/service-discovery':
         specifier: workspace:*
         version: link:../../packages/service-discovery
