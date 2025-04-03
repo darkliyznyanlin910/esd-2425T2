@@ -1,11 +1,9 @@
 import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
-import { bearerAuth } from "hono/bearer-auth";
 import { z } from "zod";
 
 import type { HonoExtension } from "@repo/auth/type";
 import { authMiddleware } from "@repo/auth/auth";
 import { db } from "@repo/db-order";
-import { OrderStatus } from "@repo/db-order/client";
 import { OrderSchema } from "@repo/db-order/zod";
 import { taskQueue } from "@repo/temporal-common";
 import { connectToTemporal } from "@repo/temporal-common/temporal-client";

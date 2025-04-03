@@ -1,25 +1,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: esd-order
+  name: esd-driver-frontend
   labels:
-    app: esd-order
+    app: esd-driver-frontend
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: esd-order
+      app: esd-driver-frontend
   template:
     metadata:
       labels:
-        app: esd-order
+        app: esd-driver-frontend
     spec:
       containers:
-        - name: esd-order
-          image: esd-order:latest
+        - name: esd-driver-frontend
+          image: esd-driver-frontend:latest
           imagePullPolicy: Never
           ports:
-            - containerPort: 3005
+            - containerPort: 6600
           resources:
             limits:
               cpu: 500m
@@ -27,3 +27,6 @@ spec:
             requests:
               cpu: 100m
               memory: 128Mi
+          envFrom:
+            - configMapRef:
+                name: app-environment

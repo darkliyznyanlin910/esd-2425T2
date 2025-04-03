@@ -34,6 +34,7 @@
     "@hono/zod-validator": "^0.4.2",
     "@repo/db-auth": "workspace:*",
     "@repo/service-discovery": "workspace:*",
+    "@scalar/hono-api-reference": "^0.5.170",
     "better-auth": "^1.1.15",
     "dotenv-cli": "catalog:",
     "hono": "^4.6.20",
