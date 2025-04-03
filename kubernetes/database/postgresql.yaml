@@ -21,7 +21,7 @@ spec:
           apiGroup: snapshot.storage.k8s.io
 
   enableSuperuserAccess: true # By default superuser access is not created on cluster bootstrap
-  imageName: ghcr.io/cloudnative-pg/postgresql:16.3
+  imageName: ghcr.io/cloudnative-pg/postgresql:13.20-8
   instances: 1
   postgresql:
     parameters: # postgresql paramaters

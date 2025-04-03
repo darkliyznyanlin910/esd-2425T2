@@ -47,3 +47,13 @@ spec:
                 name: esd-nginx
                 port:
                   number: 80
+    - host: temporal.esd.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: temporal-service
+                port:
+                  number: 80
