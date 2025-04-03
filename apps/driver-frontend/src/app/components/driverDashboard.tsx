@@ -19,6 +19,8 @@ import {
   TableRow,
 } from "@repo/ui/table";
 
+import NotificationComponent from "./notification";
+
 export default function DriverDashboard() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [pickupOrder, setPickupOrder] = useState<Order[]>([]);
@@ -165,6 +167,7 @@ export default function DriverDashboard() {
 
   return (
     <div className="flex flex-col items-center">
+      <NotificationComponent />
       <h1 className="mb-5 text-2xl font-bold">Driver Dashboard</h1>
       <Table>
         <TableHeader>
