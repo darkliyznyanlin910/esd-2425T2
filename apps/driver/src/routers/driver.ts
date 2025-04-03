@@ -245,10 +245,11 @@ const driverRouter = new OpenAPIHono<HonoExtension>()
       },
     }),
     async (c) => {
-      const assignmentData = c.req.valid("json");
+      const { driverId, orderId } = c.req.valid("json");
       const newAssignment = await db.orderAssignment.create({
-        data: assignmentData,
+        data: { driverId, orderId },
       });
+      console.log("New Assignment", newAssignment);
       return c.json({ id: newAssignment.id, message: "Order assigned" }, 201);
     },
   )

@@ -38,7 +38,7 @@ async function getOrders(): Promise<Order[]> {
 
     const orderList = await response.json();
     const orderToAssign = orderList.filter(
-      (order: any) => order.orderStatus === "FINDING_DRIVER",
+      (order: any) => order.orderStatus === "DELAYED",
     );
 
     return orderToAssign as unknown as Order[];
