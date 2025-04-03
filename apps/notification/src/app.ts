@@ -1,4 +1,3 @@
-import { OpenAPIHono } from "@hono/zod-openapi";
 import { apiReference } from "@scalar/hono-api-reference";
 import { cors } from "hono/cors";
 import { TypedEmitter } from "tiny-typed-emitter";
@@ -8,8 +7,10 @@ import { getServiceBaseUrl, SERVICES } from "@repo/service-discovery";
 import type { AdminEventHandlers, DriverEventHandlers } from "./type";
 import { adminRouter } from "./routers/admin";
 import { driverRouter } from "./routers/driver";
+import { app } from "./ws";
 
-const app = new OpenAPIHono();
+export const emitterDriver = new TypedEmitter<DriverEventHandlers>();
+export const emitterAdmin = new TypedEmitter<AdminEventHandlers>();
 
 app.use(
   "*",
@@ -22,9 +23,6 @@ app.use(
     credentials: true,
   }),
 );
-
-export const emitterDriver = new TypedEmitter<DriverEventHandlers>();
-export const emitterAdmin = new TypedEmitter<AdminEventHandlers>();
 
 const routes = app
   .doc("/openapi", {
@@ -46,4 +44,4 @@ const routes = app
   .route("/driver", driverRouter)
   .route("/admin", adminRouter);
 
-export { app, routes };
+export { routes };
