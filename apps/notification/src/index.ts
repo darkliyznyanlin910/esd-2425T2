@@ -1,6 +1,7 @@
 import { serve } from "@hono/node-server";
 
-import { app, injectWebSocket } from "./ws";
+import { app } from "./app";
+import { injectWebSocket } from "./ws";
 
 const port = 3004;
 console.log(`Server is running on http://localhost:${port}`);

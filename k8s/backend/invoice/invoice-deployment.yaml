@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: esd-invoice
+  labels:
+    app: esd-invoice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: esd-invoice
+  template:
+    metadata:
+      labels:
+        app: esd-invoice
+    spec:
+      containers:
+        - name: esd-invoice
+          image: esd-invoice:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 3007
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi

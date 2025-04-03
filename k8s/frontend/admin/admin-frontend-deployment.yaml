@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: esd-admin-frontend
+  labels:
+    app: esd-admin-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: esd-admin-frontend
+  template:
+    metadata:
+      labels:
+        app: esd-admin-frontend
+    spec:
+      containers:
+        - name: esd-admin-frontend
+          image: esd-admin-frontend:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 4400
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
