@@ -21,8 +21,10 @@ spec:
           ports:
             - containerPort: 3003
           envFrom:
-            - configMapRef:
+            - secretRef:
                 name: app-environment
+            - configMapRef:
+                name: database-connection-strings
           resources:
             limits:
               cpu: 500m

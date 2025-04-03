@@ -28,5 +28,5 @@ spec:
               cpu: 100m
               memory: 128Mi
           envFrom:
-            - configMapRef:
+            - secretRef:
                 name: app-environment
