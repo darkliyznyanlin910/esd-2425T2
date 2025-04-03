@@ -4,12 +4,14 @@ import type { Context } from "hono";
 import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
 import { bearerAuth } from "hono/bearer-auth";
 import { streamSSE } from "hono/streaming";
+import { WSContext } from "hono/ws";
 import { z } from "zod";
 
 import { authMiddleware } from "@repo/auth/auth";
 import { OrderSchema } from "@repo/db-order/zod";
 
 import type { AdminEventHandlers } from "../type";
+import { upgradeWebSocket } from "..";
 import { emitterAdmin } from "../app";
 import { env } from "../env";
 import { useSSE } from "../middlewares";
@@ -130,6 +132,41 @@ const adminRouter = new OpenAPIHono()
         }
       });
     },
+  )
+  .get(
+    "/ws",
+    authMiddleware({
+      authBased: {
+        allowedRoles: ["admin"],
+      },
+    }),
+    upgradeWebSocket(() => {
+      const eventHandler =
+        (eventName: keyof AdminEventHandlers, ws: WSContext) =>
+        async (
+          data: Parameters<AdminEventHandlers[keyof AdminEventHandlers]>[0],
+        ) => {
+          ws.send(
+            JSON.stringify({
+              event: eventName,
+              data,
+            }),
+          );
+        };
+      return {
+        onOpen(e, ws) {
+          console.log("Connection opened for admin");
+          emitterAdmin.on("receiveDelay", eventHandler("receiveDelay", ws));
+          emitterAdmin.on(
+            "manualAssignment",
+            eventHandler("manualAssignment", ws),
+          );
+        },
+        onClose() {
+          console.log("Connection closed for admin");
+        },
+      };
+    }),
   );
 
 export { adminRouter };

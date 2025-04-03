@@ -7,7 +7,7 @@ import type { routes } from "./app";
 
 export const HonoClient = hc<typeof routes>(getServiceBaseUrl("notification"));
 
-export interface EventHandlers {
+export interface DriverEventHandlers {
   broadcastOrder: (order: Order) => void;
   invalidateOrder: (orderId: string) => void;
 }
