@@ -27,6 +27,7 @@
   "prettier": "@repo/prettier-config",
   "dependencies": {
     "@hono/node-server": "^1.13.8",
+    "@hono/node-ws": "^1.1.1",
     "@hono/zod-validator": "^0.4.2",
     "@repo/auth": "workspace:*",
     "@repo/db-order": "workspace:*",

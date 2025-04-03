@@ -4,13 +4,15 @@ import type { Context } from "hono";
 import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
 import { bearerAuth } from "hono/bearer-auth";
 import { streamSSE } from "hono/streaming";
+import { WSContext } from "hono/ws";
 import { z } from "zod";
 
 import { authMiddleware } from "@repo/auth/auth";
 import { OrderSchema } from "@repo/db-order/zod";
 
-import type { EventHandlers } from "../type";
-import { emitter } from "../app";
+import type { DriverEventHandlers } from "../type";
+import { upgradeWebSocket } from "..";
+import { emitterDriver } from "../app";
 import { env } from "../env";
 import { useSSE } from "../middlewares";
 
@@ -47,7 +49,7 @@ const driverRouter = new OpenAPIHono()
     }),
     (c) => {
       const input = c.req.valid("json");
-      emitter.emit("broadcastOrder", input);
+      emitterDriver.emit("broadcastOrder", input);
       return c.json({ success: true });
     },
   )
@@ -73,7 +75,7 @@ const driverRouter = new OpenAPIHono()
     }),
     async (c) => {
       const input = c.req.valid("json");
-      emitter.emit("invalidateOrder", input.id);
+      emitterDriver.emit("invalidateOrder", input.id);
       return c.json({ success: true });
     },
   )
@@ -99,8 +101,10 @@ const driverRouter = new OpenAPIHono()
       let isAborted = false;
       return streamSSE(c as unknown as Context, async (stream) => {
         const eventHandler =
-          (eventName: keyof EventHandlers) =>
-          async (data: Parameters<EventHandlers[keyof EventHandlers]>[0]) => {
+          (eventName: keyof DriverEventHandlers) =>
+          async (
+            data: Parameters<DriverEventHandlers[keyof DriverEventHandlers]>[0],
+          ) => {
             await stream.writeSSE({
               data: typeof data === "string" ? data : JSON.stringify(data),
               event: eventName,
@@ -108,11 +112,11 @@ const driverRouter = new OpenAPIHono()
           };
 
         stream.onAbort(() => {
-          emitter.removeListener(
+          emitterDriver.removeListener(
             "broadcastOrder",
             eventHandler("broadcastOrder"),
           );
-          emitter.removeListener(
+          emitterDriver.removeListener(
             "invalidateOrder",
             eventHandler("invalidateOrder"),
           );
@@ -120,14 +124,52 @@ const driverRouter = new OpenAPIHono()
           isAborted = true;
         });
 
-        emitter.on("broadcastOrder", eventHandler("broadcastOrder"));
-        emitter.on("invalidateOrder", eventHandler("invalidateOrder"));
+        emitterDriver.on("broadcastOrder", eventHandler("broadcastOrder"));
+        emitterDriver.on("invalidateOrder", eventHandler("invalidateOrder"));
 
         while (!isAborted) {
           await stream.sleep(500);
         }
       });
     },
+  )
+  .get(
+    "/ws",
+    authMiddleware({
+      authBased: {
+        allowedRoles: ["admin"],
+      },
+    }),
+    upgradeWebSocket(() => {
+      const eventHandler =
+        (eventName: keyof DriverEventHandlers, ws: WSContext) =>
+        async (
+          data: Parameters<DriverEventHandlers[keyof DriverEventHandlers]>[0],
+        ) => {
+          ws.send(
+            JSON.stringify({
+              event: eventName,
+              data,
+            }),
+          );
+        };
+      return {
+        onOpen(e, ws) {
+          console.log("Connection opened for driver");
+          emitterDriver.on(
+            "broadcastOrder",
+            eventHandler("broadcastOrder", ws),
+          );
+          emitterDriver.on(
+            "invalidateOrder",
+            eventHandler("invalidateOrder", ws),
+          );
+        },
+        onClose() {
+          console.log("Connection closed for driver");
+        },
+      };
+    }),
   );
 
 export { driverRouter };

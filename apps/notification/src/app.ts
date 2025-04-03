@@ -5,7 +5,7 @@ import { TypedEmitter } from "tiny-typed-emitter";
 
 import { getServiceBaseUrl, SERVICES } from "@repo/service-discovery";
 
-import type { AdminEventHandlers, EventHandlers } from "./type";
+import type { AdminEventHandlers, DriverEventHandlers } from "./type";
 import { adminRouter } from "./routers/admin";
 import { driverRouter } from "./routers/driver";
 
@@ -23,7 +23,7 @@ app.use(
   }),
 );
 
-export const emitter = new TypedEmitter<EventHandlers>();
+export const emitterDriver = new TypedEmitter<DriverEventHandlers>();
 export const emitterAdmin = new TypedEmitter<AdminEventHandlers>();
 
 const routes = app
