@@ -137,7 +137,7 @@ const driverRouter = new OpenAPIHono()
     "/ws",
     authMiddleware({
       authBased: {
-        allowedRoles: ["admin"],
+        allowedRoles: ["admin", "driver"],
       },
     }),
     upgradeWebSocket(() => {

@@ -33,6 +33,11 @@ enum DriverAvailability {
   ON_DELIVERY
   OFFLINE
 }
+enum OrderStatus {
+  DRIVER_FOUND
+  PICKED_UP
+  DELIVERED
+}
 
 model Driver {
   id           String               @id @default(uuid())
@@ -50,7 +55,7 @@ model OrderAssignment {
   driverId      String
   driver        Driver       @relation(fields: [driverId], references: [id])
   orderId       String
-  paymentAmount Float
+  orderStatus   OrderStatus  @default(DRIVER_FOUND)
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
 }

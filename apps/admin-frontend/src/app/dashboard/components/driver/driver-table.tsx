@@ -7,6 +7,7 @@ import { Order } from "@repo/db-order/zod";
 import { AppType } from "@repo/order/type";
 import { getServiceBaseUrl } from "@repo/service-discovery";
 
+import NotificationComponent from "../notifications/notification";
 import { useOrders } from "./assign-context";
 import { columns } from "./columns";
 import { DataTable } from "./data-table";
@@ -37,7 +38,7 @@ async function getOrders(): Promise<Order[]> {
 
     const orderList = await response.json();
     const orderToAssign = orderList.filter(
-      (order: any) => order.orderStatus === "FINDING_DRIVER",
+      (order: any) => order.orderStatus === "DELAYED",
     );
 
     return orderToAssign as unknown as Order[];
@@ -67,6 +68,7 @@ export default function AssignTablePage() {
 
   return (
     <div className="container mx-auto h-screen py-6">
+      <NotificationComponent showComponent={false} />
       <div className="text-xl font-semibold">To Assign</div>
       <DataTable columns={columns} data={orders} />{" "}
     </div>

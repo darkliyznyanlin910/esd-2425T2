@@ -1,10 +1,6 @@
 "use client";
 
-import { use, useEffect, useState } from "react";
-import {
-  useEventSource,
-  useEventSourceListener,
-} from "@react-nano/use-event-source";
+import { useEffect, useState } from "react";
 
 import { authClient } from "@repo/auth/client";
 import { Order } from "@repo/db-order/zod";
@@ -18,6 +14,8 @@ import {
   TableHeader,
   TableRow,
 } from "@repo/ui/table";
+
+import NotificationComponent from "./notification";
 
 export default function DriverDashboard() {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -93,7 +91,7 @@ export default function DriverDashboard() {
     const fetchOrders = async () => {
       try {
         const response = await fetch(
-          `${getServiceBaseUrl("order")}/order/finding/FINDING_DRIVER`,
+          `${getServiceBaseUrl("order")}/order/finding/initialOrders`,
           {
             method: "GET",
             credentials: "include",
@@ -113,16 +111,18 @@ export default function DriverDashboard() {
     fetchOrders();
     const fetchPickupOrder = async () => {
       try {
-        const response = await fetch(
-          `${getServiceBaseUrl("order")}/order/finding/DRIVER_FOUND`,
-          {
-            method: "GET",
-            credentials: "include",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          },
+        const url = new URL(
+          `${getServiceBaseUrl("driver")}/driver/assignments/${session?.user.id}`,
         );
+        url.searchParams.append("status", "DRIVER_FOUND");
+        const response = await fetch(url, {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
         if (response.ok) {
           const data = await response.json();
           setPickupOrder(data);
@@ -134,16 +134,18 @@ export default function DriverDashboard() {
     fetchPickupOrder();
     const fetchDeliveryOrder = async () => {
       try {
-        const response = await fetch(
-          `${getServiceBaseUrl("order")}/order/finding/PICKED_UP`,
-          {
-            method: "GET",
-            credentials: "include",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          },
+        const url = new URL(
+          `${getServiceBaseUrl("driver")}/driver/assignments/${session?.user.id}`,
         );
+        url.searchParams.append("status", "PICKED_UP");
+        const response = await fetch(url, {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
         if (response.ok) {
           const data = await response.json();
           setDeliveryOrder(data);
@@ -165,6 +167,7 @@ export default function DriverDashboard() {
 
   return (
     <div className="flex flex-col items-center">
+      <NotificationComponent />
       <h1 className="mb-5 text-2xl font-bold">Driver Dashboard</h1>
       <Table>
         <TableHeader>
@@ -241,17 +244,24 @@ export default function DriverDashboard() {
           ) : (
             pickupOrder.map((data) => (
               <TableRow key={data.id}>
-                <TableCell>{data.id}</TableCell>
-                <TableCell>{data.orderDetails}</TableCell>
+                <TableCell>{data.orderDetails?.id}</TableCell>
+                <TableCell>{data.orderDetails?.orderDetails}</TableCell>
                 <TableCell>
-                  {data.fromAddressLine1}, {data.fromAddressLine2},{" "}
-                  {data.fromZipCode}
+                  {data.orderDetails?.fromAddressLine1},
+                  {data.orderDetails?.fromAddressLine2 &&
+                    `${data.orderDetails.fromAddressLine2},`}
+                  {data.orderDetails?.fromZipCode}
                 </TableCell>
                 <TableCell>
-                  {data.toAddressLine1}, {data.toAddressLine2}, {data.toZipCode}
+                  {data.orderDetails?.toAddressLine1},
+                  {data.orderDetails?.toAddressLine2 &&
+                    `${data.orderDetails.toAddressLine2},`}
+                  {data.orderDetails?.toZipCode}
                 </TableCell>
                 <TableCell>
-                  <Button onClick={() => handlePickupOrder(data.id)}>
+                  <Button
+                    onClick={() => handlePickupOrder(data.orderDetails?.id)}
+                  >
                     Picked Up
                   </Button>
                 </TableCell>
@@ -288,17 +298,22 @@ export default function DriverDashboard() {
           ) : (
             deliveryOrder.map((data) => (
               <TableRow key={data.id}>
-                <TableCell>{data.id}</TableCell>
-                <TableCell>{data.orderDetails}</TableCell>
+                <TableCell>{data.orderId}</TableCell>
+                <TableCell>{data.orderDetails?.orderDetails}</TableCell>
                 <TableCell>
-                  {data.fromAddressLine1}, {data.fromAddressLine2},{" "}
-                  {data.fromZipCode}
+                  {data.orderDetails?.fromAddressLine1},
+                  {data.orderDetails?.fromAddressLine2 &&
+                    `${data.orderDetails.fromAddressLine2},`}
+                  {data.orderDetails?.fromZipCode}
                 </TableCell>
                 <TableCell>
-                  {data.toAddressLine1}, {data.toAddressLine2}, {data.toZipCode}
+                  {data.orderDetails?.toAddressLine1},
+                  {data.orderDetails?.toAddressLine2 &&
+                    `${data.orderDetails.toAddressLine2},`}
+                  {data.orderDetails?.toZipCode}
                 </TableCell>
                 <TableCell>
-                  <Button onClick={() => handleDeliveryOrder(data.id)}>
+                  <Button onClick={() => handleDeliveryOrder(data.orderId)}>
                     Delivered
                   </Button>
                 </TableCell>
