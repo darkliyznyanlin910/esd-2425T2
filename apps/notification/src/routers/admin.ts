@@ -154,7 +154,7 @@ const adminRouter = new OpenAPIHono()
           );
         };
       return {
-        onOpen(e, ws) {
+        onOpen(_, ws) {
           console.log("Connection opened for admin");
           emitterAdmin.on("receiveDelay", eventHandler("receiveDelay", ws));
           emitterAdmin.on(

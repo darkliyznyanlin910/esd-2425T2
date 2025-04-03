@@ -154,7 +154,7 @@ const driverRouter = new OpenAPIHono()
           );
         };
       return {
-        onOpen(e, ws) {
+        onOpen(_, ws) {
           console.log("Connection opened for driver");
           emitterDriver.on(
             "broadcastOrder",
