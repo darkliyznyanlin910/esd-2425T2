@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import { hc } from "hono/client";
 
-import { Order } from "@repo/db-order/zod";
-import { AppType } from "@repo/order/type";
+import type { Order } from "@repo/db-order/zod";
+import type { AppType } from "@repo/order/type";
 import { getServiceBaseUrl } from "@repo/service-discovery";
 
 import { columns } from "./columns";
@@ -30,12 +30,6 @@ async function getOrders(): Promise<Order[]> {
 
     const orderList = await response.json();
 
-    // const orderList = (await response.json()).map((order: any) => ({
-    //   ...order,
-    //   createdAt: new Date(order.createdAt),
-    //   updatedAt: new Date(order.updatedAt),
-    // })) as Order[];
-
     return orderList as unknown as Order[];
   } catch (error) {
     console.error("Error fetching orders:", error);
@@ -54,7 +48,7 @@ export default function OrderTablePage() {
       setLoading(false);
     };
 
-    fetchData();
+    void fetchData();
   }, []);
 
   if (loading) {
@@ -62,7 +56,7 @@ export default function OrderTablePage() {
   }
 
   return (
-    <div className="container mx-auto h-screen py-6">
+    <div className="container h-screen py-6">
       <div className="text-xl font-semibold">Order Records</div>
       <DataTable columns={columns} data={orders} />{" "}
     </div>

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 
 import { authClient } from "@repo/auth/client";
-import { Order } from "@repo/db-order/zod";
+import type { Order } from "@repo/db-order/zod";
 import { getServiceBaseUrl } from "@repo/service-discovery";
 
 import { columns } from "./orders/columns";
@@ -23,8 +23,8 @@ async function getOrders(userId: string): Promise<Order[]> {
       throw new Error("Failed to fetch orders");
     }
 
-    const orderList = await response.json();
-    return orderList as Order[];
+    const orderList = (await response.json()) as Order[];
+    return orderList;
   } catch (error) {
     console.error("Error fetching orders:", error);
     return [];
@@ -48,7 +48,7 @@ export default function OrderTablePage() {
       setLoading(false);
     };
 
-    fetchData();
+    void fetchData();
   }, [userId]);
 
   if (loading) {
