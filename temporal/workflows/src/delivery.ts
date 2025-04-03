@@ -33,16 +33,17 @@ export async function delivery(
   order: Order,
   manualAssignDriverId?: string,
 ): Promise<void> {
-  if (order.orderStatus == "PAYMENT_SUCCESSFUL") {
-    await updateOrderStatus(order.id, "FINDING_DRIVER");
-  }
-
   let orderStatus: OrderStatus = "FINDING_DRIVER";
 
   if (manualAssignDriverId) {
     await updateOrderStatus(order.id, "DRIVER_FOUND");
     await assignOrderToDriver(order, manualAssignDriverId);
     orderStatus = "DRIVER_FOUND";
+  }
+
+  if (order.orderStatus == "PAYMENT_SUCCESSFUL") {
+    await updateOrderStatus(order.id, "FINDING_DRIVER");
+    orderStatus = "FINDING_DRIVER";
   }
 
   setHandler(driverFoundSignal, async (driverId) => {
@@ -68,17 +69,19 @@ export async function delivery(
     }
   });
 
-  try {
-    await sendOrderToDrivers(order);
-  } catch (error) {
-    console.error(error);
-    await updateOrderStatus(order.id, "DELAYED");
-    await notifyAdmin(order);
-    throw ApplicationFailure.create({
-      message: "Failed to send order to drivers",
-      type: "DELAYED",
-      nonRetryable: true,
-    });
+  if (!manualAssignDriverId) {
+    try {
+      await sendOrderToDrivers(order);
+    } catch (error) {
+      console.error(error);
+      await updateOrderStatus(order.id, "DELAYED");
+      await notifyAdmin(order);
+      throw ApplicationFailure.create({
+        message: "Failed to send order to drivers",
+        type: "DELAYED",
+        nonRetryable: true,
+      });
+    }
   }
 
   const notPickedUpInTime = !(await condition(

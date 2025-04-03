@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 
 import { authClient } from "@repo/auth/client";
 import { HonoClient } from "@repo/auth/type";
+import { getServiceBaseUrl } from "@repo/service-discovery";
 import { Button } from "@repo/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@repo/ui/card";
 import { Input } from "@repo/ui/input";
@@ -15,7 +16,7 @@ export default function AuthPage() {
   const { useSession, signIn } = authClient;
   const { data: session } = useSession();
   const [email, setEmail] = useState("");
-  const [role] = useState("client");
+
   const [password, setPassword] = useState("");
   const [isSignUp, setIsSignUp] = useState<boolean | null>(null);
 
@@ -35,7 +36,13 @@ export default function AuthPage() {
   useEffect(() => {
     if (session) {
       console.log(session);
-      router.push("/order");
+      if (session.user.role === "client") {
+        router.push("/order");
+      } else if (session.user.role === "admin") {
+        window.location.href = `${getServiceBaseUrl("admin-frontend")}/dashboard`;
+      } else if (session.user.role === "driver") {
+        window.location.href = `${getServiceBaseUrl("driver-frontend")}/home`;
+      }
     }
   }, [session, router]);
 
