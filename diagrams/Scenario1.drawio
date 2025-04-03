@@ -1,0 +1,191 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36" version="26.2.4" pages="2">
+  <diagram name="Page-1" id="jY7Wt-v1LxDKGmgFNE5M">
+    <mxGraphModel dx="736" dy="458" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="ZCIKir5QU30v5sFeuKnt-1" value="&lt;u&gt;Customer Frontend&lt;/u&gt;&lt;div&gt;- Submit Order Application&lt;/div&gt;&lt;div&gt;- View order status&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="32" y="58.75" width="216" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="ZCIKir5QU30v5sFeuKnt-2" value="Payment Workflow (Temporal)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=light-dark(#FFF4C3,var(--ge-dark-color, #121212));strokeColor=light-dark(#FFD966,#FFFFFF);" vertex="1" parent="1">
+          <mxGeometry x="439.5" y="259" width="222" height="77" as="geometry" />
+        </mxCell>
+        <mxCell id="ZCIKir5QU30v5sFeuKnt-3" value="Order Service" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="490" y="58.75" width="121" height="57.5" as="geometry" />
+        </mxCell>
+        <mxCell id="ZCIKir5QU30v5sFeuKnt-4" value="1. User creates order with &lt;br&gt;required details" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="32" y="20" width="239" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="ZCIKir5QU30v5sFeuKnt-5" value="" style="endArrow=classic;startArrow=classic;html=1;rounded=0;" edge="1" parent="1" source="ZCIKir5QU30v5sFeuKnt-1" target="ZCIKir5QU30v5sFeuKnt-3">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="359" y="307" as="sourcePoint" />
+            <mxPoint x="409" y="257" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ZCIKir5QU30v5sFeuKnt-6" value="" style="endArrow=classic;startArrow=classic;html=1;rounded=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="ZCIKir5QU30v5sFeuKnt-2" target="ZCIKir5QU30v5sFeuKnt-3">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="424" y="238.28932188134524" as="sourcePoint" />
+            <mxPoint x="550.5" y="184.25" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ZCIKir5QU30v5sFeuKnt-7" value="2. Order details are sent to Order Service" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="254" y="58.75" width="239" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="ZCIKir5QU30v5sFeuKnt-8" value="3. Order Service initiates payment workflow in Temporal" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="617" y="50.75" width="169" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="ZCIKir5QU30v5sFeuKnt-9" value="User Service" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="640" y="428" width="121" height="57.5" as="geometry" />
+        </mxCell>
+        <mxCell id="ZCIKir5QU30v5sFeuKnt-10" value="" style="endArrow=classic;startArrow=classic;html=1;rounded=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" target="ZCIKir5QU30v5sFeuKnt-2">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="700" y="428" as="sourcePoint" />
+            <mxPoint x="700" y="353" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="700" y="298" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ZCIKir5QU30v5sFeuKnt-11" value="4.Gets user details&#xa;from user service" style="text;whiteSpace=wrap;align=left;" vertex="1" parent="1">
+          <mxGeometry x="707" y="336" width="113" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="ZCIKir5QU30v5sFeuKnt-12" value="Stripe Payment&lt;br&gt;Service" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="490" y="428" width="121" height="57.5" as="geometry" />
+        </mxCell>
+        <mxCell id="ZCIKir5QU30v5sFeuKnt-13" value="" style="endArrow=classic;startArrow=classic;html=1;rounded=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="1" source="ZCIKir5QU30v5sFeuKnt-12">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="550" y="411" as="sourcePoint" />
+            <mxPoint x="550" y="336" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ZCIKir5QU30v5sFeuKnt-14" value="6. Using Stripe customer ID to create a checkout session" style="text;whiteSpace=wrap;align=left;" vertex="1" parent="1">
+          <mxGeometry x="447" y="346" width="113" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="ZCIKir5QU30v5sFeuKnt-15" value="5. Create Stripe&#xa;Customer and link&#xa;to user account if not already linked" style="text;whiteSpace=wrap;align=left;" vertex="1" parent="1">
+          <mxGeometry x="560" y="346" width="113" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="ZCIKir5QU30v5sFeuKnt-16" value="7. Update Order Service with Stripe checkout ID" style="text;whiteSpace=wrap;align=left;" vertex="1" parent="1">
+          <mxGeometry x="617" y="78.75" width="179" height="43.25" as="geometry" />
+        </mxCell>
+        <mxCell id="ZCIKir5QU30v5sFeuKnt-17" value="9a. If Stripe checkout session expires, remove ID from Order Service" style="text;whiteSpace=wrap;align=left;fontColor=#3399FF;" vertex="1" parent="1">
+          <mxGeometry x="258" y="88.75" width="242" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="ZCIKir5QU30v5sFeuKnt-18" value="Invoice Service" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="318.5" y="428" width="121" height="57.5" as="geometry" />
+        </mxCell>
+        <mxCell id="ZCIKir5QU30v5sFeuKnt-19" value="" style="endArrow=classic;startArrow=classic;html=1;rounded=0;entryX=0;entryY=0.75;entryDx=0;entryDy=0;" edge="1" parent="1" target="ZCIKir5QU30v5sFeuKnt-2">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="378" y="428" as="sourcePoint" />
+            <mxPoint x="340" y="298" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="378" y="317" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ZCIKir5QU30v5sFeuKnt-20" value="9b1. If checkout successful, send payment complete signal" style="text;whiteSpace=wrap;align=left;fontColor=#4D9900;labelBackgroundColor=none;" vertex="1" parent="1">
+          <mxGeometry x="259.5" y="122" width="170" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="ZCIKir5QU30v5sFeuKnt-21" value="9b3. Generates Stripe Invoice" style="text;whiteSpace=wrap;align=left;fontColor=#4D9900;labelBackgroundColor=none;" vertex="1" parent="1">
+          <mxGeometry x="470" y="485.5" width="176" height="24.5" as="geometry" />
+        </mxCell>
+        <mxCell id="ZCIKir5QU30v5sFeuKnt-22" value="9b4. Extracts Stripe invoice for record keeping" style="text;whiteSpace=wrap;align=left;fontColor=#4D9900;labelBackgroundColor=none;" vertex="1" parent="1">
+          <mxGeometry x="230" y="346" width="142.5" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="ZCIKir5QU30v5sFeuKnt-23" value="9c. If user cancels checkout, remove ID from Order Service" style="text;whiteSpace=wrap;align=left;fontColor=#990000;labelBackgroundColor=none;" vertex="1" parent="1">
+          <mxGeometry x="259.5" y="160" width="180" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="ZCIKir5QU30v5sFeuKnt-24" value="Delivery Workflow (Temporal)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=light-dark(#FFF4C3,var(--ge-dark-color, #121212));strokeColor=light-dark(#FFD966,#FFFFFF);" vertex="1" parent="1">
+          <mxGeometry x="39.5" y="418.25" width="222" height="77" as="geometry" />
+        </mxCell>
+        <mxCell id="ZCIKir5QU30v5sFeuKnt-25" value="" style="endArrow=none;startArrow=classic;html=1;rounded=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;startFill=1;endFill=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="1" target="ZCIKir5QU30v5sFeuKnt-2" source="ZCIKir5QU30v5sFeuKnt-24">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="150" y="343.5" as="sourcePoint" />
+            <mxPoint x="212" y="232.5" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="150" y="298" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ZCIKir5QU30v5sFeuKnt-26" value="9b5. Start Delivery Workflow with created Order" style="text;whiteSpace=wrap;align=left;fontColor=#4D9900;labelBackgroundColor=none;" vertex="1" parent="1">
+          <mxGeometry x="164" y="270" width="261.5" height="31" as="geometry" />
+        </mxCell>
+        <mxCell id="ZCIKir5QU30v5sFeuKnt-27" value="8. Redirect customer to checkout page using checkout session ID" style="text;whiteSpace=wrap;align=left;" vertex="1" parent="1">
+          <mxGeometry x="32" y="119" width="206.5" height="41" as="geometry" />
+        </mxCell>
+        <mxCell id="zEMAxL01PxFPJ_ourGKK-1" value="9b2. Send payment complete signal" style="text;whiteSpace=wrap;align=left;fontColor=#4D9900;labelBackgroundColor=none;" vertex="1" parent="1">
+          <mxGeometry x="560" y="180" width="210" height="72" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="oQ1AOyyI3Q7XOdvHtLZJ" name="Page-2">
+    <mxGraphModel dx="657" dy="409" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="feGOOBgOvWt05ZG6CZba-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="feGOOBgOvWt05ZG6CZba-4" target="feGOOBgOvWt05ZG6CZba-8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="feGOOBgOvWt05ZG6CZba-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="feGOOBgOvWt05ZG6CZba-4" target="feGOOBgOvWt05ZG6CZba-10">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="feGOOBgOvWt05ZG6CZba-3" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="feGOOBgOvWt05ZG6CZba-4" target="feGOOBgOvWt05ZG6CZba-7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="feGOOBgOvWt05ZG6CZba-4" value="&lt;u&gt;&lt;font color=&quot;#000000&quot;&gt;Customer Frontend&lt;/font&gt;&lt;br&gt;&lt;/u&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;- Ask Chatbot about delivery status &amp;amp; info&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="250" y="200" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="feGOOBgOvWt05ZG6CZba-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="feGOOBgOvWt05ZG6CZba-7" target="feGOOBgOvWt05ZG6CZba-7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="feGOOBgOvWt05ZG6CZba-6" style="edgeStyle=none;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="feGOOBgOvWt05ZG6CZba-7" target="feGOOBgOvWt05ZG6CZba-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="feGOOBgOvWt05ZG6CZba-7" value="Customer Support (RAG)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="250" y="360" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="feGOOBgOvWt05ZG6CZba-8" value="Order Service" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="470" y="100" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="feGOOBgOvWt05ZG6CZba-9" style="edgeStyle=none;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="feGOOBgOvWt05ZG6CZba-10">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="370" y="230" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="feGOOBgOvWt05ZG6CZba-10" value="Driver Service" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="470" y="200" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="feGOOBgOvWt05ZG6CZba-11" value="&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;1. Provide CS (RAG) with prompt&lt;/span&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="120" y="270" width="200" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="feGOOBgOvWt05ZG6CZba-12" value="3. Check user ID" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="600" y="100" width="110" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="feGOOBgOvWt05ZG6CZba-13" value="4. Return order record/s" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="600" y="130" width="150" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="feGOOBgOvWt05ZG6CZba-14" value="5. Check order ID" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="600" y="200" width="120" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="feGOOBgOvWt05ZG6CZba-15" value="6. Return driver info" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="600" y="230" width="130" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="feGOOBgOvWt05ZG6CZba-16" value="&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;2. Return list of APIs to call&lt;/span&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="120" y="295" width="170" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="feGOOBgOvWt05ZG6CZba-17" value="Invoice Service" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="470" y="300" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="feGOOBgOvWt05ZG6CZba-18" value="7. Check order ID&lt;div&gt;&lt;font color=&quot;#000000&quot;&gt;&lt;br&gt;&lt;/font&gt;&lt;div&gt;8. Return invoice&lt;/div&gt;&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="605" y="300" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="feGOOBgOvWt05ZG6CZba-19" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="feGOOBgOvWt05ZG6CZba-4" target="feGOOBgOvWt05ZG6CZba-17">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="380" y="240" as="sourcePoint" />
+            <mxPoint x="480" y="140" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
