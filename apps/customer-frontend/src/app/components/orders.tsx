@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 
 import type { Order } from "@repo/db-order/zod";
-import { authClient } from "@repo/auth/client";
+import { authClient } from "@repo/auth-client";
 import { getServiceBaseUrl } from "@repo/service-discovery";
 
 import { columns } from "./orders/columns";

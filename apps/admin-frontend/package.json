@@ -15,7 +15,7 @@
     "with-env-k8s": "dotenv -e ../../kubernetes/.env.k8s --"
   },
   "dependencies": {
-    "@repo/auth": "workspace:*",
+    "@repo/auth-client": "workspace:*",
     "@repo/chatbot-ui": "workspace:*",
     "@repo/db-driver": "workspace:*",
     "@repo/db-order": "workspace:*",

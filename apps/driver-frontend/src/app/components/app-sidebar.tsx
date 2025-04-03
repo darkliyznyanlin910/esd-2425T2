@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { Archive, Home, User2 } from "lucide-react";
 
-import { authClient } from "@repo/auth/client";
+import { authClient } from "@repo/auth-client";
 import { getServiceBaseUrl } from "@repo/service-discovery";
 import { Button } from "@repo/ui/button";
 import {
