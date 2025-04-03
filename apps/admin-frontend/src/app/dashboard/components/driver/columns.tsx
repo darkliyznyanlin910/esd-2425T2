@@ -168,7 +168,10 @@ export const columns: ColumnDef<Order>[] = [
             getServiceBaseUrl("order"),
           ).order.process[":id"].$get(
             {
-              param: { id: orderId, manualAssignDriverId: driverId },
+              param: { id: orderId },
+              query: {
+                manualAssignDriverId: driverId,
+              },
             },
             {
               init: { credentials: "include" },

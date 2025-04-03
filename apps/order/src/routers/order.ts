@@ -122,6 +122,9 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
       description: "[Internal] Start Delivery Process",
       middleware: [
         authMiddleware({
+          authBased: {
+            allowedRoles: ["admin"],
+          },
           bearer: {
             tokens: [env.INTERNAL_COMMUNICATION_SECRET],
           },
@@ -130,6 +133,8 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
       request: {
         params: z.object({
           id: z.string(),
+        }),
+        query: z.object({
           manualAssignDriverId: z.string().optional(),
         }),
       },
@@ -146,7 +151,8 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
       },
     }),
     async (c) => {
-      const { id, manualAssignDriverId } = c.req.valid("param");
+      const { id } = c.req.valid("param");
+      const { manualAssignDriverId } = c.req.valid("query");
 
       const order = await db.order.findUnique({
         where: {
@@ -316,7 +322,7 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
       ] as const,
       request: {
         query: z.object({
-          take: z.number().default(10),
+          take: z.number().default(100),
           page: z.number().default(1),
         }),
       },
