@@ -11,10 +11,10 @@ import { authMiddleware } from "@repo/auth/auth";
 import { OrderSchema } from "@repo/db-order/zod";
 
 import type { DriverEventHandlers } from "../type";
-import { upgradeWebSocket } from "..";
 import { emitterDriver } from "../app";
 import { env } from "../env";
 import { useSSE } from "../middlewares";
+import { upgradeWebSocket } from "../ws";
 
 const driverRouter = new OpenAPIHono()
   .openapi(
