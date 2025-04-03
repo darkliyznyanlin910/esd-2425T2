@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { hc } from "hono/client";
 import { z } from "zod";
 
-import { AppType } from "@repo/order/type";
+import type { AppType } from "@repo/order/type";
 import { getServiceBaseUrl } from "@repo/service-discovery";
 import { Button } from "@repo/ui/button";
 import {
@@ -132,7 +132,7 @@ export default function CreateOrderPage() {
   }, [isPolling, orderId]);
 
   return (
-    <div className="mx-auto max-w-4xl p-6">
+    <div className="mx-auto w-full max-w-5xl px-4 sm:px-6">
       {isPolling && (
         <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black bg-opacity-50">
           <div className="rounded-lg bg-accent p-6 text-center shadow-lg">
