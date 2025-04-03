@@ -15,7 +15,7 @@
     "with-env-k8s": "dotenv -e ../../kubernetes/.env.k8s --"
   },
   "dependencies": {
-    "@repo/auth": "workspace:*",
+    "@repo/auth-client": "workspace:*",
     "@repo/chatbot-ui": "workspace:*",
     "@repo/db-auth": "workspace:*",
     "@repo/db-order": "workspace:*",
@@ -36,6 +36,7 @@
   },
   "devDependencies": {
     "@repo/api": "workspace:*",
+    "@repo/auth": "workspace:*",
     "@repo/eslint-config": "workspace:*",
     "@repo/prettier-config": "workspace:*",
     "@repo/tailwind-config": "workspace:*",

@@ -3,7 +3,7 @@
 import { usePathname, useRouter } from "next/navigation";
 import { Archive, Bot, FilePlus } from "lucide-react";
 
-import { authClient } from "@repo/auth/client";
+import { authClient } from "@repo/auth-client";
 import { Button } from "@repo/ui/button";
 import {
   Sidebar,

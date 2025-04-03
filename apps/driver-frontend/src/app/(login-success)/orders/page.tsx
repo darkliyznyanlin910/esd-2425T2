@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-import { authClient } from "@repo/auth/client";
+import { authClient } from "@repo/auth-client";
 
 export default function orders() {
   const { useSession } = authClient;

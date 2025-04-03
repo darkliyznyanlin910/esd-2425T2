@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@react-nano/use-event-source": "^0.16.0",
-    "@repo/auth": "workspace:*",
+    "@repo/auth-client": "workspace:*",
     "@repo/chatbot-ui": "workspace:*",
     "@repo/db-order": "workspace:*",
     "@repo/service-discovery": "workspace:*",
@@ -35,6 +35,7 @@
   },
   "devDependencies": {
     "@repo/api": "workspace:*",
+    "@repo/auth": "workspace:*",
     "@repo/driver": "workspace:*",
     "@repo/eslint-config": "workspace:*",
     "@repo/prettier-config": "workspace:*",

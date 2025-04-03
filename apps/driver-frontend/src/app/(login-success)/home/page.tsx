@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 
-import { authClient } from "@repo/auth/client";
+import { authClient } from "@repo/auth-client";
 
 const DriverDashboard = dynamic(
   () => import("../../components/driverDashboard"),

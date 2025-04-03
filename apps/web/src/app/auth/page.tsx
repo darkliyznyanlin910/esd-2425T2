@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { authClient } from "@repo/auth/client";
+import { authClient } from "@repo/auth-client";
 
 export default function AuthPage() {
   const { useSession, signIn, signUp, signOut } = authClient;

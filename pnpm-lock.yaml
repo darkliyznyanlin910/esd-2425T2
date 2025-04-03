@@ -63,9 +63,9 @@ importers:
 
   apps/admin-frontend:
     dependencies:
-      '@repo/auth':
+      '@repo/auth-client':
         specifier: workspace:*
-        version: link:../auth
+        version: link:../../packages/auth-client
       '@repo/chatbot-ui':
         specifier: workspace:*
         version: link:../../packages/chatbot-ui
@@ -346,9 +346,9 @@ importers:
 
   apps/customer-frontend:
     dependencies:
-      '@repo/auth':
+      '@repo/auth-client':
         specifier: workspace:*
-        version: link:../auth
+        version: link:../../packages/auth-client
       '@repo/chatbot-ui':
         specifier: workspace:*
         version: link:../../packages/chatbot-ui
@@ -404,6 +404,9 @@ importers:
       '@repo/api':
         specifier: workspace:*
         version: link:../api
+      '@repo/auth':
+        specifier: workspace:*
+        version: link:../auth
       '@repo/eslint-config':
         specifier: workspace:*
         version: link:../../tooling/eslint
@@ -513,9 +516,9 @@ importers:
       '@react-nano/use-event-source':
         specifier: ^0.16.0
         version: 0.16.0(react@18.3.1)
-      '@repo/auth':
+      '@repo/auth-client':
         specifier: workspace:*
-        version: link:../auth
+        version: link:../../packages/auth-client
       '@repo/chatbot-ui':
         specifier: workspace:*
         version: link:../../packages/chatbot-ui
@@ -565,6 +568,9 @@ importers:
       '@repo/api':
         specifier: workspace:*
         version: link:../api
+      '@repo/auth':
+        specifier: workspace:*
+        version: link:../auth
       '@repo/driver':
         specifier: workspace:*
         version: link:../driver
@@ -842,9 +848,9 @@ importers:
 
   apps/web:
     dependencies:
-      '@repo/auth':
+      '@repo/auth-client':
         specifier: workspace:*
-        version: link:../auth
+        version: link:../../packages/auth-client
       '@repo/chatbot-ui':
         specifier: workspace:*
         version: link:../../packages/chatbot-ui
@@ -927,6 +933,37 @@ importers:
       tailwindcss:
         specifier: 'catalog:'
         version: 3.4.17(ts-node@10.9.2(@swc/core@1.10.17(@swc/helpers@0.5.5))(@types/node@20.17.19)(typescript@5.7.3))
+      typescript:
+        specifier: 'catalog:'
+        version: 5.7.3
+
+  packages/auth-client:
+    dependencies:
+      '@repo/service-discovery':
+        specifier: workspace:^
+        version: link:../service-discovery
+      better-auth:
+        specifier: ^1.1.15
+        version: 1.1.18
+      zod:
+        specifier: 'catalog:'
+        version: 3.24.1
+    devDependencies:
+      '@repo/eslint-config':
+        specifier: workspace:*
+        version: link:../../tooling/eslint
+      '@repo/prettier-config':
+        specifier: workspace:*
+        version: link:../../tooling/prettier
+      '@repo/tsconfig':
+        specifier: workspace:*
+        version: link:../../tooling/typescript
+      eslint:
+        specifier: 'catalog:'
+        version: 9.20.1(jiti@1.21.7)
+      prettier:
+        specifier: 'catalog:'
+        version: 3.5.1
       typescript:
         specifier: 'catalog:'
         version: 5.7.3

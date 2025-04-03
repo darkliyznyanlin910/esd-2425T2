@@ -3,14 +3,14 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { authClient } from "@repo/auth/client";
+import { authClient } from "@repo/auth-client";
 
 export default function Account() {
   const { useSession } = authClient;
   const { data: session } = useSession();
   const router = useRouter();
 
-  const [driverData, setDriverData] = useState<any>([]); 
+  const [driverData, setDriverData] = useState<any>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -24,13 +24,13 @@ export default function Account() {
   // Fetch Driver Data from database
   const fetchDriverData = async () => {
     try {
-      const response = await fetch("http://localhost:3006/driver"); 
+      const response = await fetch("http://localhost:3006/driver");
       const data = await response.json();
-      setDriverData(data); 
+      setDriverData(data);
     } catch (error) {
       console.error("Error fetching driver data:", error);
     } finally {
-      setLoading(false); 
+      setLoading(false);
     }
   };
 
@@ -43,7 +43,7 @@ export default function Account() {
           <h2 className="text-xl font-semibold">Your Profile</h2>
           <div>
             {driverData.map((driver: any) => (
-              <div key={driver.id} className="p-4 border-b">
+              <div key={driver.id} className="border-b p-4">
                 <p>Driver ID: {driver.userId}</p>
                 <p>Phone Number: {driver.phone}</p>
                 {/* <p>Status: {driver.availability}</p> */}

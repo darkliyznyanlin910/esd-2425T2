@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: esd-nginx
+  labels:
+    app: esd-nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: esd-nginx
+  template:
+    metadata:
+      labels:
+        app: esd-nginx
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:alpine
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: nginx-config
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+          resources:
+            limits:
+              cpu: 200m
+              memory: 256Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+      volumes:
+        - name: nginx-config
+          configMap:
+            name: nginx-config 
