@@ -43,13 +43,16 @@ const userRouter = new OpenAPIHono()
       },
     }),
     async (c) => {
-      const url = c.req.header("X-Forwarded-For") ?? c.req.header("Origin");
-      const role =
-        url == getServiceBaseUrl("customer-frontend")
-          ? "client"
-          : url == getServiceBaseUrl("driver-frontend")
-            ? "driver"
-            : null;
+      const url = c.req.header("Origin");
+      console.log(url);
+      if (!url) {
+        return c.json({ message: "Invalid origin" }, 400);
+      }
+      const role = getServiceBaseUrl("customer-frontend").includes(url)
+        ? "client"
+        : getServiceBaseUrl("driver-frontend").includes(url)
+          ? "driver"
+          : null;
       if (!role) {
         return c.json({ message: "Invalid origin" }, 400);
       }

@@ -25,17 +25,23 @@ spec:
               valueFrom:
                 secretKeyRef:
                   key: username
-                  name: postgres-app
+                  name: postgres-superuser
             - name: PGPASSWORD
               valueFrom:
                 secretKeyRef:
                   key: password
-                  name: postgres-app
+                  name: postgres-superuser
+            - name: AUTH_POSTGRES_URL
+              value: "postgresql://$(PGUSER):$(PGPASSWORD)@postgres-rw.default.svc.cluster.local:5432/auth_database"
+            - name: DRIVER_POSTGRES_URL
+              value: "postgresql://$(PGUSER):$(PGPASSWORD)@postgres-rw.default.svc.cluster.local:5432/driver_database"
+            - name: INVOICE_POSTGRES_URL
+              value: "postgresql://$(PGUSER):$(PGPASSWORD)@postgres-rw.default.svc.cluster.local:5432/invoice_database"
+            - name: ORDER_POSTGRES_URL
+              value: "postgresql://$(PGUSER):$(PGPASSWORD)@postgres-rw.default.svc.cluster.local:5432/order_database"
           envFrom:
             - secretRef:
                 name: app-environment
-            - configMapRef:
-                name: database-connection-strings
           resources:
             limits:
               cpu: 500m

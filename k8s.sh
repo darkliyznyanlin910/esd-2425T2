@@ -14,6 +14,9 @@ case $1 in
         docker build -t esd-driver-frontend:latest -f apps/driver-frontend/Dockerfile .
         docker build -t esd-customer-frontend:latest -f apps/customer-frontend/Dockerfile .
         docker build -t esd-admin-frontend:latest -f apps/admin-frontend/Dockerfile .
+
+        # DB Seeder
+        docker build -t esd-db-seeder:latest -f dbSeeder.Dockerfile .
         ;;
     "install")
         kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.8.2/deploy/static/provider/cloud/deploy.yaml
@@ -39,6 +42,7 @@ case $1 in
                 kubectl create secret generic app-environment --from-env-file=kubernetes/.env.k8s
                 kubectl apply -k kubernetes/backend
                 kubectl apply -k kubernetes/frontend
+                kubectl apply -k kubernetes/nginx
                 ;;
             "db")
                 export WORKSPACE_DIR=$(pwd)
@@ -61,6 +65,7 @@ case $1 in
             "app")
                 kubectl delete -k kubernetes/backend
                 kubectl delete -k kubernetes/frontend
+                kubectl delete -k kubernetes/nginx
                 ;;
             "db")
                 kubectl delete -k kubernetes/database
