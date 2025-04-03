@@ -1,7 +1,6 @@
-import { Button } from "@repo/ui/button";
-import { Input } from "@repo/ui/input";
-import { Label } from "@repo/ui/label";
+import { useState } from "react";
 import { Edit, Lock, Mail, Phone, Save, User } from "lucide-react";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -11,8 +10,12 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@repo/ui/alert-dialog';
-import { useState } from "react";
+} from "@repo/ui/alert-dialog";
+import { Button } from "@repo/ui/button";
+import { Input } from "@repo/ui/input";
+import { Label } from "@repo/ui/label";
+
+import NotificationComponent from "./notification";
 
 interface DriverProfile {
   driverId: string;
@@ -63,7 +66,9 @@ export function ProfileManagementWrapper({
 
   // State for password confirmation dialog
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
-  const [currentField, setCurrentField] = useState<"phone" | "email" | "password" | null>(null);
+  const [currentField, setCurrentField] = useState<
+    "phone" | "email" | "password" | null
+  >(null);
   const [passwordError, setPasswordError] = useState("");
 
   // Function to handle update with confirmation for password
@@ -94,6 +99,7 @@ export function ProfileManagementWrapper({
 
   return (
     <div className="p-6">
+      <NotificationComponent />
       <h2 className="mb-6 text-xl font-semibold">Profile Management</h2>
 
       <div className="mb-6 rounded-lg border bg-white shadow-sm">
@@ -303,12 +309,16 @@ export function ProfileManagementWrapper({
       </div>
 
       {/* Confirmation Dialog */}
-      <AlertDialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
+      <AlertDialog
+        open={isConfirmDialogOpen}
+        onOpenChange={setIsConfirmDialogOpen}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Confirm Password Change</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to change your password? You'll need to use your new password the next time you log in.
+              Are you sure you want to change your password? You'll need to use
+              your new password the next time you log in.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
