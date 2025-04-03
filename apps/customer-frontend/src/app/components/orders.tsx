@@ -62,8 +62,8 @@ export default function OrderTablePage() {
     };
 
     if (userId) {
-      fetchData();
-      interval = setInterval(fetchData, 5000);
+      void fetchData();
+      interval = setInterval(() => void fetchData(), 5000);
     }
 
     return () => clearInterval(interval);
