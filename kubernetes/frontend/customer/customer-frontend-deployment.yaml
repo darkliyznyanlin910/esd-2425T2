@@ -30,3 +30,5 @@ spec:
           envFrom:
             - secretRef:
                 name: app-environment
+            - configMapRef:
+                name: database-connection-strings
