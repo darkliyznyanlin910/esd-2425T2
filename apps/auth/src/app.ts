@@ -14,7 +14,7 @@ app.use(
   "*",
   cors({
     origin: SERVICES.map((service) => getServiceBaseUrl(service)),
-    allowHeaders: ["Content-Type", "Authorization"],
+    allowHeaders: ["Content-Type", "Authorization", "Origin"],
     allowMethods: ["POST", "GET", "PUT", "OPTIONS"],
     exposeHeaders: ["Content-Length"],
     maxAge: 600,

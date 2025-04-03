@@ -1,0 +1,37 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: esd-db-seeder
+spec:
+  template:
+    spec:
+      containers:
+      - name: seeder
+        image: esd-db-seeder:latest
+        imagePullPolicy: Never
+        command: [
+          "/bin/sh", 
+          "-c", 
+          "mkdir -p ./service-env && echo \"AUTH_POSTGRES_URL=$AUTH_POSTGRES_URL\nDRIVER_POSTGRES_URL=$DRIVER_POSTGRES_URL\nINVOICE_POSTGRES_URL=$INVOICE_POSTGRES_URL\nORDER_POSTGRES_URL=$ORDER_POSTGRES_URL\" > ./service-env/.env && cat ./service-env/.env && pnpm run db:push --ui tui" 
+        ]
+        env: 
+          - name: PGUSER
+            valueFrom:
+              secretKeyRef:
+                key: username
+                name: postgres-superuser
+          - name: PGPASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: password
+                name: postgres-superuser
+          - name: AUTH_POSTGRES_URL
+            value: "postgresql://$(PGUSER):$(PGPASSWORD)@postgres-rw.default.svc.cluster.local:5432/auth_database"
+          - name: DRIVER_POSTGRES_URL
+            value: "postgresql://$(PGUSER):$(PGPASSWORD)@postgres-rw.default.svc.cluster.local:5432/driver_database"
+          - name: INVOICE_POSTGRES_URL
+            value: "postgresql://$(PGUSER):$(PGPASSWORD)@postgres-rw.default.svc.cluster.local:5432/invoice_database"
+          - name: ORDER_POSTGRES_URL
+            value: "postgresql://$(PGUSER):$(PGPASSWORD)@postgres-rw.default.svc.cluster.local:5432/order_database"
+      restartPolicy: Never
+  backoffLimit: 4
