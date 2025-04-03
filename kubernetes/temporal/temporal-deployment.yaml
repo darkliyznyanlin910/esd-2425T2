@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: temporal
+  labels:
+    app: temporal
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: temporal
+  template:
+    metadata:
+      labels:
+        app: temporal
+    spec:
+      containers:
+      - name: temporal
+        image: temporalio/auto-setup:1.26.2
+        ports:
+        - containerPort: 7233
+        env:
+          - name: POSTGRES_SEEDS
+            valueFrom:
+              secretKeyRef:
+                key: host
+                name: postgres-superuser
+          - name: DB
+            value: "postgres12"
+          - name: DB_PORT
+            valueFrom:
+              secretKeyRef:
+                key: port
+                name: postgres-superuser
+          - name: POSTGRES_USER
+            valueFrom:
+              secretKeyRef:
+                key: username
+                name: postgres-superuser
+          - name: POSTGRES_PWD
+            valueFrom:
+              secretKeyRef:
+                key: password
+                name: postgres-superuser
+        resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
