@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: temporal-ui
+  labels:
+    app: temporal-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: temporal-service
+  template:
+    metadata:
+      labels:
+        app: temporal-service
+    spec:
+      containers:
+      - name: temporal-ui
+        image: temporalio/ui:2.31.2
+        ports:
+        - containerPort: 8080
+        env:
+          - name: TEMPORAL_ADDRESS
+            value: "temporal:7233"
+        resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi

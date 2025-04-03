@@ -54,6 +54,9 @@ case $1 in
             "nginx")
                 kubectl apply -k kubernetes/nginx
                 ;;
+            "temporal")
+                kubectl apply -k kubernetes/temporal
+                ;;
             *)
                 echo "Usage: $0 up {app|db|ingress|all}"
                 exit 1
@@ -63,6 +66,7 @@ case $1 in
     "down")
         case $2 in
             "app")
+                kubectl delete secret app-environment
                 kubectl delete -k kubernetes/backend
                 kubectl delete -k kubernetes/frontend
                 kubectl delete -k kubernetes/nginx
@@ -75,6 +79,9 @@ case $1 in
                 ;;
             "nginx")
                 kubectl delete -k kubernetes/nginx
+                ;;
+            "temporal")
+                kubectl delete -k kubernetes/temporal
                 ;;
             *)
                 echo "Usage: $0 down {app|db|ingress|nginx|all}"
