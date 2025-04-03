@@ -1,0 +1,68 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: postgres
+spec:
+  bootstrap:
+    # initdb:
+    #   database: esd
+    #   owner: esd
+    #   postInitSQL:
+    #     - ALTER USER "esd" WITH CREATEDB;
+    #     - CREATE DATABASE auth_database;
+    #     - CREATE DATABASE order_database;
+    #     - CREATE DATABASE driver_database;
+    #     - CREATE DATABASE invoice_database;
+    recovery:
+      volumeSnapshots:
+        storage:
+          name: postgres-pv-snapshot
+          kind: VolumeSnapshot
+          apiGroup: snapshot.storage.k8s.io
+
+  enableSuperuserAccess: true # By default superuser access is not created on cluster bootstrap
+  imageName: ghcr.io/cloudnative-pg/postgresql:16.3
+  instances: 1
+  postgresql:
+    parameters: # postgresql paramaters
+      auto_explain.log_min_duration: 500ms
+      checkpoint_completion_target: "0.9"
+      default_statistics_target: "100"
+      effective_cache_size: 1536MB
+      effective_io_concurrency: "200"
+      log_min_duration_statement: 20ms
+      maintenance_work_mem: 128MB
+      max_connections: "300"
+      max_wal_size: 8GB
+      min_wal_size: 2GB
+      pg_stat_statements.max: "10000"
+      pg_stat_statements.track: all
+      random_page_cost: "1.1"
+      shared_buffers: 512MB
+      wal_buffers: 16MB
+      work_mem: 30MB
+  storage:
+    storageClass: postgres-storage
+    size: 10Gi
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: postgres-storage
+provisioner: kubernetes.io/host-path
+parameters:
+  path: /data/k8s/postgres
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: postgres-pv
+spec:
+  storageClassName: postgres-storage
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: ${WORKSPACE_DIR}/data/k8s/postgres
+    type: DirectoryOrCreate

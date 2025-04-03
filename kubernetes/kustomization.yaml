@@ -5,3 +5,5 @@ resources:
   - backend
   - frontend
   - ingress.yaml
+  - env.yaml
+  - database-configmap.yaml

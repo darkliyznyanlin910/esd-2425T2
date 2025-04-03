@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: esd-order
+  labels:
+    app: esd-order
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: esd-order
+  template:
+    metadata:
+      labels:
+        app: esd-order
+    spec:
+      containers:
+        - name: esd-order
+          image: esd-order:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 3005
+          env:
+            - name: PGUSER
+              valueFrom:
+                secretKeyRef:
+                  key: username
+                  name: postgres-app
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: postgres-app
+            - name: ORDER_POSTGRES_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: database-connection-strings
+                  key: ORDER_POSTGRES_URL
+          envFrom:
+            - configMapRef:
+                name: app-environment
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
