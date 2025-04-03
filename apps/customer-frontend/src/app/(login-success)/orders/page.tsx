@@ -7,7 +7,7 @@ import { authClient } from "@repo/auth/client";
 
 import OrderTable from "~/app/components/orders";
 
-export default function main() {
+export default function Main() {
   const { useSession } = authClient;
   const { data: session } = useSession();
   const router = useRouter();
