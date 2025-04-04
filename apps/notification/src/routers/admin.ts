@@ -162,6 +162,11 @@ const adminRouter = new OpenAPIHono()
             eventHandler("manualAssignment", ws),
           );
         },
+        onMessage(evt, ws) {
+          if (evt.data === "ping") {
+            ws.send("pong");
+          }
+        },
         onClose() {
           console.log("Connection closed for admin");
         },
