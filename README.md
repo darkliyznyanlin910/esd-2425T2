@@ -168,7 +168,7 @@ region = ap-south-1
 3. Run docker command
 
 ```bash
-./docker-compose.sh up
+./docker-compose.sh up localstack
 ```
 
 ## Contributing
