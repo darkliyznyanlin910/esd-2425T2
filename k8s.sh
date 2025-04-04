@@ -59,6 +59,7 @@ case $1 in
                 ;;
             "temporal")
                 kubectl apply -k kubernetes/temporal
+                kubectl apply -k kubernetes/backend/temporal-runner
                 ;;
             *)
                 echo "Usage: $0 up {app|db|ingress|all}"
@@ -85,6 +86,7 @@ case $1 in
                 ;;
             "temporal")
                 kubectl delete -k kubernetes/temporal
+                kubectl delete -k kubernetes/backend/temporal-runner
                 ;;
             *)
                 echo "Usage: $0 down {app|db|ingress|nginx|all}"

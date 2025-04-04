@@ -22,6 +22,10 @@ spec:
         env:
           - name: TEMPORAL_ADDRESS
             value: "temporal:7233"
+          - name: TEMPORAL_CORS_ORIGINS
+            value: "http://temporal.esd.local"
+          - name: TEMPORAL_CSRF_COOKIE_INSECURE
+            value: "true"
         resources:
             limits:
               cpu: 500m
