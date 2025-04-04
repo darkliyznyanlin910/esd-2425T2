@@ -312,7 +312,7 @@ const driverRouter = new OpenAPIHono<HonoExtension>()
       });
 
       if (!driverAssignments || driverAssignments.length === 0) {
-        return c.json({ message: "Assignment not found" }, 404);
+        return c.json({});
       }
 
       // Extract order IDs from the assignments

@@ -121,7 +121,7 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
       middleware: [
         authMiddleware({
           authBased: {
-            allowedRoles: ["admin"],
+            allowedRoles: ["admin", "client"],
           },
           bearer: {
             tokens: [env.INTERNAL_COMMUNICATION_SECRET],
@@ -149,6 +149,8 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
       },
     }),
     async (c) => {
+      console.log("hit the endpoint to process order");
+      console.log(env.INTERNAL_COMMUNICATION_SECRET);
       const { id } = c.req.valid("param");
       const { manualAssignDriverId } = c.req.valid("query");
 

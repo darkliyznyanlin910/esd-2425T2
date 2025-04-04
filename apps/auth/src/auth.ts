@@ -78,7 +78,20 @@ export const authMiddleware = ({
       };
     }) =>
   createMiddleware<HonoExtension>(async (c, next) => {
-    if (authBased) {
+    let isAuthenticated = false;
+
+    if (bearer) {
+      const authHeader = c.req.raw.headers.get("Authorization");
+      if (authHeader && authHeader.startsWith("Bearer ")) {
+        const token = authHeader.split(" ")[1];
+        if (token && bearer.tokens.includes(token)) {
+          isAuthenticated = true;
+          return next();
+        }
+      }
+    }
+
+    if (!isAuthenticated && authBased) {
       const session = await auth.api.getSession({
         headers: c.req.raw.headers,
       });
@@ -86,26 +99,19 @@ export const authMiddleware = ({
       if (!session) {
         c.set("user", null);
         c.set("session", null);
-        return c.json({ error: "Unauthorized" }, 401);
+        return c.json({ error: "Unauthorized - No session" }, 401);
       }
 
       if (
         authBased.allowedRoles.length > 0 &&
         !authBased.allowedRoles.includes(session.user.role as Role)
       ) {
-        return c.json({ error: "Unauthorized" }, 401);
+        return c.json({ error: "Unauthorized - Invalid role" }, 401);
       } else {
         c.set("user", session.user);
         c.set("session", session.session);
         return next();
       }
     }
-
-    if (bearer) {
-      const token = c.req.raw.headers.get("Authorization")?.split(" ")[1];
-      if (!token) {
-        return c.json({ error: "Unauthorized" }, 401);
-      }
-      return next();
-    }
+    return c.json({ error: "Unauthorized - Authentication required" }, 401);
   });
