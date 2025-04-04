@@ -36,10 +36,20 @@ export default function NotificationComponent() {
       const message = JSON.parse(event.data);
       console.log("WebSocket message received:", message);
 
+      if (!message || message.data === undefined) {
+        console.warn("Received message with missing data:", message);
+        return;
+      }
+
+      const messageContent =
+        typeof message.data === "string"
+          ? message.data
+          : JSON.stringify(message.data);
+
       switch (message.event) {
         case "invalidateOrder":
           toast(message.data, {
-            description: `${message.data}`,
+            description: messageContent,
             duration: 5000,
             action: {
               label: <X className="h-4 w-4" />,
@@ -49,7 +59,7 @@ export default function NotificationComponent() {
           break;
         case "broadcastOrder":
           toast(message.data, {
-            description: `${message.data}`,
+            description: messageContent,
             duration: 5000,
             action: {
               label: <X className="h-4 w-4" />,
