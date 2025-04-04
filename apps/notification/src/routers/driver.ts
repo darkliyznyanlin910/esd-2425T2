@@ -146,6 +146,7 @@ const driverRouter = new OpenAPIHono()
         async (
           data: Parameters<DriverEventHandlers[keyof DriverEventHandlers]>[0],
         ) => {
+          console.log("Sending event", eventName, data);
           ws.send(
             JSON.stringify({
               event: eventName,

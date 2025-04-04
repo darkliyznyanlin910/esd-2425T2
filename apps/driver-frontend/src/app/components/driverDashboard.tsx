@@ -19,10 +19,11 @@ import NotificationComponent from "./notification";
 
 export default function DriverDashboard() {
   const [orders, setOrders] = useState<Order[]>([]);
-  const [pickupOrder, setPickupOrder] = useState<Order[]>([]);
-  const [deliveryOrder, setDeliveryOrder] = useState<Order[]>([]);
+  const [pickupOrder, setPickupOrder] = useState<any[]>([]);
+  const [deliveryOrder, setDeliveryOrder] = useState<any[]>([]);
   const { useSession } = authClient;
   const { data: session } = useSession();
+
   const handleAcceptOrder = async (orderId: string) => {
     try {
       const response = await fetch(
@@ -44,6 +45,7 @@ export default function DriverDashboard() {
       console.error("Failed to accept order:", error);
     }
   };
+
   const handlePickupOrder = async (orderId: string) => {
     try {
       const response = await fetch(
@@ -60,11 +62,12 @@ export default function DriverDashboard() {
           }),
         },
       );
-      console.log("Order accepted:", response);
+      console.log("Order picked up:", response);
     } catch (error) {
-      console.error("Failed to accept order:", error);
+      console.error("Failed to pick up order:", error);
     }
   };
+
   const handleDeliveryOrder = async (orderId: string) => {
     try {
       const response = await fetch(
@@ -81,9 +84,9 @@ export default function DriverDashboard() {
           }),
         },
       );
-      console.log("Order accepted:", response);
+      console.log("Order delivered:", response);
     } catch (error) {
-      console.error("Failed to accept order:", error);
+      console.error("Failed to deliver order:", error);
     }
   };
 
@@ -102,17 +105,19 @@ export default function DriverDashboard() {
         );
         if (response.ok) {
           const data = await response.json();
-          setOrders(data);
+          setOrders(Array.isArray(data) ? data : []);
         }
       } catch (error) {
         console.error("Failed to fetch orders:", error);
       }
     };
-    fetchOrders();
+
     const fetchPickupOrder = async () => {
+      if (!session?.user.id) return;
+
       try {
         const url = new URL(
-          `${getServiceBaseUrl("driver")}/driver/assignments/${session?.user.id}`,
+          `${getServiceBaseUrl("driver")}/driver/assignments/${session.user.id}`,
         );
         url.searchParams.append("status", "DRIVER_FOUND");
         const response = await fetch(url, {
@@ -125,17 +130,19 @@ export default function DriverDashboard() {
 
         if (response.ok) {
           const data = await response.json();
-          setPickupOrder(data);
+          setPickupOrder(Array.isArray(data) ? data : []);
         }
       } catch (error) {
-        console.error("Failed to fetch orders:", error);
+        console.error("Failed to fetch pickup orders:", error);
       }
     };
-    fetchPickupOrder();
+
     const fetchDeliveryOrder = async () => {
+      if (!session?.user.id) return;
+
       try {
         const url = new URL(
-          `${getServiceBaseUrl("driver")}/driver/assignments/${session?.user.id}`,
+          `${getServiceBaseUrl("driver")}/driver/assignments/${session.user.id}`,
         );
         url.searchParams.append("status", "PICKED_UP");
         const response = await fetch(url, {
@@ -148,33 +155,41 @@ export default function DriverDashboard() {
 
         if (response.ok) {
           const data = await response.json();
-          setDeliveryOrder(data);
+          console.log("Delivery order data:", data);
+          setDeliveryOrder(Array.isArray(data) ? data : []);
         }
       } catch (error) {
-        console.error("Failed to fetch orders:", error);
+        console.error("Failed to fetch delivery orders:", error);
       }
     };
+
+    fetchOrders();
+    fetchPickupOrder();
     fetchDeliveryOrder();
+
     const intervalId = setInterval(fetchOrders, 2000);
     const intervalId2 = setInterval(fetchPickupOrder, 2000);
     const intervalId3 = setInterval(fetchDeliveryOrder, 2000);
+
     return () => {
       clearInterval(intervalId);
       clearInterval(intervalId2);
       clearInterval(intervalId3);
     };
-  }, []);
+  }, [session]);
 
   return (
     <div className="flex flex-col items-center">
       <NotificationComponent />
       <h1 className="mb-5 text-2xl font-bold">Driver Dashboard</h1>
+
+      {/* Available Orders Table */}
       <Table>
         <TableHeader>
           <TableRow>
             <TableHead
               className="text-center text-xl text-amber-400"
-              colSpan={4}
+              colSpan={5}
             >
               Available Orders
             </TableHead>
@@ -200,11 +215,14 @@ export default function DriverDashboard() {
                 <TableCell>{data.id}</TableCell>
                 <TableCell>{data.orderDetails}</TableCell>
                 <TableCell>
-                  {data.fromAddressLine1}, {data.fromAddressLine2},{" "}
-                  {data.fromZipCode}
+                  {data.fromAddressLine1}
+                  {data.fromAddressLine2 ? `, ${data.fromAddressLine2}` : ""}
+                  {data.fromZipCode ? `, ${data.fromZipCode}` : ""}
                 </TableCell>
                 <TableCell>
-                  {data.toAddressLine1}, {data.toAddressLine2}, {data.toZipCode}
+                  {data.toAddressLine1}
+                  {data.toAddressLine2 ? `, ${data.toAddressLine2}` : ""}
+                  {data.toZipCode ? `, ${data.toZipCode}` : ""}
                 </TableCell>
                 <TableCell>
                   <Button onClick={() => handleAcceptOrder(data.id)}>
@@ -216,12 +234,14 @@ export default function DriverDashboard() {
           )}
         </TableBody>
       </Table>
+
+      {/* Orders to Pick Up Table */}
       <Table>
         <TableHeader>
           <TableRow>
             <TableHead
               className="text-center text-xl text-amber-500"
-              colSpan={4}
+              colSpan={5}
             >
               Orders to Pick Up
             </TableHead>
@@ -247,16 +267,22 @@ export default function DriverDashboard() {
                 <TableCell>{data.orderDetails?.id}</TableCell>
                 <TableCell>{data.orderDetails?.orderDetails}</TableCell>
                 <TableCell>
-                  {data.orderDetails?.fromAddressLine1},
-                  {data.orderDetails?.fromAddressLine2 &&
-                    `${data.orderDetails.fromAddressLine2},`}
-                  {data.orderDetails?.fromZipCode}
+                  {data.orderDetails?.fromAddressLine1}
+                  {data.orderDetails?.fromAddressLine2
+                    ? `, ${data.orderDetails.fromAddressLine2}`
+                    : ""}
+                  {data.orderDetails?.fromZipCode
+                    ? `, ${data.orderDetails.fromZipCode}`
+                    : ""}
                 </TableCell>
                 <TableCell>
-                  {data.orderDetails?.toAddressLine1},
-                  {data.orderDetails?.toAddressLine2 &&
-                    `${data.orderDetails.toAddressLine2},`}
-                  {data.orderDetails?.toZipCode}
+                  {data.orderDetails?.toAddressLine1}
+                  {data.orderDetails?.toAddressLine2
+                    ? `, ${data.orderDetails.toAddressLine2}`
+                    : ""}
+                  {data.orderDetails?.toZipCode
+                    ? `, ${data.orderDetails.toZipCode}`
+                    : ""}
                 </TableCell>
                 <TableCell>
                   <Button
@@ -270,12 +296,14 @@ export default function DriverDashboard() {
           )}
         </TableBody>
       </Table>
+
+      {/* Orders to Deliver Table */}
       <Table>
         <TableHeader>
           <TableRow>
             <TableHead
               className="text-center text-xl text-amber-600"
-              colSpan={4}
+              colSpan={5}
             >
               Orders to Deliver
             </TableHead>
@@ -289,7 +317,7 @@ export default function DriverDashboard() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {deliveryOrder.length === 0 ? (
+          {!Array.isArray(deliveryOrder) || deliveryOrder.length === 0 ? (
             <TableRow>
               <TableCell className="text-center text-lg" colSpan={5}>
                 No new orders yet.
@@ -298,22 +326,30 @@ export default function DriverDashboard() {
           ) : (
             deliveryOrder.map((data) => (
               <TableRow key={data.id}>
-                <TableCell>{data.orderId}</TableCell>
+                <TableCell>{data.orderDetails?.id}</TableCell>
                 <TableCell>{data.orderDetails?.orderDetails}</TableCell>
                 <TableCell>
-                  {data.orderDetails?.fromAddressLine1},
-                  {data.orderDetails?.fromAddressLine2 &&
-                    `${data.orderDetails.fromAddressLine2},`}
-                  {data.orderDetails?.fromZipCode}
+                  {data.orderDetails?.fromAddressLine1}
+                  {data.orderDetails?.fromAddressLine2
+                    ? `, ${data.orderDetails.fromAddressLine2}`
+                    : ""}
+                  {data.orderDetails?.fromZipCode
+                    ? `, ${data.orderDetails.fromZipCode}`
+                    : ""}
                 </TableCell>
                 <TableCell>
-                  {data.orderDetails?.toAddressLine1},
-                  {data.orderDetails?.toAddressLine2 &&
-                    `${data.orderDetails.toAddressLine2},`}
-                  {data.orderDetails?.toZipCode}
+                  {data.orderDetails?.toAddressLine1}
+                  {data.orderDetails?.toAddressLine2
+                    ? `, ${data.orderDetails.toAddressLine2}`
+                    : ""}
+                  {data.orderDetails?.toZipCode
+                    ? `, ${data.orderDetails.toZipCode}`
+                    : ""}
                 </TableCell>
                 <TableCell>
-                  <Button onClick={() => handleDeliveryOrder(data.orderId)}>
+                  <Button
+                    onClick={() => handleDeliveryOrder(data.orderDetails?.id)}
+                  >
                     Delivered
                   </Button>
                 </TableCell>

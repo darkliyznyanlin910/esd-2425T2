@@ -38,6 +38,7 @@ export async function delivery(
   if (manualAssignDriverId) {
     await updateOrderStatus(order.id, "DRIVER_FOUND");
     await assignOrderToDriver(order, manualAssignDriverId);
+    await invalidateOrder(order);
     orderStatus = "DRIVER_FOUND";
   }
 
