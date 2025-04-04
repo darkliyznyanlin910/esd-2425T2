@@ -17,6 +17,9 @@ case $1 in
 
         # DB Seeder
         docker build -t esd-db-seeder:latest -f dbSeeder.Dockerfile .
+
+        # Temporal
+        docker build -t esd-temporal:latest -f apps/temporal/Dockerfile .
         ;;
     "install")
         kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.8.2/deploy/static/provider/cloud/deploy.yaml
