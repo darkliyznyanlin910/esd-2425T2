@@ -21,7 +21,8 @@
     "lint:ws": "pnpm dlx sherif@latest",
     "postinstall": "pnpm lint:ws",
     "typecheck": "turbo run typecheck",
-    "ui-add": "turbo run ui-add"
+    "ui-add": "turbo run ui-add",
+    "start:temporal-runner": "turbo run start -F @repo/temporal-runner..."
   },
   "devDependencies": {
     "@repo/prettier-config": "workspace:*",

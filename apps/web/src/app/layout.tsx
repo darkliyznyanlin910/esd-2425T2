@@ -8,10 +8,10 @@ import { Toaster } from "@repo/ui/toast";
 
 import "~/styles/globals.css";
 
-import { getServiceBaseUrl } from "@repo/service-discovery";
+// import { getServiceBaseUrl } from "@repo/service-discovery";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(getServiceBaseUrl("web")),
+  // metadataBase: new URL(getServiceBaseUrl("web")),
   title: "Create T3 Turbo",
   description: "Simple monorepo with shared backend for web & mobile apps",
   openGraph: {
