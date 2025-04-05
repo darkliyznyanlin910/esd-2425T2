@@ -8,12 +8,19 @@ import { Button } from "@repo/ui/button";
 
 export const columns: ColumnDef<Order>[] = [
   {
-    accessorKey: "id",
+    accessorKey: "displayId",
     header: "Order ID",
+    enableColumnFilter: true,
   },
   {
     accessorKey: "userId",
     header: "Customer ID",
+    enableColumnFilter: true,
+  },
+  {
+    accessorKey: "orderDetails",
+    header: "Order Details",
+    enableColumnFilter: true,
   },
   {
     header: "From Address",
