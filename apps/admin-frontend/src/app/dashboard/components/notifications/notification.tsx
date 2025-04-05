@@ -11,10 +11,12 @@ let wsReuse: WebSocket | null = null;
 
 type NotificationPageProps = {
   showComponent?: boolean;
+  onNotification?: () => void;
 };
 
 export default function NotificationComponent({
   showComponent = false,
+  onNotification,
 }: NotificationPageProps) {
   const [data, setData] = useState<string>("Nothing as of now...");
   const wsRef = useRef<WebSocket | null>(null);
@@ -55,6 +57,9 @@ export default function NotificationComponent({
               onClick: () => toast.dismiss(),
             },
           });
+          if (onNotification) {
+            onNotification();
+          }
           break;
         case "manualAssignment":
           setData(`Reassigned: ${message.data}`);
@@ -66,6 +71,9 @@ export default function NotificationComponent({
               onClick: () => toast.dismiss(),
             },
           });
+          if (onNotification) {
+            onNotification();
+          }
           break;
         default:
           console.warn("Unknown event type:", message.event);
@@ -79,7 +87,7 @@ export default function NotificationComponent({
     wsReuse.onclose = () => {
       console.log("WebSocket Disconnected. Attempting Reconnect...");
     };
-  }, []);
+  }, [onNotification]);
 
   useEffect(() => {
     connectWebSocket();

@@ -50,6 +50,10 @@ export default function OrderTablePage() {
     };
 
     void fetchData();
+    const intervalId = setInterval(fetchData, 2000);
+    return () => {
+      clearInterval(intervalId);
+    };
   }, []);
 
   if (loading) {

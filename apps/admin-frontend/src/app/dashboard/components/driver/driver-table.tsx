@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { hc } from "hono/client";
 
 import { Order } from "@repo/db-order/zod";
@@ -52,15 +52,20 @@ export default function AssignTablePage() {
   const { orders, setOrders } = useOrders();
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const fetchedData = await getOrders();
-      setOrders(fetchedData);
-      setLoading(false);
-    };
-
-    fetchData();
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    const fetchedData = await getOrders();
+    setOrders(fetchedData);
+    setLoading(false);
   }, [setOrders]);
+
+  const handleNotification = useCallback(() => {
+    fetchData();
+  }, [fetchData]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -68,7 +73,10 @@ export default function AssignTablePage() {
 
   return (
     <div className="container mx-auto h-screen py-6">
-      <NotificationComponent showComponent={false} />
+      <NotificationComponent
+        showComponent={false}
+        onNotification={handleNotification}
+      />
       <div className="text-xl font-semibold">To Assign</div>
       <DataTable columns={columns} data={orders} />{" "}
     </div>
