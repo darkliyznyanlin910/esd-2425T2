@@ -980,6 +980,9 @@ importers:
       '@repo/prettier-config':
         specifier: workspace:*
         version: link:../../tooling/prettier
+      '@repo/service-discovery':
+        specifier: workspace:*
+        version: link:../service-discovery
       '@repo/tsconfig':
         specifier: workspace:*
         version: link:../../tooling/typescript
