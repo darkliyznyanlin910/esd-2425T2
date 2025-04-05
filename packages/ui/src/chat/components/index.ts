@@ -1,4 +1,3 @@
-export { DriverDetails } from "./DriverDetails";
 export { OrderDetails } from "./OrderDetails";
 export { OrdersList } from "./OrdersList";
 export { TrackingDetails } from "./TrackingDetails";

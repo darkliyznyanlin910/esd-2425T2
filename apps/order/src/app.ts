@@ -33,6 +33,12 @@ const routes = app
       version: "1.0.0",
       description: "ESD Order API",
     },
+    servers: [
+      {
+        url: getServiceBaseUrl("order"),
+        description: "Local",
+      },
+    ],
   })
   .get("/", (c) => c.json({ ok: true, service: "order" }))
   .get(
