@@ -23,7 +23,7 @@
     "lint": "eslint",
     "push": "pnpm with-env prisma db push",
     "pull": "pnpm with-env prisma db pull",
-    "studio": "pnpm with-env prisma studio -p 5588 -b none",
+    "studio": "pnpm with-env prisma studio -p 5566 -b none",
     "sync": "pnpm with-env prisma generate",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false",
     "with-env": "dotenv -e ../../service-env/.env --",

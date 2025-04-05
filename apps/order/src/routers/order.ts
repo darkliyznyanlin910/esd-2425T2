@@ -247,67 +247,6 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
   .openapi(
     createRoute({
       method: "get",
-      path: "/:id",
-      description: "Get order by id",
-      middleware: [
-        authMiddleware({
-          authBased: {
-            allowedRoles: ["client", "admin"],
-          },
-          bearer: {
-            tokens: [env.INTERNAL_COMMUNICATION_SECRET],
-          },
-        }),
-      ] as const,
-      request: {
-        params: z.object({
-          id: z.string(),
-        }),
-      },
-      responses: {
-        200: {
-          content: {
-            "application/json": {
-              schema: OrderSchema,
-            },
-          },
-          description: "Get order by id",
-        },
-        403: {
-          description: "Unauthorized to get order by id",
-        },
-        404: {
-          description: "Order not found",
-        },
-      },
-    }),
-    async (c) => {
-      const { id } = c.req.valid("param");
-      const user = c.get("user");
-
-      let userId: string | undefined = undefined;
-      // Only filter by userId for regular clients
-      if (!!user && user.role === "client" && !c.req.header("Authorization")) {
-        userId = user.id;
-      }
-
-      const order = await db.order.findUnique({
-        where: {
-          id,
-          userId,
-        },
-      });
-
-      if (!order) {
-        return c.json({ error: "Order not found" }, 404);
-      }
-
-      return c.json(order);
-    },
-  )
-  .openapi(
-    createRoute({
-      method: "get",
       path: "/tracking/:id",
       description: "Get order tracking by id",
       middleware: [
@@ -388,16 +327,24 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
       ] as const,
       request: {
         query: z.object({
-          take: z.number().default(100),
-          page: z.number().default(1),
+          take: z
+            .string()
+            .transform((val) => parseInt(val))
+            .optional(),
+          page: z
+            .string()
+            .transform((val) => parseInt(val))
+            .optional(),
           sortBy: z
             .enum(["createdAt", "updatedAt"])
             .default("createdAt")
-            .describe("the field to sort by"),
+            .describe("the field to sort by")
+            .optional(),
           sortOrder: z
             .enum(["asc", "desc"])
             .default("desc")
-            .describe("the order to sort by"),
+            .describe("the order to sort by")
+            .optional(),
         }),
       },
       responses: {
@@ -418,8 +365,11 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
       },
     }),
     async (c) => {
+      console.log("hit the endpoint to get all orders");
       const { take, page, sortBy, sortOrder } = c.req.valid("query");
       const user = c.get("user")!;
+
+      console.log(take, page, sortBy, sortOrder);
 
       let userId: string | undefined = undefined;
       // Only filter by userId for regular clients
@@ -432,8 +382,8 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
           userId,
         },
         take,
-        skip: (page - 1) * take,
-        orderBy: {
+        skip: page && take ? (page - 1) * take : undefined,
+        orderBy: sortBy && {
           [sortBy]: sortOrder,
         },
       });
@@ -488,6 +438,67 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
       });
 
       return c.json(orders);
+    },
+  )
+  .openapi(
+    createRoute({
+      method: "get",
+      path: "/:id",
+      description: "Get order by id",
+      middleware: [
+        authMiddleware({
+          authBased: {
+            allowedRoles: ["client", "admin"],
+          },
+          bearer: {
+            tokens: [env.INTERNAL_COMMUNICATION_SECRET],
+          },
+        }),
+      ] as const,
+      request: {
+        params: z.object({
+          id: z.string(),
+        }),
+      },
+      responses: {
+        200: {
+          content: {
+            "application/json": {
+              schema: OrderSchema,
+            },
+          },
+          description: "Get order by id",
+        },
+        403: {
+          description: "Unauthorized to get order by id",
+        },
+        404: {
+          description: "Order not found",
+        },
+      },
+    }),
+    async (c) => {
+      const { id } = c.req.valid("param");
+      const user = c.get("user");
+
+      let userId: string | undefined = undefined;
+      // Only filter by userId for regular clients
+      if (!!user && user.role === "client" && !c.req.header("Authorization")) {
+        userId = user.id;
+      }
+
+      const order = await db.order.findUnique({
+        where: {
+          id,
+          userId,
+        },
+      });
+
+      if (!order) {
+        return c.json({ error: "Order not found" }, 404);
+      }
+
+      return c.json(order);
     },
   );
 // .openapi(
