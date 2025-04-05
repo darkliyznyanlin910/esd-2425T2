@@ -970,6 +970,9 @@ importers:
 
   packages/chatbot-common:
     dependencies:
+      '@repo/service-discovery':
+        specifier: workspace:*
+        version: link:../service-discovery
       ai:
         specifier: ^4.1.37
         version: 4.1.41(react@18.3.1)(zod@3.24.2)
@@ -980,9 +983,6 @@ importers:
       '@repo/prettier-config':
         specifier: workspace:*
         version: link:../../tooling/prettier
-      '@repo/service-discovery':
-        specifier: workspace:*
-        version: link:../service-discovery
       '@repo/tsconfig':
         specifier: workspace:*
         version: link:../../tooling/typescript
