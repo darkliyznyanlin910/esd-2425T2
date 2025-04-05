@@ -11,13 +11,10 @@ import { DataTable } from "./orders/data-table";
 
 async function getOrders(userId: string): Promise<Order[]> {
   try {
-    const response = await fetch(
-      `${getServiceBaseUrl("order")}/order/user/${userId}`,
-      {
-        method: "GET",
-        credentials: "include",
-      },
-    );
+    const response = await fetch(`${getServiceBaseUrl("order")}/order/order`, {
+      method: "GET",
+      credentials: "include",
+    });
 
     if (!response.ok) {
       throw new Error("Failed to fetch orders");
