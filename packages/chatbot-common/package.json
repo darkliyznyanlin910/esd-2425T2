@@ -17,7 +17,6 @@
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
     "@repo/prettier-config": "workspace:*",
-    "@repo/service-discovery": "workspace:*",
     "@repo/tsconfig": "workspace:*",
     "eslint": "catalog:",
     "prettier": "catalog:",
@@ -25,6 +24,7 @@
   },
   "prettier": "@repo/prettier-config",
   "dependencies": {
+    "@repo/service-discovery": "workspace:*",
     "ai": "^4.1.37"
   }
 }

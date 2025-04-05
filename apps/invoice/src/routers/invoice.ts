@@ -1,5 +1,8 @@
-import { Blob } from "buffer";
-import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import {
+  GetObjectCommand,
+  PutObjectCommand,
+  S3Client,
+} from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
 import dotenv from "dotenv";
@@ -14,6 +17,16 @@ import { env } from "../env";
 dotenv.config();
 
 const router = new OpenAPIHono<HonoExtension>();
+
+const s3Client = new S3Client({
+  region: env.AWS_REGION,
+  credentials: {
+    accessKeyId: env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: env.AWS_SECRET_ACCESS_KEY,
+  },
+  endpoint: env.S3_ENDPOINT,
+  forcePathStyle: true,
+});
 
 // Add the invoice router - keeping all the existing routes from the provided code
 const invoiceRouter = router
@@ -42,16 +55,6 @@ const invoiceRouter = router
     async (c) => {
       try {
         const { orderId } = c.req.valid("json");
-
-        const s3Client = new S3Client({
-          region: env.AWS_REGION,
-          credentials: {
-            accessKeyId: env.AWS_ACCESS_KEY_ID,
-            secretAccessKey: env.AWS_SECRET_ACCESS_KEY,
-          },
-          endpoint: env.S3_ENDPOINT,
-          forcePathStyle: true,
-        });
 
         const filename = `invoice-${Date.now()}.pdf`;
         const key = `${orderId}/${filename}`;
@@ -136,7 +139,55 @@ const invoiceRouter = router
       const { id } = c.req.valid("param");
       const invoice = await db.invoice.findUnique({ where: { id } });
       if (!invoice) return c.json({ error: "Invoice not found" }, 404);
-      return c.json(invoice);
+      const command = new GetObjectCommand({
+        Bucket: env.S3_BUCKET,
+        Key: invoice.path,
+      });
+      const invoiceUrl = await getSignedUrl(s3Client, command, {
+        expiresIn: 300,
+      });
+      return c.json({
+        ...invoice,
+        invoiceUrl: invoiceUrl.replace(
+          env.S3_ENDPOINT,
+          "http://localhost:4566",
+        ),
+      });
+    },
+  )
+  .openapi(
+    createRoute({
+      method: "get",
+      path: "/invoices/order/:orderId",
+      description: "Get invoice by ID",
+      request: {
+        params: z.object({
+          orderId: z.string(),
+        }),
+      },
+      responses: {
+        200: { description: "Invoice found" },
+        404: { description: "Invoice not found" },
+      },
+    }),
+    async (c) => {
+      const { orderId } = c.req.valid("param");
+      const invoice = await db.invoice.findFirst({ where: { orderId } });
+      if (!invoice) return c.json({ error: "Invoice not found" }, 404);
+      const command = new GetObjectCommand({
+        Bucket: env.S3_BUCKET,
+        Key: invoice.path,
+      });
+      const invoiceUrl = await getSignedUrl(s3Client, command, {
+        expiresIn: 300,
+      });
+      return c.json({
+        ...invoice,
+        invoiceUrl: invoiceUrl.replace(
+          env.S3_ENDPOINT,
+          "http://localhost:4566",
+        ),
+      });
     },
   )
 

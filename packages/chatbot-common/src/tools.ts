@@ -9,7 +9,6 @@ export const backendTools = {
   getOrders: {
     description: "show the orders to the user",
     parameters: z.object({
-      userId: z.string().describe("the ID of the user"),
       take: z.number().default(10).describe("the number of orders to show"),
       page: z.number().default(1).describe("the page number to show"),
       sortBy: z
@@ -24,10 +23,6 @@ export const backendTools = {
   },
   getOrderDetails: {
     description: "show the order details to the user",
-    parameters: orderIdSchema,
-  },
-  getDriverDetails: {
-    description: "show the driver details of an order to the user",
     parameters: orderIdSchema,
   },
   getTrackingDetails: {
@@ -64,11 +59,6 @@ export type ToolFunctionMap = {
 export interface ToolReturnTypes {
   getOrders: Promise<string[]>;
   getOrderDetails: Promise<{ orderId: string; status: string }>;
-  getDriverDetails: Promise<{
-    orderId: string;
-    driverName: string;
-    driverPhone: string;
-  }>;
   getTrackingDetails: Promise<
     {
       orderId: string;
@@ -84,44 +74,57 @@ export interface ToolReturnTypes {
 }
 
 export const toolFunctionMap: ToolFunctionMap = {
-  getOrders: async ({ userId, take, page, sortBy, sortOrder }) => {
-    const res = await fetch(
-      `${(getServiceBaseUrl as (s: string, i?: boolean) => string)("order")}/order/user/${userId}`,
-    );
+  getOrders: async ({ take, page, sortBy, sortOrder }) => {
+    const url = new URL(`${getServiceBaseUrl("order")}/order/order`);
+    url.searchParams.set("take", take.toString());
+    url.searchParams.set("page", page.toString());
+    url.searchParams.set("sortBy", sortBy);
+    url.searchParams.set("sortOrder", sortOrder);
+
+    const res = await fetch(url);
     const data = await res.json();
     if (!Array.isArray(data)) return [];
     return data.map((order: any) => String(order.id));
   },
   getOrderDetails: async ({ orderId }) => {
+    const url = new URL(`${getServiceBaseUrl("order")}/order/${orderId}`);
+
+    const res = await fetch(url);
+    const data = (await res.json()) as { orderStatus: string };
     return {
       orderId,
-      status: "pending",
-    };
-  },
-  getDriverDetails: async ({ orderId }) => {
-    return {
-      orderId,
-      driverName: "John Doe",
-      driverPhone: "1234567890",
+      status: data.orderStatus,
     };
   },
   getTrackingDetails: async ({ orderId }) => {
-    return [
-      {
-        orderId,
-        status: "pending",
-      },
-      {
-        orderId,
-        status: "pending",
-      },
-    ];
+    const url = new URL(
+      `${getServiceBaseUrl("order")}/order/tracking/${orderId}`,
+    );
+
+    const res = await fetch(url);
+    const data = (await res.json()) as {
+      orderId: string;
+      orderStatus: string;
+    }[];
+    return data.map((order) => ({
+      orderId: order.orderId,
+      status: order.orderStatus,
+    }));
   },
   getInvoice: async ({ orderId }) => {
+    const url = new URL(
+      `${getServiceBaseUrl("invoice")}/invoice/invoices/order/${orderId}`,
+    );
+    const res = await fetch(url);
+    const data = (await res.json()) as {
+      orderId: string;
+      amount: number;
+      invoiceUrl: string;
+    };
     return {
       orderId,
-      amount: 100,
-      url: "https://knl-personal.s3.ap-southeast-1.amazonaws.com/KaungNyanLin_Resume.pdf",
+      amount: data.amount,
+      url: data.invoiceUrl,
     };
   },
 };
