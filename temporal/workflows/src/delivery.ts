@@ -72,6 +72,7 @@ export async function delivery(
 
   if (!manualAssignDriverId) {
     try {
+      console.log("Sending order to drivers", order);
       await sendOrderToDrivers(order);
     } catch (error) {
       console.error(error);

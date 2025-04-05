@@ -51,31 +51,39 @@ export default function NotificationComponent() {
         return;
       }
 
-      const messageContent =
-        typeof message.data === "string"
-          ? message.data
-          : JSON.stringify(message.data);
-
       switch (message.event) {
         case "invalidateOrder":
-          toast(message.data, {
-            description: messageContent,
-            duration: 5000,
-            action: {
-              label: <X className="h-4 w-4" />,
-              onClick: () => toast.dismiss(),
+          toast(
+            // Use a string title instead of passing the object directly
+            typeof message.data === "object"
+              ? "Order Invalidated"
+              : message.data,
+            {
+              // For the description, you can stringify the object if needed
+              description: "Order has been invalidated",
+              duration: 10000,
+              action: {
+                label: <X className="h-4 w-4" />,
+                onClick: () => toast.dismiss(),
+              },
             },
-          });
+          );
           break;
         case "broadcastOrder":
-          toast(message.data, {
-            description: messageContent,
-            duration: 5000,
-            action: {
-              label: <X className="h-4 w-4" />,
-              onClick: () => toast.dismiss(),
+          toast(
+            // Use a string title instead of passing the object directly
+            typeof message.data === "object"
+              ? "New Order Available"
+              : message.data,
+            {
+              description: "New order available",
+              duration: 10000,
+              action: {
+                label: <X className="h-4 w-4" />,
+                onClick: () => toast.dismiss(),
+              },
             },
-          });
+          );
           break;
         default:
           console.warn("Unknown event type:", message.event);
