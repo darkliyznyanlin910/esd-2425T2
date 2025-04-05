@@ -3,7 +3,6 @@ kind: Kustomization
 
 resources:
   - ingress.yaml
-  - database-configmap.yaml
   - frontend/
   - backend/
   - database/
