@@ -75,7 +75,7 @@ const driverRouter = new OpenAPIHono()
     }),
     async (c) => {
       const input = c.req.valid("json");
-      emitterDriver.emit("invalidateOrder", input.id);
+      emitterDriver.emit("invalidateOrder", input);
       return c.json({ success: true });
     },
   )
