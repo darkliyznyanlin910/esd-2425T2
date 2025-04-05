@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import type { AiSdkToolSet } from "@repo/chatbot-common";
+import { getServiceBaseUrl } from "@repo/service-discovery";
 
 const orderIdSchema = z.object({ orderId: z.string() });
 
@@ -8,6 +9,7 @@ export const backendTools = {
   getOrders: {
     description: "show the orders to the user",
     parameters: z.object({
+      userId: z.string().describe("the ID of the user"),
       take: z.number().default(10).describe("the number of orders to show"),
       page: z.number().default(1).describe("the page number to show"),
       sortBy: z
@@ -82,8 +84,13 @@ export interface ToolReturnTypes {
 }
 
 export const toolFunctionMap: ToolFunctionMap = {
-  getOrders: async () => {
-    return ["123", "456", "789"] as string[];
+  getOrders: async ({ userId, take, page, sortBy, sortOrder }) => {
+    const res = await fetch(
+      `${(getServiceBaseUrl as (s: string, i?: boolean) => string)("order")}/order/user/${userId}`,
+    );
+    const data = await res.json();
+    if (!Array.isArray(data)) return [];
+    return data.map((order: any) => String(order.id));
   },
   getOrderDetails: async ({ orderId }) => {
     return {

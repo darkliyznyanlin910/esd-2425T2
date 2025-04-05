@@ -18,6 +18,7 @@ const chatRouter = new OpenAPIHono().openapi(
           "application/json": {
             schema: z.object({
               messages: z.any(),
+              id: z.string().optional(), 
             }),
           },
         },
