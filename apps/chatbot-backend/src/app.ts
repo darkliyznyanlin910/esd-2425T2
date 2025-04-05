@@ -4,17 +4,17 @@ import { cors } from "hono/cors";
 
 import type { HonoExtension } from "@repo/auth/type";
 import { authMiddleware } from "@repo/auth/auth";
-import { getServiceBaseUrl } from "@repo/service-discovery";
+import { getServiceBaseUrl, SERVICES } from "@repo/service-discovery";
 
 import { chatRouter } from "./chatRouter";
 
 const app = new OpenAPIHono<HonoExtension>();
-
 app.use(
+  "*",
   cors({
-    origin: "*",
-    allowHeaders: ["Content-Type", "Authorization"],
-    allowMethods: ["POST", "GET", "OPTIONS"],
+    origin: SERVICES.map((service) => getServiceBaseUrl(service)),
+    allowHeaders: ["Content-Type", "Authorization", "Origin"],
+    allowMethods: ["POST", "GET", "PUT", "OPTIONS"],
     exposeHeaders: ["Content-Length"],
     maxAge: 600,
     credentials: true,
@@ -41,7 +41,7 @@ const routes = app
   .use(
     authMiddleware({
       authBased: {
-        allowedRoles: ["client"],
+        allowedRoles: ["client", "admin", "driver"],
       },
     }),
   )
