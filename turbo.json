@@ -57,7 +57,12 @@
     "OPENAI_API_KEY",
     "INTERNAL_COMMUNICATION_SECRET",
     "STRIPE_SECRET_KEY",
-    "GOOGLE_MAP_API_KEY"
+    "GOOGLE_MAP_API_KEY",
+    "S3_BUCKET",
+    "S3_ENDPOINT",
+    "AWS_REGION",
+    "AWS_ACCESS_KEY_ID",
+    "AWS_SECRET_ACCESS_KEY"
   ],
   "globalPassThroughEnv": [
     "NODE_ENV",
