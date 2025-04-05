@@ -81,7 +81,9 @@ export const toolFunctionMap: ToolFunctionMap = {
     url.searchParams.set("sortBy", sortBy);
     url.searchParams.set("sortOrder", sortOrder);
 
-    const res = await fetch(url);
+    const res = await fetch(url, {
+      credentials: "include",
+    });
     const data = await res.json();
     if (!Array.isArray(data)) return [];
     return data.map((order: any) => String(order.id));
@@ -89,7 +91,9 @@ export const toolFunctionMap: ToolFunctionMap = {
   getOrderDetails: async ({ orderId }) => {
     const url = new URL(`${getServiceBaseUrl("order")}/order/${orderId}`);
 
-    const res = await fetch(url);
+    const res = await fetch(url, {
+      credentials: "include",
+    });
     const data = (await res.json()) as { orderStatus: string };
     return {
       orderId,
@@ -101,21 +105,25 @@ export const toolFunctionMap: ToolFunctionMap = {
       `${getServiceBaseUrl("order")}/order/tracking/${orderId}`,
     );
 
-    const res = await fetch(url);
+    const res = await fetch(url, {
+      credentials: "include",
+    });
     const data = (await res.json()) as {
       orderId: string;
-      orderStatus: string;
+      status: string;
     }[];
     return data.map((order) => ({
       orderId: order.orderId,
-      status: order.orderStatus,
+      status: order.status,
     }));
   },
   getInvoice: async ({ orderId }) => {
     const url = new URL(
       `${getServiceBaseUrl("invoice")}/invoice/invoices/order/${orderId}`,
     );
-    const res = await fetch(url);
+    const res = await fetch(url, {
+      credentials: "include",
+    });
     const data = (await res.json()) as {
       orderId: string;
       amount: number;

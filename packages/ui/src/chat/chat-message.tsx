@@ -10,7 +10,6 @@ import { ToolName } from "@repo/chatbot-common";
 
 import { cn } from "../index";
 import {
-  DriverDetails,
   OrderDetails,
   OrdersList,
   ToolInvocation,
@@ -188,8 +187,6 @@ function ToolInvocationsRenderer({
 
         // Route to the appropriate component based on tool name
         switch (toolName) {
-          case "getDriverDetails":
-            return <DriverDetails key={index} invocation={invocation} />;
           case "getOrderDetails":
             return <OrderDetails key={index} invocation={invocation} />;
           case "getOrders":
