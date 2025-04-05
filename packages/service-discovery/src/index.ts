@@ -73,15 +73,17 @@ export const DOCKER_SERVICE_MAP: Record<Service, string> = {
   invoice: "http://localhost:8000/invoice",
 };
 
-export const getServiceBaseUrl = (service: Service) => {
+export const getServiceBaseUrl = (
+  service: Service,
+  internal = env.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT === "kubernetes-internal",
+) => {
   if (env.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT === "local") {
     return LOCAL_SERVICE_MAP[service];
   } else if (env.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT === "docker") {
     return DOCKER_SERVICE_MAP[service];
-  } else if (env.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT === "kubernetes") {
-    // kubernetes
-    return KUBERNETES_SERVICE_MAP[service];
   } else {
-    return KUBERNETES_INTERNAL_SERVICE_MAP[service];
+    return internal
+      ? KUBERNETES_INTERNAL_SERVICE_MAP[service]
+      : KUBERNETES_SERVICE_MAP[service];
   }
 };

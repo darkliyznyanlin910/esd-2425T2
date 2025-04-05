@@ -30,8 +30,8 @@ export async function createStripeCheckoutSession(
     customer: customerId,
     mode: "payment",
     line_items: updatedLineItems,
-    success_url: `${getServiceBaseUrl("order")}/payment/${orderId}?status=success&sessionId={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${getServiceBaseUrl("order")}/payment/${orderId}?status=failed&sessionId={CHECKOUT_SESSION_ID}`,
+    success_url: `${getServiceBaseUrl("order", false)}/payment/${orderId}?status=success&sessionId={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${getServiceBaseUrl("order", false)}/payment/${orderId}?status=failed&sessionId={CHECKOUT_SESSION_ID}`,
     invoice_creation: {
       enabled: true,
     },
