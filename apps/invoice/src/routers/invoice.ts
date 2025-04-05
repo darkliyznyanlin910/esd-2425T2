@@ -44,12 +44,12 @@ const invoiceRouter = router
         const { orderId } = c.req.valid("json");
 
         const s3Client = new S3Client({
-          region: process.env.AWS_REGION || "ap-south-1",
+          region: env.AWS_REGION,
           credentials: {
-            accessKeyId: process.env.AWS_ACCESS_KEY_ID || "test",
-            secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "test",
+            accessKeyId: env.AWS_ACCESS_KEY_ID,
+            secretAccessKey: env.AWS_SECRET_ACCESS_KEY,
           },
-          endpoint: process.env.S3_ENDPOINT || "http://localhost:4566",
+          endpoint: env.S3_ENDPOINT,
           forcePathStyle: true,
         });
 
@@ -57,7 +57,7 @@ const invoiceRouter = router
         const key = `${orderId}/${filename}`;
 
         const command = new PutObjectCommand({
-          Bucket: process.env.S3_BUCKET || "invoice-bucket",
+          Bucket: env.S3_BUCKET,
           Key: key,
           ContentType: "application/pdf",
         });

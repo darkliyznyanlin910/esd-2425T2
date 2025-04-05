@@ -45,6 +45,20 @@ export const KUBERNETES_SERVICE_MAP: Record<Service, string> = {
   invoice: "http://api.esd.local/invoice",
 };
 
+export const KUBERNETES_INTERNAL_SERVICE_MAP: Record<Service, string> = {
+  // Frontend
+  "admin-frontend": "http://esd-admin-frontend.default.svc.cluster.local",
+  "customer-frontend": "http://esd-customer-frontend.default.svc.cluster.local",
+  "driver-frontend": "http://esd-driver-frontend.default.svc.cluster.local",
+  // Backend
+  auth: "http://esd-nginx.default.svc.cluster.local/auth",
+  chatbot: "http://esd-nginx.default.svc.cluster.local/chatbot",
+  notification: "http://esd-nginx.default.svc.cluster.local/notification",
+  order: "http://esd-nginx.default.svc.cluster.local/order",
+  driver: "http://esd-nginx.default.svc.cluster.local/driver",
+  invoice: "http://esd-nginx.default.svc.cluster.local/invoice",
+};
+
 export const DOCKER_SERVICE_MAP: Record<Service, string> = {
   // Frontend
   "admin-frontend": "http://localhost:4400",
@@ -64,8 +78,10 @@ export const getServiceBaseUrl = (service: Service) => {
     return LOCAL_SERVICE_MAP[service];
   } else if (env.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT === "docker") {
     return DOCKER_SERVICE_MAP[service];
-  } else {
+  } else if (env.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT === "kubernetes") {
     // kubernetes
     return KUBERNETES_SERVICE_MAP[service];
+  } else {
+    return KUBERNETES_INTERNAL_SERVICE_MAP[service];
   }
 };

@@ -4,7 +4,7 @@ import { z } from "zod";
 export const env = createEnv({
   client: {
     NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT: z
-      .enum(["local", "docker", "kubernetes"])
+      .enum(["local", "docker", "kubernetes", "kubernetes-internal"])
       .default("local"),
   },
   clientPrefix: "NEXT_PUBLIC_",
