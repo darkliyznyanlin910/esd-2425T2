@@ -17,6 +17,7 @@
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
     "@repo/prettier-config": "workspace:*",
+    "@repo/service-discovery": "workspace:*",
     "@repo/tsconfig": "workspace:*",
     "eslint": "catalog:",
     "prettier": "catalog:",

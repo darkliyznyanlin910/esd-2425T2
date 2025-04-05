@@ -23,6 +23,11 @@ export function CustomChat() {
   } = useChat({
     api: `${getServiceBaseUrl("chatbot")}/chat/chat`,
     maxSteps: 10,
+    fetch: (url, options) =>
+      fetch(url, {
+        ...options,
+        credentials: "include",
+      }),
     async onToolCall({ toolCall }) {
       const tool = toolFunctionMap[toolCall.toolName as ToolName];
       if (!tool) {
