@@ -40,34 +40,19 @@ export default function OrderTablePage() {
   const userId = session?.user.id;
   console.log(userId);
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     if (!userId) return;
-  //     const fetchedData = await getOrders(userId);
-  //     setOrders(fetchedData);
-  //     setLoading(false);
-  //   };
-
-  //   void fetchData();
-  // }, [userId]);
+  const fetchOrders = async () => {
+    if (!userId) return;
+    const fetchedData = await getOrders(userId);
+    setOrders(fetchedData);
+  };
 
   useEffect(() => {
-    let interval: NodeJS.Timeout;
-
-    const fetchData = async () => {
-      if (!userId) return;
-      const fetchedData = await getOrders(userId);
-      setOrders(fetchedData);
-      setLoading(false);
-    };
-
-    if (userId) {
-      void fetchData();
-      interval = setInterval(() => void fetchData(), 5000);
-    }
-
-    return () => clearInterval(interval);
+    void fetchOrders();
   }, [userId]);
+
+  useEffect(() => {
+    setLoading(false);
+  }, [orders]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -77,7 +62,7 @@ export default function OrderTablePage() {
     <div className="container h-screen py-6">
       <p className="mb-4 text-xl font-semibold">Order Records</p>
       <div className="rounded-lg bg-background p-4 shadow">
-        <DataTable columns={columns} data={orders} />
+        <DataTable columns={columns} data={orders} onRefresh={fetchOrders} />
       </div>
     </div>
   );
