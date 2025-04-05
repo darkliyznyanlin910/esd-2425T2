@@ -1,17 +1,20 @@
 "use client";
 
-import { useState } from "react";
-import {
+import type {
   ColumnDef,
   ColumnFiltersState,
+  SortingState,
+} from "@tanstack/react-table";
+import { useState } from "react";
+import {
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  SortingState,
   useReactTable,
 } from "@tanstack/react-table";
+import { RefreshCcw } from "lucide-react";
 
 import { Button } from "@repo/ui/button";
 import { Input } from "@repo/ui/input";
@@ -27,16 +30,18 @@ import {
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  onRefresh?: () => void;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  onRefresh,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [filterValue, setFilterValue] = useState("");
-  const [selectedColumn, setSelectedColumn] = useState("id");
+  const [selectedColumn, setSelectedColumn] = useState("displayId");
 
   const table = useReactTable({
     data,
@@ -66,22 +71,42 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="flex flex-col">
-      <div className="flex flex-wrap items-center gap-2 py-4">
-        <select
-          value={selectedColumn}
-          onChange={(e) => setSelectedColumn(e.target.value)}
-          className="rounded border border-gray-300 p-2"
-        >
-          <option value="id">Order ID</option>
-        </select>
+      <div className="flex justify-between">
+        <div className="flex gap-2 py-4">
+          <select
+            value={selectedColumn}
+            onChange={(e) => setSelectedColumn(e.target.value)}
+            className="rounded border border-gray-300 p-2"
+          >
+            <option value="displayId">Order ID</option>
+            <option value="userId">Customer ID</option>
+            <option value="orderDetails">Order Details</option>
+          </select>
 
-        <Input
-          placeholder="Search by Order ID"
-          value={filterValue}
-          onChange={handleFilterChange}
-          className="max-w-sm"
-        />
+          <Input
+            placeholder={`Search by ${
+              selectedColumn === "displayId"
+                ? "Order ID"
+                : selectedColumn === "userId"
+                  ? "Customer ID"
+                  : "Order Details"
+            }`}
+            value={filterValue}
+            onChange={handleFilterChange}
+            className="max-w-sm"
+          />
+        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={onRefresh}
+          className="ml-2 mt-4 text-sm"
+        >
+          <RefreshCcw className="mr-2 h-4 w-4" />
+          Refresh
+        </Button>
       </div>
+
       <div className="w-full rounded-md border">
         <Table>
           <TableHeader className="text-foreground">
