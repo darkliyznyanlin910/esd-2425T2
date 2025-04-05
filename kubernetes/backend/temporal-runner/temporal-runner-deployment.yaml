@@ -14,6 +14,10 @@ spec:
       labels:
         app: temporal-runner
     spec:
+      hostAliases:
+      - ip: "10.100.204.191" # CHANGE
+        hostnames:
+        - "api.esd.local"
       containers:
       - name: temporal-runner
         image: esd-temporal:latest
