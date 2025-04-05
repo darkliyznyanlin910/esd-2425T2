@@ -46,31 +46,44 @@ export default function NotificationComponent({
       const message = JSON.parse(event.data);
       console.log("WebSocket message received:", message);
 
+      if (!message || message.data === undefined) {
+        console.warn("Received message with missing data:", message);
+        return;
+      }
+
       switch (message.event) {
         case "receiveDelay":
           setData(`Delay: ${message.data}`);
-          toast(message.data, {
-            description: `${message.data}`,
-            duration: 5000,
-            action: {
-              label: <X className="h-4 w-4" />,
-              onClick: () => toast.dismiss(),
+          toast(
+            typeof message.data === "object" ? "Order Delayed" : message.data,
+            {
+              description: "An order has been delayed",
+              duration: 5000,
+              action: {
+                label: <X className="h-4 w-4" />,
+                onClick: () => toast.dismiss(),
+              },
             },
-          });
+          );
           if (onNotification) {
             onNotification();
           }
           break;
         case "manualAssignment":
           setData(`Reassigned: ${message.data}`);
-          toast(message.data, {
-            description: `${message.data}`,
-            duration: 5000,
-            action: {
-              label: <X className="h-4 w-4" />,
-              onClick: () => toast.dismiss(),
+          toast(
+            typeof message.data === "object"
+              ? "Order Reassignment Required"
+              : message.data,
+            {
+              description: "Please check the To Assign page",
+              duration: 5000,
+              action: {
+                label: <X className="h-4 w-4" />,
+                onClick: () => toast.dismiss(),
+              },
             },
-          });
+          );
           if (onNotification) {
             onNotification();
           }

@@ -9,7 +9,5 @@ COPY . .
 
 RUN pnpm install
 
-RUN pnpm build
-
 CMD ["pnpm", "run", "start:temporal-runner"]
 

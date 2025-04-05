@@ -72,6 +72,7 @@ export async function sendOrderToDrivers(order: Order): Promise<void> {
       },
     },
   );
+  log.info("Sending order to drivers", { order, res });
   if (!res.ok) {
     throw ApplicationFailure.create({
       nonRetryable: true,

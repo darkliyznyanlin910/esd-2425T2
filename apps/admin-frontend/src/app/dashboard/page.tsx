@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Bell, Notebook, Truck } from "lucide-react";
 
@@ -29,16 +29,16 @@ export default function HomePage() {
   const router = useRouter();
   const [selectedMenu, setSelectedMenu] = useState("orders");
 
-  // useEffect(() => {
-  //   if (!session) {
-  //     router.push("/auth");
-  //   }
-  // }, [session, router]);
+  useEffect(() => {
+    if (!session) {
+      router.push("/auth");
+    }
+  }, [session, router]);
 
-  // const handleSignOut = async () => {
-  //   await signOut();
-  //   router.push("/auth");
-  // };
+  const handleSignOut = async () => {
+    await signOut();
+    router.push("/auth");
+  };
 
   const menuComponents: Record<string, JSX.Element> = {
     orders: <OrderTablePage />,
