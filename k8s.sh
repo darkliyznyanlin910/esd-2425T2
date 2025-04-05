@@ -76,6 +76,7 @@ case $1 in
                 kubectl delete -k kubernetes/nginx
                 ;;
             "db")
+                kubectl delete pv postgres-pv
                 kubectl delete -k kubernetes/database
                 ;;
             "ingress")
@@ -95,6 +96,6 @@ case $1 in
         esac
         ;;
     *)
-        echo "Usage: $0 {build|install|uninstall|up|down}"
+        echo "Usage: $0 {build|install|uninstall|up|down|port-forward}"
         exit 1
 esac
