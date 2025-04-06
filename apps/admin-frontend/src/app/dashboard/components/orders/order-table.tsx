@@ -1,11 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { hc } from "hono/client";
+import { RefreshCw } from "lucide-react";
 
 import type { Order } from "@repo/db-order/zod";
 import type { AppType } from "@repo/order/type";
 import { getServiceBaseUrl } from "@repo/service-discovery";
+import { Button } from "@repo/ui/button";
 
 import NotificationComponent from "../notifications/notification";
 import { columns } from "./columns";
@@ -41,6 +43,19 @@ async function getOrders(): Promise<Order[]> {
 export default function OrderTablePage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const handleRefresh = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      const fetchedData = await getOrders();
+      setOrders(fetchedData);
+    } catch (error) {
+      console.error("Error refreshing orders:", error);
+    } finally {
+      setRefreshing(false);
+    }
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -63,8 +78,21 @@ export default function OrderTablePage() {
   return (
     <div className="container h-screen py-6">
       <NotificationComponent showComponent={false} />
-      <div className="text-xl font-semibold">Order Records</div>
-      <DataTable columns={columns} data={orders} />{" "}
+      <div className="mb-4 flex items-center justify-between">
+        <div className="text-xl font-semibold">Order Records</div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleRefresh}
+          disabled={refreshing}
+        >
+          <RefreshCw
+            className={`mr-2 h-4 w-4 ${refreshing ? "animate-spin" : ""}`}
+          />
+          Refresh
+        </Button>
+      </div>
+      <DataTable columns={columns} data={orders} />
     </div>
   );
 }
