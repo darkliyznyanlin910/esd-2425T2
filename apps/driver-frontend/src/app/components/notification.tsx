@@ -1,14 +1,20 @@
 "use client";
 
 import { useCallback, useEffect, useRef } from "react";
-import { X } from "lucide-react";
+import { RefreshCcw } from "lucide-react";
 
 import { getServiceBaseUrl } from "@repo/service-discovery";
 import { toast } from "@repo/ui/toast";
 
 let wsReuse: WebSocket | null = null;
 
-export default function NotificationComponent() {
+interface NotificationComponentProps {
+  onNewOrder?: () => void;
+}
+
+export default function NotificationComponent({
+  onNewOrder,
+}: NotificationComponentProps) {
   const wsRef = useRef<WebSocket | null>(null);
   const pingIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -53,34 +59,29 @@ export default function NotificationComponent() {
 
       switch (message.event) {
         case "invalidateOrder":
-          // toast(
-          //   // Use a string title instead of passing the object directly
-          //   typeof message.data === "object"
-          //     ? "Order Invalidated"
-          //     : message.data,
-          //   {
-          //     // For the description, you can stringify the object if needed
-          //     description: "Order has been invalidated",
-          //     duration: 10000,
-          //     action: {
-          //       label: <X className="h-4 w-4" />,
-          //       onClick: () => toast.dismiss(),
-          //     },
-          //   },
-          // );
+          console.log("Invalidating order:", message.data);
           break;
         case "broadcastOrder":
+          // Call the callback to notify parent component
+          if (onNewOrder) {
+            onNewOrder();
+          }
+
           toast(
             // Use a string title instead of passing the object directly
             typeof message.data === "object"
               ? "New Order Available"
               : message.data,
             {
-              description: "New order available",
+              description: "There is a new order available for you",
               duration: 10000,
               action: {
-                label: <X className="h-4 w-4" />,
-                onClick: () => toast.dismiss(),
+                label: <RefreshCcw className="h-4 w-4" />,
+                onClick: () => {
+                  toast.dismiss();
+                  // Refresh the page when toast is dismissed
+                  window.location.reload();
+                },
               },
             },
           );
@@ -101,7 +102,7 @@ export default function NotificationComponent() {
         pingIntervalRef.current = null;
       }
     };
-  }, [toast]);
+  }, [onNewOrder]);
 
   useEffect(() => {
     connectWebSocket();
