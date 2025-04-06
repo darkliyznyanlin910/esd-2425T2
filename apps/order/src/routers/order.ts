@@ -187,9 +187,16 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
       method: "post",
       path: "/updateStatus/:id",
       description: "[Internal] Update order status",
-      // middleware: [
-      //   bearerAuth({ token: env.INTERNAL_COMMUNICATION_SECRET }),
-      // ] as const,
+      middleware: [
+        authMiddleware({
+          authBased: {
+            allowedRoles: ["admin"],
+          },
+          bearer: {
+            tokens: [env.INTERNAL_COMMUNICATION_SECRET],
+          },
+        }),
+      ] as const,
       request: {
         params: z.object({
           id: z.string(),
@@ -247,8 +254,8 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
   .openapi(
     createRoute({
       method: "get",
-      path: "/tracking/:id",
-      description: "Get order tracking by id",
+      path: "/tracking/:orderId",
+      description: "Get order tracking by orderId",
       middleware: [
         authMiddleware({
           authBased: {
@@ -261,7 +268,7 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
       ] as const,
       request: {
         params: z.object({
-          id: z.string(),
+          orderId: z.string(),
         }),
       },
       responses: {
@@ -282,7 +289,7 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
       },
     }),
     async (c) => {
-      const { id } = c.req.valid("param");
+      const { orderId } = c.req.valid("param");
       const user = c.get("user");
 
       let userId: string | undefined = undefined;
@@ -294,7 +301,7 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
       const order = await db.orderTrackingRecord.findMany({
         where: {
           order: {
-            id,
+            id: orderId,
             userId,
           },
         },
@@ -320,9 +327,9 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
           authBased: {
             allowedRoles: ["client", "admin"],
           },
-          // bearer: {
-          //   tokens: [env.INTERNAL_COMMUNICATION_SECRET],
-          // },
+          bearer: {
+            tokens: [env.INTERNAL_COMMUNICATION_SECRET],
+          },
         }),
       ] as const,
       request: {

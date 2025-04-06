@@ -49,10 +49,13 @@ export const TrackingDetails: React.FC<TrackingDetailsProps> = ({
               <div className="flex items-center gap-2">
                 <span className="font-medium">Status:</span>
                 <span className="capitalize">{item.status}</span>
+                <span className="text-xs text-muted-foreground">
+                  {item.timestamp}
+                </span>
               </div>
-              {item.orderId && (
+              {item.displayId && (
                 <div className="text-xs text-muted-foreground">
-                  Order ID: {item.orderId}
+                  Order ID: {item.displayId}
                 </div>
               )}
             </div>

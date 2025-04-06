@@ -33,13 +33,14 @@ export const backendTools = {
   selectOrder: {
     description: "You give options to the user to select an order",
     parameters: z.object({
-      orderIds: z.array(z.string()),
+      orders: z.array(z.object({ orderId: z.string(), displayId: z.string() })),
     }),
   },
   getInvoice: {
     description: "show the invoice details to the user",
     parameters: z.object({
       orderId: z.string(),
+      displayId: z.string(),
     }),
   },
 } satisfies AiSdkToolSet;
@@ -57,17 +58,24 @@ export type ToolFunctionMap = {
 };
 
 export interface ToolReturnTypes {
-  getOrders: Promise<string[]>;
-  getOrderDetails: Promise<{ orderId: string; status: string }>;
+  getOrders: Promise<{ orderId: string; displayId: string }[]>;
+  getOrderDetails: Promise<{
+    orderId: string;
+    displayId: string;
+    status: string;
+  }>;
   getTrackingDetails: Promise<
     {
       orderId: string;
+      displayId: string;
       status: string;
+      timestamp: string;
     }[]
   >;
   selectOrder: void;
   getInvoice: Promise<{
     orderId: string;
+    displayId: string;
     amount: number;
     url: string;
   }>;
@@ -86,7 +94,10 @@ export const toolFunctionMap: ToolFunctionMap = {
     });
     const data = await res.json();
     if (!Array.isArray(data)) return [];
-    return data.map((order: any) => String(order.id));
+    return data.map((order: any) => ({
+      orderId: order.id,
+      displayId: order.displayId,
+    }));
   },
   getOrderDetails: async ({ orderId }) => {
     const url = new URL(`${getServiceBaseUrl("order")}/order/${orderId}`);
@@ -94,9 +105,13 @@ export const toolFunctionMap: ToolFunctionMap = {
     const res = await fetch(url, {
       credentials: "include",
     });
-    const data = (await res.json()) as { orderStatus: string };
+    const data = (await res.json()) as {
+      orderStatus: string;
+      displayId: string;
+    };
     return {
       orderId,
+      displayId: data.displayId,
       status: data.orderStatus,
     };
   },
@@ -110,14 +125,18 @@ export const toolFunctionMap: ToolFunctionMap = {
     });
     const data = (await res.json()) as {
       orderId: string;
+      displayId: string;
       status: string;
+      createdAt: string;
     }[];
     return data.map((order) => ({
       orderId: order.orderId,
+      displayId: order.displayId,
       status: order.status,
+      timestamp: new Date(order.createdAt).toLocaleString(),
     }));
   },
-  getInvoice: async ({ orderId }) => {
+  getInvoice: async ({ orderId, displayId }) => {
     const url = new URL(
       `${getServiceBaseUrl("invoice")}/invoice/invoices/order/${orderId}`,
     );
@@ -131,6 +150,7 @@ export const toolFunctionMap: ToolFunctionMap = {
     };
     return {
       orderId,
+      displayId: displayId,
       amount: data.amount,
       url: data.invoiceUrl,
     };

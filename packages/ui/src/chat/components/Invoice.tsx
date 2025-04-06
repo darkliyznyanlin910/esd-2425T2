@@ -30,7 +30,7 @@ export const Invoice: React.FC<InvoiceProps> = ({ invocation }) => {
           <div className="flex flex-col">
             <span className="text-sm font-medium">Invoice</span>
             <span className="text-xs text-muted-foreground">
-              Order #{result.orderId}
+              Order #{result.displayId}
             </span>
           </div>
         </div>

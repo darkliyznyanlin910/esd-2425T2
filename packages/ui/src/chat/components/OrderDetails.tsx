@@ -28,10 +28,10 @@ export const OrderDetails: React.FC<OrderDetailsProps> = ({ invocation }) => {
           <span className="font-medium">Status:</span>
           <span className="capitalize">{result.status}</span>
         </div>
-        {result.orderId && (
+        {result.displayId && (
           <div className="flex items-center gap-2">
             <span className="font-medium">Order ID:</span>
-            <span>{result.orderId}</span>
+            <span>{result.displayId}</span>
           </div>
         )}
       </div>
