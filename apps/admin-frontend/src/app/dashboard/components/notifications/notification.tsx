@@ -20,6 +20,7 @@ export default function NotificationComponent({
 }: NotificationPageProps) {
   const [data, setData] = useState<string>("Nothing as of now...");
   const wsRef = useRef<WebSocket | null>(null);
+  const pingIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const connectWebSocket = useCallback(() => {
     if (wsReuse && wsReuse.readyState === WebSocket.OPEN) {
@@ -40,6 +41,15 @@ export default function NotificationComponent({
 
     wsReuse.onopen = () => {
       console.log("WebSocket Connected");
+      if (pingIntervalRef.current) {
+        clearInterval(pingIntervalRef.current);
+      }
+      pingIntervalRef.current = setInterval(() => {
+        if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+          wsRef.current.send("ping");
+          console.log("Ping message sent to server");
+        }
+      }, 10000);
     };
 
     wsReuse.onmessage = (event) => {
