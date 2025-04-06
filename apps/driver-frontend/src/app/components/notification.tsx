@@ -42,7 +42,7 @@ export default function NotificationComponent({
       }
       pingIntervalRef.current = setInterval(() => {
         if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
-          wsRef.current.send(JSON.stringify({ type: "ping" }));
+          wsRef.current.send("ping");
           console.log("Ping message sent to server");
         }
       }, 10000);
