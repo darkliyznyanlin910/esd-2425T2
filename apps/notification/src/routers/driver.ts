@@ -79,60 +79,6 @@ const driverRouter = new OpenAPIHono()
       return c.json({ success: true });
     },
   )
-  .openapi(
-    createRoute({
-      method: "get",
-      path: "/sse",
-      middleware: [
-        useSSE,
-        authMiddleware({
-          authBased: {
-            allowedRoles: ["driver"],
-          },
-        }),
-      ],
-      responses: {
-        200: {
-          description: "Success",
-        },
-      },
-    }),
-    async (c) => {
-      let isAborted = false;
-      return streamSSE(c as unknown as Context, async (stream) => {
-        const eventHandler =
-          (eventName: keyof DriverEventHandlers) =>
-          async (
-            data: Parameters<DriverEventHandlers[keyof DriverEventHandlers]>[0],
-          ) => {
-            await stream.writeSSE({
-              data: typeof data === "string" ? data : JSON.stringify(data),
-              event: eventName,
-            });
-          };
-
-        stream.onAbort(() => {
-          emitterDriver.removeListener(
-            "broadcastOrder",
-            eventHandler("broadcastOrder"),
-          );
-          emitterDriver.removeListener(
-            "invalidateOrder",
-            eventHandler("invalidateOrder"),
-          );
-          console.log("Connection aborted");
-          isAborted = true;
-        });
-
-        emitterDriver.on("broadcastOrder", eventHandler("broadcastOrder"));
-        emitterDriver.on("invalidateOrder", eventHandler("invalidateOrder"));
-
-        while (!isAborted) {
-          await stream.sleep(500);
-        }
-      });
-    },
-  )
   .get(
     "/ws",
     authMiddleware({
@@ -141,30 +87,23 @@ const driverRouter = new OpenAPIHono()
       },
     }),
     upgradeWebSocket(() => {
-      const eventHandler =
-        (eventName: keyof DriverEventHandlers, ws: WSContext) =>
-        async (
-          data: Parameters<DriverEventHandlers[keyof DriverEventHandlers]>[0],
-        ) => {
-          console.log("Sending event", eventName, data);
-          ws.send(
-            JSON.stringify({
-              event: eventName,
-              data,
-            }),
-          );
-        };
       return {
         onOpen(_, ws) {
           console.log("Connection opened for driver");
-          emitterDriver.on(
-            "broadcastOrder",
-            eventHandler("broadcastOrder", ws),
-          );
-          emitterDriver.on(
-            "invalidateOrder",
-            eventHandler("invalidateOrder", ws),
-          );
+          emitterDriver.on("broadcastOrder", (data) => {
+            console.log("broadcastOrder", data);
+            ws.send(JSON.stringify({ event: "broadcastOrder", data }));
+          });
+          emitterDriver.on("invalidateOrder", (data) => {
+            console.log("invalidateOrder", data);
+            ws.send(JSON.stringify({ event: "invalidateOrder", data }));
+          });
+        },
+        onMessage(evt, ws) {
+          if (evt.data === "ping") {
+            console.log("ping");
+            ws.send("pong");
+          }
         },
         onClose() {
           console.log("Connection closed for driver");
