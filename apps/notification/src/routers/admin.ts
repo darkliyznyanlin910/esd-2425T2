@@ -79,60 +79,6 @@ const adminRouter = new OpenAPIHono()
       return c.json({ success: true });
     },
   )
-  .openapi(
-    createRoute({
-      method: "get",
-      path: "/sse",
-      middleware: [
-        useSSE,
-        authMiddleware({
-          authBased: {
-            allowedRoles: ["admin"],
-          },
-        }),
-      ],
-      responses: {
-        200: {
-          description: "Success",
-        },
-      },
-    }),
-    async (c) => {
-      let isAborted = false;
-      return streamSSE(c as unknown as Context, async (stream) => {
-        const eventHandler =
-          (eventName: keyof AdminEventHandlers) =>
-          async (
-            data: Parameters<AdminEventHandlers[keyof AdminEventHandlers]>[0],
-          ) => {
-            await stream.writeSSE({
-              data: typeof data === "string" ? data : JSON.stringify(data),
-              event: eventName,
-            });
-          };
-
-        stream.onAbort(() => {
-          emitterAdmin.removeListener(
-            "receiveDelay",
-            eventHandler("receiveDelay"),
-          );
-          emitterAdmin.removeListener(
-            "manualAssignment",
-            eventHandler("manualAssignment"),
-          );
-          console.log("Connection aborted");
-          isAborted = true;
-        });
-
-        emitterAdmin.on("receiveDelay", eventHandler("receiveDelay"));
-        emitterAdmin.on("manualAssignment", eventHandler("manualAssignment"));
-
-        while (!isAborted) {
-          await stream.sleep(500);
-        }
-      });
-    },
-  )
   .get(
     "/ws",
     authMiddleware({
@@ -141,29 +87,21 @@ const adminRouter = new OpenAPIHono()
       },
     }),
     upgradeWebSocket(() => {
-      const eventHandler =
-        (eventName: keyof AdminEventHandlers, ws: WSContext) =>
-        async (
-          data: Parameters<AdminEventHandlers[keyof AdminEventHandlers]>[0],
-        ) => {
-          ws.send(
-            JSON.stringify({
-              event: eventName,
-              data,
-            }),
-          );
-        };
       return {
         onOpen(_, ws) {
           console.log("Connection opened for admin");
-          emitterAdmin.on("receiveDelay", eventHandler("receiveDelay", ws));
-          emitterAdmin.on(
-            "manualAssignment",
-            eventHandler("manualAssignment", ws),
-          );
+          emitterAdmin.on("receiveDelay", (data) => {
+            console.log("receiveDelay", data);
+            ws.send(JSON.stringify({ event: "receiveDelay", data }));
+          });
+          emitterAdmin.on("manualAssignment", (data) => {
+            console.log("manualAssignment", data);
+            ws.send(JSON.stringify({ event: "manualAssignment", data }));
+          });
         },
         onMessage(evt, ws) {
           if (evt.data === "ping") {
+            console.log("ping");
             ws.send("pong");
           }
         },
