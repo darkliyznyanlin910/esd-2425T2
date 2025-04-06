@@ -175,16 +175,6 @@ export default function DriverDashboard() {
     fetchOrders();
     fetchPickupOrder();
     fetchDeliveryOrder();
-
-    const intervalId = setInterval(fetchOrders, 2000);
-    const intervalId2 = setInterval(fetchPickupOrder, 2000);
-    const intervalId3 = setInterval(fetchDeliveryOrder, 2000);
-
-    return () => {
-      clearInterval(intervalId);
-      clearInterval(intervalId2);
-      clearInterval(intervalId3);
-    };
   }, [session]);
 
   return (
