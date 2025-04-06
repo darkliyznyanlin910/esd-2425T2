@@ -165,6 +165,16 @@ const invoiceRouter = router
           orderId: z.string(),
         }),
       },
+      middleware: [
+        authMiddleware({
+          authBased: {
+            allowedRoles: ["admin", "client"],
+          },
+          bearer: {
+            tokens: [env.INTERNAL_COMMUNICATION_SECRET],
+          },
+        }),
+      ] as const,
       responses: {
         200: { description: "Invoice found" },
         404: { description: "Invoice not found" },
@@ -172,7 +182,15 @@ const invoiceRouter = router
     }),
     async (c) => {
       const { orderId } = c.req.valid("param");
-      const invoice = await db.invoice.findFirst({ where: { orderId } });
+      let userId: string | undefined = undefined;
+      const user = c.get("user");
+      if (!!user && user.role === "client" && !c.req.header("Authorization")) {
+        userId = user.id;
+      }
+
+      const invoice = await db.invoice.findFirst({
+        where: { orderId, customerId: userId },
+      });
       if (!invoice) return c.json({ error: "Invoice not found" }, 404);
       const command = new GetObjectCommand({
         Bucket: env.S3_BUCKET,

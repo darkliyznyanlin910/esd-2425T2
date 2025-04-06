@@ -38,7 +38,7 @@ export const OrdersList: React.FC<OrdersListProps> = ({ invocation }) => {
         <ul className="space-y-1">
           {result.map((order, index) => (
             <li key={index} className="text-sm">
-              {order}
+              {order.displayId}
             </li>
           ))}
         </ul>

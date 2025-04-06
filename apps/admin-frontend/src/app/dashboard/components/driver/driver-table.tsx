@@ -14,7 +14,9 @@ import { DataTable } from "./data-table";
 
 async function getOrders(): Promise<Order[]> {
   try {
-    const response = await hc<AppType>(getServiceBaseUrl("order")).order.$get(
+    const response = await hc<AppType>(
+      getServiceBaseUrl("order"),
+    ).order.order.$get(
       {
         query: {},
       },

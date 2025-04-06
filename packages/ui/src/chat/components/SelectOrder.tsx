@@ -30,6 +30,7 @@ interface SelectOrderProps extends BaseToolProps {
 // Define the result type explicitly
 interface SelectOrderResult {
   orderId: string;
+  displayId: string;
 }
 
 export const SelectOrder: React.FC<SelectOrderProps> = ({
@@ -41,16 +42,14 @@ export const SelectOrder: React.FC<SelectOrderProps> = ({
 
   console.log("selectedOrder", selectedOrder);
 
-  const handleSubmit = () => {
+  const handleSubmit = (order: { orderId: string; displayId: string }) => {
     console.log("toolCallId", toolCallId);
     if (selectedOrder) {
-      const result = { orderId: selectedOrder };
-
       if (addToolResult && toolCallId) {
         // Use addToolResult if available and we have a toolCallId
         addToolResult({
           toolCallId,
-          result,
+          result: order,
         });
       }
     }
@@ -62,7 +61,7 @@ export const SelectOrder: React.FC<SelectOrderProps> = ({
   }
 
   if (state === "call") {
-    const { orderIds } = backendTools.selectOrder.parameters.parse(
+    const { orders } = backendTools.selectOrder.parameters.parse(
       invocation.args,
     );
     return (
@@ -77,16 +76,20 @@ export const SelectOrder: React.FC<SelectOrderProps> = ({
               <SelectValue placeholder="Select an order" />
             </SelectTrigger>
             <SelectContent>
-              {orderIds.map((order: string) => (
-                <SelectItem key={order} value={order}>
-                  {order}
+              {orders.map((order) => (
+                <SelectItem key={order.orderId} value={order.orderId}>
+                  {order.displayId}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
 
           <Button
-            onClick={handleSubmit}
+            onClick={() =>
+              handleSubmit(
+                orders.find((order) => order.orderId === selectedOrder)!,
+              )
+            }
             disabled={!selectedOrder}
             className="mt-2 w-full"
           >
@@ -106,7 +109,7 @@ export const SelectOrder: React.FC<SelectOrderProps> = ({
       <div className="flex flex-col gap-2 p-2">
         <div className="flex items-center gap-2">
           <span className="font-medium">Selected Order:</span>
-          <span>{result.orderId}</span>
+          <span>{result.displayId}</span>
         </div>
       </div>
     </ToolWrapper>
