@@ -6,6 +6,12 @@ settings:
 
 catalogs:
   default:
+    '@prisma/client':
+      specifier: ^6.5.0
+      version: 6.5.0
+    '@prisma/extension-read-replicas':
+      specifier: ^0.4.1
+      version: 0.4.1
     '@tanstack/react-query':
       specifier: ^5.59.15
       version: 5.66.6
@@ -18,6 +24,9 @@ catalogs:
     prettier:
       specifier: ^3.3.3
       version: 3.5.1
+    prisma:
+      specifier: ^6.5.0
+      version: 6.5.0
     tailwindcss:
       specifier: ^3.4.14
       version: 3.4.17
@@ -1045,8 +1054,11 @@ importers:
   packages/db-auth:
     dependencies:
       '@prisma/client':
-        specifier: ^6.2.1
-        version: 6.3.1(prisma@6.3.1(typescript@5.7.3))(typescript@5.7.3)
+        specifier: 'catalog:'
+        version: 6.5.0(prisma@6.5.0(typescript@5.7.3))(typescript@5.7.3)
+      '@prisma/extension-read-replicas':
+        specifier: 'catalog:'
+        version: 0.4.1(@prisma/client@6.5.0(prisma@6.5.0(typescript@5.7.3))(typescript@5.7.3))
       '@t3-oss/env-nextjs':
         specifier: ^0.11.1
         version: 0.11.1(typescript@5.7.3)(zod@3.24.1)
@@ -1058,7 +1070,7 @@ importers:
         version: 3.24.1
       zod-prisma-types:
         specifier: ^3.2.4
-        version: 3.2.4(@prisma/client@6.3.1(prisma@6.3.1(typescript@5.7.3))(typescript@5.7.3))(prisma@6.3.1(typescript@5.7.3))
+        version: 3.2.4(@prisma/client@6.5.0(prisma@6.5.0(typescript@5.7.3))(typescript@5.7.3))(prisma@6.5.0(typescript@5.7.3))
     devDependencies:
       '@repo/eslint-config':
         specifier: workspace:*
@@ -1076,8 +1088,8 @@ importers:
         specifier: 'catalog:'
         version: 3.5.1
       prisma:
-        specifier: ^6.2.1
-        version: 6.3.1(typescript@5.7.3)
+        specifier: 'catalog:'
+        version: 6.5.0(typescript@5.7.3)
       typescript:
         specifier: 'catalog:'
         version: 5.7.3
@@ -1085,8 +1097,11 @@ importers:
   packages/db-driver:
     dependencies:
       '@prisma/client':
-        specifier: ^6.2.1
-        version: 6.3.1(prisma@6.3.1(typescript@5.7.3))(typescript@5.7.3)
+        specifier: 'catalog:'
+        version: 6.5.0(prisma@6.5.0(typescript@5.7.3))(typescript@5.7.3)
+      '@prisma/extension-read-replicas':
+        specifier: 'catalog:'
+        version: 0.4.1(@prisma/client@6.5.0(prisma@6.5.0(typescript@5.7.3))(typescript@5.7.3))
       '@t3-oss/env-nextjs':
         specifier: ^0.11.1
         version: 0.11.1(typescript@5.7.3)(zod@3.24.1)
@@ -1098,7 +1113,7 @@ importers:
         version: 3.24.1
       zod-prisma-types:
         specifier: ^3.2.4
-        version: 3.2.4(@prisma/client@6.3.1(prisma@6.3.1(typescript@5.7.3))(typescript@5.7.3))(prisma@6.3.1(typescript@5.7.3))
+        version: 3.2.4(@prisma/client@6.5.0(prisma@6.5.0(typescript@5.7.3))(typescript@5.7.3))(prisma@6.5.0(typescript@5.7.3))
     devDependencies:
       '@repo/eslint-config':
         specifier: workspace:*
@@ -1116,8 +1131,8 @@ importers:
         specifier: 'catalog:'
         version: 3.5.1
       prisma:
-        specifier: ^6.2.1
-        version: 6.3.1(typescript@5.7.3)
+        specifier: 'catalog:'
+        version: 6.5.0(typescript@5.7.3)
       typescript:
         specifier: 'catalog:'
         version: 5.7.3
@@ -1125,8 +1140,11 @@ importers:
   packages/db-invoice:
     dependencies:
       '@prisma/client':
-        specifier: ^6.2.1
-        version: 6.3.1(prisma@6.3.1(typescript@5.7.3))(typescript@5.7.3)
+        specifier: 'catalog:'
+        version: 6.5.0(prisma@6.5.0(typescript@5.7.3))(typescript@5.7.3)
+      '@prisma/extension-read-replicas':
+        specifier: 'catalog:'
+        version: 0.4.1(@prisma/client@6.5.0(prisma@6.5.0(typescript@5.7.3))(typescript@5.7.3))
       '@t3-oss/env-nextjs':
         specifier: ^0.11.1
         version: 0.11.1(typescript@5.7.3)(zod@3.24.1)
@@ -1138,7 +1156,7 @@ importers:
         version: 3.24.1
       zod-prisma-types:
         specifier: ^3.2.4
-        version: 3.2.4(@prisma/client@6.3.1(prisma@6.3.1(typescript@5.7.3))(typescript@5.7.3))(prisma@6.3.1(typescript@5.7.3))
+        version: 3.2.4(@prisma/client@6.5.0(prisma@6.5.0(typescript@5.7.3))(typescript@5.7.3))(prisma@6.5.0(typescript@5.7.3))
     devDependencies:
       '@repo/eslint-config':
         specifier: workspace:*
@@ -1156,8 +1174,8 @@ importers:
         specifier: 'catalog:'
         version: 3.5.1
       prisma:
-        specifier: ^6.2.1
-        version: 6.3.1(typescript@5.7.3)
+        specifier: 'catalog:'
+        version: 6.5.0(typescript@5.7.3)
       typescript:
         specifier: 'catalog:'
         version: 5.7.3
@@ -1165,8 +1183,11 @@ importers:
   packages/db-order:
     dependencies:
       '@prisma/client':
-        specifier: ^6.2.1
-        version: 6.3.1(prisma@6.3.1(typescript@5.7.3))(typescript@5.7.3)
+        specifier: 'catalog:'
+        version: 6.5.0(prisma@6.5.0(typescript@5.7.3))(typescript@5.7.3)
+      '@prisma/extension-read-replicas':
+        specifier: 'catalog:'
+        version: 0.4.1(@prisma/client@6.5.0(prisma@6.5.0(typescript@5.7.3))(typescript@5.7.3))
       '@t3-oss/env-nextjs':
         specifier: ^0.11.1
         version: 0.11.1(typescript@5.7.3)(zod@3.24.1)
@@ -1178,7 +1199,7 @@ importers:
         version: 3.24.1
       zod-prisma-types:
         specifier: ^3.2.4
-        version: 3.2.4(@prisma/client@6.3.1(prisma@6.3.1(typescript@5.7.3))(typescript@5.7.3))(prisma@6.3.1(typescript@5.7.3))
+        version: 3.2.4(@prisma/client@6.5.0(prisma@6.5.0(typescript@5.7.3))(typescript@5.7.3))(prisma@6.5.0(typescript@5.7.3))
     devDependencies:
       '@repo/eslint-config':
         specifier: workspace:*
@@ -1196,8 +1217,8 @@ importers:
         specifier: 'catalog:'
         version: 3.5.1
       prisma:
-        specifier: ^6.2.1
-        version: 6.3.1(typescript@5.7.3)
+        specifier: 'catalog:'
+        version: 6.5.0(typescript@5.7.3)
       typescript:
         specifier: 'catalog:'
         version: 5.7.3
@@ -2423,8 +2444,8 @@ packages:
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
     engines: {node: '>=14'}
 
-  '@prisma/client@6.3.1':
-    resolution: {integrity: sha512-ARAJaPs+eBkemdky/XU3cvGRl+mIPHCN2lCXsl5Vlb0E2gV+R6IN7aCI8CisRGszEZondwIsW9Iz8EJkTdykyA==}
+  '@prisma/client@6.5.0':
+    resolution: {integrity: sha512-M6w1Ql/BeiGoZmhMdAZUXHu5sz5HubyVcKukbLs3l0ELcQb8hTUJxtGEChhv4SVJ0QJlwtLnwOLgIRQhpsm9dw==}
     engines: {node: '>=18.18'}
     peerDependencies:
       prisma: '*'
@@ -2435,23 +2456,34 @@ packages:
       typescript:
         optional: true
 
+  '@prisma/config@6.5.0':
+    resolution: {integrity: sha512-sOH/2Go9Zer67DNFLZk6pYOHj+rumSb0VILgltkoxOjYnlLqUpHPAN826vnx8HigqnOCxj9LRhT6U7uLiIIWgw==}
+
   '@prisma/debug@6.3.1':
     resolution: {integrity: sha512-RrEBkd+HLZx+ydfmYT0jUj7wjLiS95wfTOSQ+8FQbvb6vHh5AeKfEPt/XUQ5+Buljj8hltEfOslEW57/wQIVeA==}
 
-  '@prisma/engines-version@6.3.0-17.acc0b9dd43eb689cbd20c9470515d719db10d0b0':
-    resolution: {integrity: sha512-R/ZcMuaWZT2UBmgX3Ko6PAV3f8//ZzsjRIG1eKqp3f2rqEqVtCv+mtzuH2rBPUC9ujJ5kCb9wwpxeyCkLcHVyA==}
+  '@prisma/debug@6.5.0':
+    resolution: {integrity: sha512-fc/nusYBlJMzDmDepdUtH9aBsJrda2JNErP9AzuHbgUEQY0/9zQYZdNlXmKoIWENtio+qarPNe/+DQtrX5kMcQ==}
 
-  '@prisma/engines@6.3.1':
-    resolution: {integrity: sha512-sXdqEVLyGAJ5/iUoG/Ea5AdHMN71m6PzMBWRQnLmhhOejzqAaEr8rUd623ql6OJpED4s/U4vIn4dg1qkF7vGag==}
+  '@prisma/engines-version@6.5.0-73.173f8d54f8d52e692c7e27e72a88314ec7aeff60':
+    resolution: {integrity: sha512-iK3EmiVGFDCmXjSpdsKGNqy9hOdLnvYBrJB61far/oP03hlIxrb04OWmDjNTwtmZ3UZdA5MCvI+f+3k2jPTflQ==}
 
-  '@prisma/fetch-engine@6.3.1':
-    resolution: {integrity: sha512-HOf/0umOgt+/S2xtZze+FHKoxpVg4YpVxROr6g2YG09VsI3Ipyb+rGvD6QGbCqkq5NTWAAZoOGNL+oy7t+IhaQ==}
+  '@prisma/engines@6.5.0':
+    resolution: {integrity: sha512-FVPQYHgOllJklN9DUyujXvh3hFJCY0NX86sDmBErLvoZjy2OXGiZ5FNf3J/C4/RZZmCypZBYpBKEhx7b7rEsdw==}
+
+  '@prisma/extension-read-replicas@0.4.1':
+    resolution: {integrity: sha512-mCMDloqUKUwx2o5uedTs1FHX3Nxdt1GdRMoeyp1JggjiwOALmIYWhxfIN08M2BZ0w8SKwvJqicJZMjkQYkkijw==}
+    peerDependencies:
+      '@prisma/client': ^6.5.0
+
+  '@prisma/fetch-engine@6.5.0':
+    resolution: {integrity: sha512-3LhYA+FXP6pqY8FLHCjewyE8pGXXJ7BxZw2rhPq+CZAhvflVzq4K8Qly3OrmOkn6wGlz79nyLQdknyCG2HBTuA==}
 
   '@prisma/generator-helper@6.3.1':
     resolution: {integrity: sha512-hX2fxjMksyAWAS0OcDi7GVmRUqsZ35ZY3Zla1EfO+uDYW6BY+om8kuKHyKkIvvRcUlTmL+xccl+nJwNToqP/aA==}
 
-  '@prisma/get-platform@6.3.1':
-    resolution: {integrity: sha512-AYLq6Hk9xG73JdLWJ3Ip9Wg/vlP7xPvftGBalsPzKDOHr/ImhwJ09eS8xC2vNT12DlzGxhfk8BkL0ve2OriNhQ==}
+  '@prisma/get-platform@6.5.0':
+    resolution: {integrity: sha512-xYcvyJwNMg2eDptBYFqFLUCfgi+wZLcj6HDMsj0Qw0irvauG4IKmkbywnqwok0B+k+W+p+jThM2DKTSmoPCkzw==}
 
   '@protobufjs/aspromise@1.1.2':
     resolution: {integrity: sha512-j+gKExEuLmKwvz3OgROXtrJ2UG2x8Ch2YZUxahh+s1F2HZ+wAceUNLkvy6zKCPVRkU++ZWQrdxsUeQXmcg4uoQ==}
@@ -4080,6 +4112,11 @@ packages:
     resolution: {integrity: sha512-w+5mJ3GuFL+NjVtJlvydShqE1eN3h3PbI7/5LAsYJP/2qtuMXjfL2LpHSRqo4b4eSF5K/DH1JXKUAHSB2UW50g==}
     engines: {node: '>= 0.4'}
 
+  esbuild-register@3.6.0:
+    resolution: {integrity: sha512-H2/S7Pm8a9CL1uhp9OvjwrBh5Pvx0H8qVOxNu8Wed9Y7qv56MPtq+GGM8RJpq6glYJn9Wspr8uw7l55uyinNeg==}
+    peerDependencies:
+      esbuild: '>=0.12 <1'
+
   esbuild@0.23.1:
     resolution: {integrity: sha512-VVNz/9Sa0bs5SELtn3f7qhJCDPCF5oMEl5cO9/SSinpE9hbPVvxbd572HH5AKiP7WD8INO53GgfDDhRjkylHEg==}
     engines: {node: '>=18'}
@@ -5430,8 +5467,8 @@ packages:
     engines: {node: '>=14'}
     hasBin: true
 
-  prisma@6.3.1:
-    resolution: {integrity: sha512-JKCZWvBC3enxk51tY4TWzS4b5iRt4sSU1uHn2I183giZTvonXaQonzVtjLzpOHE7qu9MxY510kAtFGJwryKe3Q==}
+  prisma@6.5.0:
+    resolution: {integrity: sha512-yUGXmWqv5F4PByMSNbYFxke/WbnyTLjnJ5bKr8fLkcnY7U5rU9rUTh/+Fja+gOrRxEgtCbCtca94IeITj4j/pg==}
     engines: {node: '>=18.18'}
     hasBin: true
     peerDependencies:
@@ -7408,35 +7445,48 @@ snapshots:
   '@pkgjs/parseargs@0.11.0':
     optional: true
 
-  '@prisma/client@6.3.1(prisma@6.3.1(typescript@5.7.3))(typescript@5.7.3)':
+  '@prisma/client@6.5.0(prisma@6.5.0(typescript@5.7.3))(typescript@5.7.3)':
     optionalDependencies:
-      prisma: 6.3.1(typescript@5.7.3)
+      prisma: 6.5.0(typescript@5.7.3)
       typescript: 5.7.3
+
+  '@prisma/config@6.5.0':
+    dependencies:
+      esbuild: 0.25.0
+      esbuild-register: 3.6.0(esbuild@0.25.0)
+    transitivePeerDependencies:
+      - supports-color
 
   '@prisma/debug@6.3.1': {}
 
-  '@prisma/engines-version@6.3.0-17.acc0b9dd43eb689cbd20c9470515d719db10d0b0': {}
+  '@prisma/debug@6.5.0': {}
 
-  '@prisma/engines@6.3.1':
-    dependencies:
-      '@prisma/debug': 6.3.1
-      '@prisma/engines-version': 6.3.0-17.acc0b9dd43eb689cbd20c9470515d719db10d0b0
-      '@prisma/fetch-engine': 6.3.1
-      '@prisma/get-platform': 6.3.1
+  '@prisma/engines-version@6.5.0-73.173f8d54f8d52e692c7e27e72a88314ec7aeff60': {}
 
-  '@prisma/fetch-engine@6.3.1':
+  '@prisma/engines@6.5.0':
     dependencies:
-      '@prisma/debug': 6.3.1
-      '@prisma/engines-version': 6.3.0-17.acc0b9dd43eb689cbd20c9470515d719db10d0b0
-      '@prisma/get-platform': 6.3.1
+      '@prisma/debug': 6.5.0
+      '@prisma/engines-version': 6.5.0-73.173f8d54f8d52e692c7e27e72a88314ec7aeff60
+      '@prisma/fetch-engine': 6.5.0
+      '@prisma/get-platform': 6.5.0
+
+  '@prisma/extension-read-replicas@0.4.1(@prisma/client@6.5.0(prisma@6.5.0(typescript@5.7.3))(typescript@5.7.3))':
+    dependencies:
+      '@prisma/client': 6.5.0(prisma@6.5.0(typescript@5.7.3))(typescript@5.7.3)
+
+  '@prisma/fetch-engine@6.5.0':
+    dependencies:
+      '@prisma/debug': 6.5.0
+      '@prisma/engines-version': 6.5.0-73.173f8d54f8d52e692c7e27e72a88314ec7aeff60
+      '@prisma/get-platform': 6.5.0
 
   '@prisma/generator-helper@6.3.1':
     dependencies:
       '@prisma/debug': 6.3.1
 
-  '@prisma/get-platform@6.3.1':
+  '@prisma/get-platform@6.5.0':
     dependencies:
-      '@prisma/debug': 6.3.1
+      '@prisma/debug': 6.5.0
 
   '@protobufjs/aspromise@1.1.2': {}
 
@@ -9395,6 +9445,13 @@ snapshots:
       is-date-object: 1.1.0
       is-symbol: 1.1.1
 
+  esbuild-register@3.6.0(esbuild@0.25.0):
+    dependencies:
+      debug: 4.4.0
+      esbuild: 0.25.0
+    transitivePeerDependencies:
+      - supports-color
+
   esbuild@0.23.1:
     optionalDependencies:
       '@esbuild/aix-ppc64': 0.23.1
@@ -11076,12 +11133,15 @@ snapshots:
 
   prettier@3.5.1: {}
 
-  prisma@6.3.1(typescript@5.7.3):
+  prisma@6.5.0(typescript@5.7.3):
     dependencies:
-      '@prisma/engines': 6.3.1
+      '@prisma/config': 6.5.0
+      '@prisma/engines': 6.5.0
     optionalDependencies:
       fsevents: 2.3.3
       typescript: 5.7.3
+    transitivePeerDependencies:
+      - supports-color
 
   prop-types@15.8.1:
     dependencies:
@@ -12176,13 +12236,13 @@ snapshots:
     dependencies:
       zod: 3.24.1
 
-  zod-prisma-types@3.2.4(@prisma/client@6.3.1(prisma@6.3.1(typescript@5.7.3))(typescript@5.7.3))(prisma@6.3.1(typescript@5.7.3)):
+  zod-prisma-types@3.2.4(@prisma/client@6.5.0(prisma@6.5.0(typescript@5.7.3))(typescript@5.7.3))(prisma@6.5.0(typescript@5.7.3)):
     dependencies:
-      '@prisma/client': 6.3.1(prisma@6.3.1(typescript@5.7.3))(typescript@5.7.3)
+      '@prisma/client': 6.5.0(prisma@6.5.0(typescript@5.7.3))(typescript@5.7.3)
       '@prisma/generator-helper': 6.3.1
       code-block-writer: 12.0.0
       lodash: 4.17.21
-      prisma: 6.3.1(typescript@5.7.3)
+      prisma: 6.5.0(typescript@5.7.3)
       zod: 3.24.2
 
   zod-to-json-schema@3.24.1(zod@3.24.1):

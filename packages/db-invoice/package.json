@@ -30,7 +30,8 @@
     "postinstall": "pnpm sync"
   },
   "dependencies": {
-    "@prisma/client": "^6.2.1",
+    "@prisma/client": "catalog:",
+    "@prisma/extension-read-replicas": "catalog:",
     "@t3-oss/env-nextjs": "^0.11.1",
     "dotenv-cli": "catalog:",
     "zod": "catalog:",
@@ -42,7 +43,7 @@
     "@repo/tsconfig": "workspace:*",
     "eslint": "catalog:",
     "prettier": "catalog:",
-    "prisma": "^6.2.1",
+    "prisma": "catalog:",
     "typescript": "catalog:"
   },
   "prettier": "@repo/prettier-config"
