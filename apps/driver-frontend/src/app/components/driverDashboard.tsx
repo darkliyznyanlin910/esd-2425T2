@@ -23,17 +23,23 @@ import {
   TableRow,
 } from "@repo/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@repo/ui/tabs";
+import { toast } from "@repo/ui/toast";
 
 import NotificationComponent from "./notification";
 
 export default function DriverDashboard() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [pickupOrder, setPickupOrder] = useState<any[]>([]);
+  const [hasNewOrder, setHasNewOrder] = useState(false);
   const [deliveryOrder, setDeliveryOrder] = useState<any[]>([]);
   const { useSession } = authClient;
   const { data: session } = useSession();
+  const [disabledButtons, setDisabledButtons] = useState<{
+    [key: string]: boolean;
+  }>({});
 
   const handleAcceptOrder = async (orderId: string) => {
+    setDisabledButtons((prev) => ({ ...prev, [orderId]: true }));
     try {
       const response = await fetch(
         `${getServiceBaseUrl("driver")}/driver/state/DRIVER_FOUND`,
@@ -49,9 +55,59 @@ export default function DriverDashboard() {
           }),
         },
       );
-      console.log("Order accepted:", response);
+      if (response.ok) {
+        toast("Order Accepted", {
+          description: "You have successfully accepted the order.",
+          duration: 3000,
+        });
+      }
+      if (!session?.user.id) return;
+      try {
+        const url = new URL(
+          `${getServiceBaseUrl("driver")}/driver/assignments/${session.user.id}`,
+        );
+        url.searchParams.append("status", "DRIVER_FOUND");
+        const response = await fetch(url, {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setPickupOrder(Array.isArray(data) ? data : []);
+        }
+      } catch (error) {
+        console.error("Failed to fetch pickup orders:", error);
+      }
+      try {
+        const response = await fetch(
+          `${getServiceBaseUrl("order")}/order/finding/initialOrders`,
+          {
+            method: "GET",
+            credentials: "include",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          },
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setOrders(Array.isArray(data) ? data : []);
+        }
+      } catch (error) {
+        console.error("Failed to fetch orders:", error);
+      }
     } catch (error) {
       console.error("Failed to accept order:", error);
+      toast("Error", {
+        description: "Failed to accept order. Please try again.",
+        duration: 3000,
+      });
+    } finally {
+      setDisabledButtons((prev) => ({ ...prev, [orderId]: false }));
     }
   };
 
@@ -71,9 +127,61 @@ export default function DriverDashboard() {
           }),
         },
       );
-      console.log("Order picked up:", response);
+      if (response.ok) {
+        toast("Order Picked Up", {
+          description: "You have successfully picked the order up.",
+          duration: 3000,
+        });
+      }
+      if (!session?.user.id) return;
+      try {
+        const url = new URL(
+          `${getServiceBaseUrl("driver")}/driver/assignments/${session.user.id}`,
+        );
+        url.searchParams.append("status", "DRIVER_FOUND");
+        const response = await fetch(url, {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setPickupOrder(Array.isArray(data) ? data : []);
+        }
+      } catch (error) {
+        console.error("Failed to fetch pickup orders:", error);
+      }
+      try {
+        const url = new URL(
+          `${getServiceBaseUrl("driver")}/driver/assignments/${session.user.id}`,
+        );
+        url.searchParams.append("status", "PICKED_UP");
+        const response = await fetch(url, {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log("Delivery order data:", data);
+          setDeliveryOrder(Array.isArray(data) ? data : []);
+        }
+      } catch (error) {
+        console.error("Failed to fetch delivery orders:", error);
+      }
     } catch (error) {
-      console.error("Failed to pick up order:", error);
+      toast("Error", {
+        description: "Failed to pick order up. Please try again.",
+        duration: 3000,
+      });
+    } finally {
+      setDisabledButtons((prev) => ({ ...prev, [orderId]: false }));
     }
   };
 
@@ -93,9 +201,42 @@ export default function DriverDashboard() {
           }),
         },
       );
-      console.log("Order delivered:", response);
+      if (response.ok) {
+        toast("Order Delivered", {
+          description: "You have successfully delivered the order.",
+          duration: 3000,
+        });
+      }
+      if (!session?.user.id) return;
+
+      try {
+        const url = new URL(
+          `${getServiceBaseUrl("driver")}/driver/assignments/${session.user.id}`,
+        );
+        url.searchParams.append("status", "PICKED_UP");
+        const response = await fetch(url, {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log("Delivery order data:", data);
+          setDeliveryOrder(Array.isArray(data) ? data : []);
+        }
+      } catch (error) {
+        console.error("Failed to fetch delivery orders:", error);
+      }
     } catch (error) {
-      console.error("Failed to deliver order:", error);
+      toast("Error", {
+        description: "Failed to deliver the order. Please try again.",
+        duration: 3000,
+      });
+    } finally {
+      setDisabledButtons((prev) => ({ ...prev, [orderId]: false }));
     }
   };
 
@@ -176,6 +317,9 @@ export default function DriverDashboard() {
     fetchPickupOrder();
     fetchDeliveryOrder();
   }, [session]);
+  const handleNewOrder = () => {
+    setHasNewOrder(true);
+  };
 
   return (
     <div className="flex flex-1 flex-col">
@@ -193,7 +337,7 @@ export default function DriverDashboard() {
       <main className="flex-1 overflow-auto p-4 md:p-6">
         <div className="mb-6 flex items-center justify-between">
           <h1 className="text-2xl font-bold">Driver Dashboard</h1>
-          <NotificationComponent />
+          <NotificationComponent onNewOrder={handleNewOrder} />
         </div>
 
         <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-3">
@@ -230,9 +374,25 @@ export default function DriverDashboard() {
           </Card>
         </div>
 
-        <Tabs defaultValue="available" className="w-full">
+        <Tabs
+          defaultValue="available"
+          className="w-full"
+          onValueChange={(value) => {
+            if (value === "available") {
+              setHasNewOrder(false);
+            }
+          }}
+        >
           <TabsList className="mb-4 grid w-full grid-cols-3">
-            <TabsTrigger value="available">Available Orders</TabsTrigger>
+            <TabsTrigger value="available" className="relative">
+              Available Orders
+              {hasNewOrder && (
+                <span className="absolute -right-1 -top-1 flex h-3 w-3">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75"></span>
+                  <span className="relative inline-flex h-3 w-3 rounded-full bg-red-500"></span>
+                </span>
+              )}
+            </TabsTrigger>
             <TabsTrigger value="pickup">To Pick Up</TabsTrigger>
             <TabsTrigger value="dropoff">To Deliver</TabsTrigger>
           </TabsList>
@@ -270,6 +430,7 @@ export default function DriverDashboard() {
                             <Button
                               onClick={() => handleAcceptOrder(data.id)}
                               size="sm"
+                              disabled={disabledButtons[data.id]}
                             >
                               Accept Order
                             </Button>
@@ -320,6 +481,7 @@ export default function DriverDashboard() {
                                 handlePickupOrder(data.orderDetails?.id)
                               }
                               size="sm"
+                              disabled={disabledButtons[data.orderDetails?.id]}
                             >
                               <Package className="mr-2 h-4 w-4" />
                               Picked Up
@@ -371,6 +533,7 @@ export default function DriverDashboard() {
                                 handleDeliveryOrder(data.orderDetails?.id)
                               }
                               size="sm"
+                              disabled={disabledButtons[data.orderDetails?.id]}
                             >
                               <CheckCircle className="mr-2 h-4 w-4" />
                               Delivered

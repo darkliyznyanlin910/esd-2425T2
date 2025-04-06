@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 
 import { authClient } from "@repo/auth-client";
 
+import DeliveryHistory from "~/app/components/deliveryHistory";
+
 export default function orders() {
   const { useSession } = authClient;
   const { data: session } = useSession();
@@ -15,5 +17,5 @@ export default function orders() {
       router.push("/auth");
     }
   }, [session, router]);
-  return <main className="flex-1 p-0"></main>;
+  return <DeliveryHistory />;
 }

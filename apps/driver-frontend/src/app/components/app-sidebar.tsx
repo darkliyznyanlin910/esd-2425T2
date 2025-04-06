@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Archive, Home, User2 } from "lucide-react";
+import { Home, Truck, User2 } from "lucide-react";
 
 import { authClient } from "@repo/auth-client";
 import { getServiceBaseUrl } from "@repo/service-discovery";
@@ -79,7 +79,7 @@ export function AppSidebar() {
           </SidebarMenuItem>
           <SidebarMenuItem>
             <SidebarMenuButton onClick={() => router.push("/orders")}>
-              <Archive /> Orders
+              <Truck /> My Deliveries
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
