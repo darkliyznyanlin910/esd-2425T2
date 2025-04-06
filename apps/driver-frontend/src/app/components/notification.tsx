@@ -53,21 +53,21 @@ export default function NotificationComponent() {
 
       switch (message.event) {
         case "invalidateOrder":
-          toast(
-            // Use a string title instead of passing the object directly
-            typeof message.data === "object"
-              ? "Order Invalidated"
-              : message.data,
-            {
-              // For the description, you can stringify the object if needed
-              description: "Order has been invalidated",
-              duration: 10000,
-              action: {
-                label: <X className="h-4 w-4" />,
-                onClick: () => toast.dismiss(),
-              },
-            },
-          );
+          // toast(
+          //   // Use a string title instead of passing the object directly
+          //   typeof message.data === "object"
+          //     ? "Order Invalidated"
+          //     : message.data,
+          //   {
+          //     // For the description, you can stringify the object if needed
+          //     description: "Order has been invalidated",
+          //     duration: 10000,
+          //     action: {
+          //       label: <X className="h-4 w-4" />,
+          //       onClick: () => toast.dismiss(),
+          //     },
+          //   },
+          // );
           break;
         case "broadcastOrder":
           toast(

@@ -2,12 +2,10 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { hc } from "hono/client";
-import { RefreshCw } from "lucide-react";
 
 import type { Order } from "@repo/db-order/zod";
 import type { AppType } from "@repo/order/type";
 import { getServiceBaseUrl } from "@repo/service-discovery";
-import { Button } from "@repo/ui/button";
 
 import NotificationComponent from "../notifications/notification";
 import { columns } from "./columns";
@@ -80,19 +78,8 @@ export default function OrderTablePage() {
       <NotificationComponent showComponent={false} />
       <div className="mb-4 flex items-center justify-between">
         <div className="text-xl font-semibold">Order Records</div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleRefresh}
-          disabled={refreshing}
-        >
-          <RefreshCw
-            className={`mr-2 h-4 w-4 ${refreshing ? "animate-spin" : ""}`}
-          />
-          Refresh
-        </Button>
       </div>
-      <DataTable columns={columns} data={orders} />
+      <DataTable columns={columns} data={orders} onRefresh={handleRefresh} />
     </div>
   );
 }
