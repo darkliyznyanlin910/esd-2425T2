@@ -29,6 +29,7 @@ export default function AuthPage() {
       );
       const data = await res.json();
       console.log(data);
+      setIsSignUp(!isSignUp);
     } else {
       await signIn.email({ email, password });
     }
@@ -106,11 +107,7 @@ export default function AuthPage() {
                 />
               </div>
 
-              <Button
-                type="submit"
-                variant="blue"
-                className="w-full text-sm sm:text-base"
-              >
+              <Button type="submit" className="w-full text-sm sm:text-base">
                 {isSignUp ? "Sign up" : "Sign in"}
               </Button>
             </form>

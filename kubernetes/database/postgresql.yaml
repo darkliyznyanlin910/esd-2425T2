@@ -4,21 +4,21 @@ metadata:
   name: postgres
 spec:
   bootstrap:
-    # initdb:
-    #   database: app
-    #   owner: app
-    #   postInitSQL:
-    #     - ALTER USER "app" WITH CREATEDB;
-    #     - CREATE DATABASE auth_database;
-    #     - CREATE DATABASE order_database;
-    #     - CREATE DATABASE driver_database;
-    #     - CREATE DATABASE invoice_database;
-    recovery:
-      volumeSnapshots:
-        storage:
-          name: postgres-pv-snapshot
-          kind: VolumeSnapshot
-          apiGroup: snapshot.storage.k8s.io
+    initdb:
+      database: app
+      owner: app
+      postInitSQL:
+        - ALTER USER "app" WITH CREATEDB;
+        - CREATE DATABASE auth_database;
+        - CREATE DATABASE order_database;
+        - CREATE DATABASE driver_database;
+        - CREATE DATABASE invoice_database;
+    # recovery:
+    #   volumeSnapshots:
+    #     storage:
+    #       name: postgres-pv-snapshot
+    #       kind: VolumeSnapshot
+    #       apiGroup: snapshot.storage.k8s.io
 
   enableSuperuserAccess: true # By default superuser access is not created on cluster bootstrap
   imageName: ghcr.io/cloudnative-pg/postgresql:13.20-8
