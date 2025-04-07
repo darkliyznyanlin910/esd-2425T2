@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Bell, Notebook, Truck } from "lucide-react";
 
 import { authClient } from "@repo/auth-client";
+import { getServiceBaseUrl } from "@repo/service-discovery";
 import { Button } from "@repo/ui/button";
 import {
   Sidebar,
@@ -32,9 +33,12 @@ export default function HomePage() {
   useEffect(() => {
     if (!session) {
       router.push("/auth");
+    } else if (session && session.user.role === "driver") {
+      router.push(`${getServiceBaseUrl("driver-frontend")}/auth`);
+    } else if (session && session.user.role === "client") {
+      router.push(`${getServiceBaseUrl("customer-frontend")}/auth`);
     }
   }, [session, router]);
-
   const handleSignOut = async () => {
     await signOut();
     router.push("/auth");

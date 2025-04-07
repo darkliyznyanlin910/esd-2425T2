@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 import { authClient } from "@repo/auth-client";
+import { getServiceBaseUrl } from "@repo/service-discovery";
 
 import CreateOrderPage from "~/app/components/create-order";
 
@@ -15,6 +16,10 @@ export default function Main() {
   useEffect(() => {
     if (!session) {
       router.push("/auth");
+    } else if (session && session.user.role === "driver") {
+      router.push(`${getServiceBaseUrl("driver-frontend")}/auth`);
+    } else if (session && session.user.role === "admin") {
+      router.push(`${getServiceBaseUrl("admin-frontend")}/auth`);
     }
   }, [session, router]);
   return <CreateOrderPage />;
