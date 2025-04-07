@@ -440,11 +440,7 @@ export default function CreateOrderPage() {
             </div>
           </div>
 
-          <Button
-            type="submit"
-            variant="blue"
-            className="mt-4 w-full text-lg md:w-auto"
-          >
+          <Button type="submit" className="mt-4 w-full text-lg md:w-auto">
             Submit Order
           </Button>
         </form>

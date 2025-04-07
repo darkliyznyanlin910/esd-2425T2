@@ -181,11 +181,7 @@ export default function AuthPage() {
                 />
               </div>
 
-              <Button
-                type="submit"
-                variant="blue"
-                className="w-full text-sm sm:text-base"
-              >
+              <Button type="submit" className="w-full text-sm sm:text-base">
                 {isSignUp ? "Sign up" : "Sign in"}
               </Button>
             </form>
