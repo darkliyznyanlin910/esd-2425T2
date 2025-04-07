@@ -49,6 +49,14 @@ export default function NotificationComponent({
     };
 
     wsReuse.onmessage = (event) => {
+      if (typeof event.data === "string") {
+        if (event.data.startsWith("{") || event.data.startsWith("[")) {
+          console.log("Received message:", event.data);
+        } else {
+          console.log("Is a String: ", event.data);
+          return;
+        }
+      }
       const message = JSON.parse(event.data);
       console.log("WebSocket message received:", message);
 
@@ -67,24 +75,20 @@ export default function NotificationComponent({
             onNewOrder();
           }
 
-          toast(
-            // Use a string title instead of passing the object directly
-            typeof message.data === "object"
-              ? "New Order Available"
-              : message.data,
-            {
-              description: "There is a new order available for you",
-              duration: 10000,
-              action: {
-                label: <RefreshCcw className="h-4 w-4" />,
-                onClick: () => {
-                  toast.dismiss();
-                  // Refresh the page when toast is dismissed
-                  window.location.reload();
-                },
+          toast("New Order Available", {
+            description: `New order available for you!\n
+          Order ID: ${message.data.id}\n
+          Order Details: ${message.data.orderDetails}
+          `,
+            duration: 10000,
+            action: {
+              label: <RefreshCcw className="h-4 w-4" />,
+              onClick: () => {
+                toast.dismiss();
+                window.location.reload();
               },
             },
-          );
+          });
           break;
         default:
           console.warn("Unknown event type:", message.event);
