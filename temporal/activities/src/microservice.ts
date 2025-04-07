@@ -8,6 +8,7 @@ import { UserSchema } from "@repo/db-auth/zod";
 import { HonoClient as NotificationClient } from "@repo/notification-backend/type";
 import { getServiceBaseUrl } from "@repo/service-discovery";
 
+import { app } from "../../../apps/auth/src/app";
 import { env } from "./env";
 
 export * from "./stripe";
@@ -47,6 +48,7 @@ export async function getOrderStatus(
     method: "GET",
     headers: {
       Authorization: `Bearer ${env.INTERNAL_COMMUNICATION_SECRET}`,
+      "Content-Type": "application/json",
     },
   });
   if (!res.ok) {
@@ -60,26 +62,50 @@ export async function getOrderStatus(
 }
 
 export async function sendOrderToDrivers(order: Order): Promise<void> {
-  const res = await NotificationClient.driver.send.$post(
-    {
-      json: order,
-    },
-    {
-      init: {
-        headers: {
-          Authorization: `Bearer ${env.INTERNAL_COMMUNICATION_SECRET}`,
+  try {
+    const res = await NotificationClient.driver.send.$post(
+      {
+        json: order,
+      },
+      {
+        init: {
+          headers: {
+            Authorization: `Bearer ${env.INTERNAL_COMMUNICATION_SECRET}`,
+            "Content-Type": "application/json",
+          },
         },
       },
-    },
-  );
-  log.info("Sending order to drivers", { order, res });
-  if (!res.ok) {
+    );
+
+    const responseBody = await res.json();
+    log.info("Sending order to drivers", {
+      orderId: order.id,
+      status: res.status,
+      responseBody,
+    });
+
+    if (!res.ok) {
+      throw new Error(
+        `Failed to send order to drivers: ${res.status} ${res.statusText}`,
+      );
+    }
+
+    log.info("Successfully sent order to drivers", {
+      orderId: order.id,
+      responseBody,
+    });
+  } catch (error) {
+    log.error("Error sending order to drivers", {
+      orderId: order.id,
+      error: error instanceof Error ? error.message : String(error),
+    });
     throw ApplicationFailure.create({
       nonRetryable: true,
-      message: "Failed to send order to drivers",
+      message: `Failed to send order to drivers: ${
+        error instanceof Error ? error.message : String(error)
+      }`,
     });
   }
-  log.info("Sent order to drivers", { res });
 }
 
 export async function notifyAdmin(order: Order): Promise<void> {
@@ -91,6 +117,7 @@ export async function notifyAdmin(order: Order): Promise<void> {
       init: {
         headers: {
           Authorization: `Bearer ${env.INTERNAL_COMMUNICATION_SECRET}`,
+          "Content-Type": "application/json",
         },
       },
     },
@@ -131,6 +158,7 @@ export async function invalidateOrder(order: Order): Promise<void> {
         init: {
           headers: {
             Authorization: `Bearer ${env.INTERNAL_COMMUNICATION_SECRET}`,
+            "Content-Type": "application/json",
           },
         },
       },
