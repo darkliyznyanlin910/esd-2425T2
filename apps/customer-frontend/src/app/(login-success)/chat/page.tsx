@@ -15,9 +15,9 @@ export default function ChatPage() {
   useEffect(() => {
     if (!session) {
       router.push("/auth");
-    } else if (session && session.user.role === "driver") {
+    } else if (session.user.role === "driver") {
       router.push(`${getServiceBaseUrl("driver-frontend")}/auth`);
-    } else if (session && session.user.role === "admin") {
+    } else if (session.user.role === "admin") {
       router.push(`${getServiceBaseUrl("admin-frontend")}/auth`);
     }
   }, [session, router]);
