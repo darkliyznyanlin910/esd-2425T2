@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { authClient } from "@repo/auth-client";
+import { getServiceBaseUrl } from "@repo/service-discovery";
 
 export default function Account() {
   const { useSession } = authClient;
@@ -16,6 +17,10 @@ export default function Account() {
   useEffect(() => {
     if (!session) {
       router.push("/auth");
+    } else if (session && session.user.role === "client") {
+      router.push(`${getServiceBaseUrl("customer-frontend")}/auth`);
+    } else if (session && session.user.role === "admin") {
+      router.push(`${getServiceBaseUrl("admin-frontend")}/auth`);
     } else {
       fetchDriverData();
     }
@@ -24,7 +29,7 @@ export default function Account() {
   // Fetch Driver Data from database
   const fetchDriverData = async () => {
     try {
-      const response = await fetch("http://localhost:3006/driver");
+      const response = await fetch(`${getServiceBaseUrl("driver")}/driver`);
       const data = await response.json();
       setDriverData(data);
     } catch (error) {
