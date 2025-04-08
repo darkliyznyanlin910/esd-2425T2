@@ -27,6 +27,26 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@repo/ui/tabs";
 
 import NotificationComponent from "./notification";
 
+// Add these helper functions outside your component
+const getAcceptedOrdersFromStorage = (): Set<string> => {
+  if (typeof window === "undefined") return new Set();
+
+  const stored = localStorage.getItem("acceptedOrderIds");
+  if (!stored) return new Set();
+
+  try {
+    return new Set(JSON.parse(stored));
+  } catch (error) {
+    console.error("Error parsing accepted orders from storage:", error);
+    return new Set();
+  }
+};
+
+const saveAcceptedOrdersToStorage = (orderIds: Set<string>) => {
+  if (typeof window === "undefined") return;
+  localStorage.setItem("acceptedOrderIds", JSON.stringify([...orderIds]));
+};
+
 export default function DriverDashboard() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [pickupOrder, setPickupOrder] = useState<any[]>([]);
@@ -40,11 +60,26 @@ export default function DriverDashboard() {
   const { toast } = useToast();
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [newOrderIds, setNewOrderIds] = useState<string[]>([]);
+  const [acceptingOrderIds, setAcceptingOrderIds] = useState<string[]>([]);
+  // Use localStorage for persistence
+  const [acceptedOrderIds, setAcceptedOrderIds] = useState<Set<string>>(() =>
+    getAcceptedOrdersFromStorage(),
+  );
+
+  // Update localStorage when acceptedOrderIds changes
+  useEffect(() => {
+    saveAcceptedOrdersToStorage(acceptedOrderIds);
+  }, [acceptedOrderIds]);
 
   const handleAcceptOrder = async (orderId: string) => {
     setDisabledButtons((prev) => ({ ...prev, [orderId]: true }));
-    // Clear the new order notification when accepting any order
     setHasNewOrder(false);
+
+    // Track that this driver is accepting this order
+    setAcceptingOrderIds((prev) => [...prev, orderId]);
+
+    // Track this order ID as being accepted by this driver
+    setAcceptedOrderIds((prev) => new Set([...prev, orderId]));
 
     try {
       const response = await fetch(
@@ -68,6 +103,15 @@ export default function DriverDashboard() {
           variant: "success",
           duration: 3000,
         });
+
+        // Add this order to pickup orders list
+        const acceptedOrder = orders.find((order) => order.id === orderId);
+        if (acceptedOrder) {
+          setPickupOrder((prev) => [...prev, acceptedOrder]);
+
+          // Remove from available orders
+          setOrders((prev) => prev.filter((order) => order.id !== orderId));
+        }
       }
       if (!session?.user.id) {
         console.error("Session user ID is not available.");
@@ -121,8 +165,21 @@ export default function DriverDashboard() {
         description: "Failed to accept order. Please try again.",
         duration: 3000,
       });
+
+      // Remove from accepted set if there was an error
+      setAcceptedOrderIds((prev) => {
+        const newSet = new Set([...prev]);
+        newSet.delete(orderId);
+        return newSet;
+      });
     } finally {
       setDisabledButtons((prev) => ({ ...prev, [orderId]: false }));
+
+      // Remove from the accepting list after a delay (to ensure we don't
+      // process our own invalidation message that might arrive after acceptance)
+      setTimeout(() => {
+        setAcceptingOrderIds((prev) => prev.filter((id) => id !== orderId));
+      }, 5000); // 5 second delay
     }
   };
 
@@ -410,6 +467,36 @@ export default function DriverDashboard() {
     }
   };
 
+  const handleInvalidateOrder = (orderId: string) => {
+    // Don't invalidate if this driver just accepted this order
+    if (acceptingOrderIds.includes(orderId)) {
+      console.log(
+        "Ignoring invalidation for order being accepted by this driver:",
+        orderId,
+      );
+      return;
+    }
+
+    // Check if this driver has accepted this order
+    if (acceptedOrderIds.has(orderId)) {
+      console.log(
+        "Ignoring invalidation for order that this driver accepted:",
+        orderId,
+      );
+      return;
+    }
+
+    console.log("Invalidating order in dashboard:", orderId);
+    // Rest of your existing invalidation logic...
+    setOrders((prevOrders) =>
+      prevOrders.filter((order) => order.id !== orderId),
+    );
+    setNewOrderIds((prev) => prev.filter((id) => id !== orderId));
+    if (orders.length <= 1 && hasNewOrder) {
+      setHasNewOrder(false);
+    }
+  };
+
   return (
     <div className="flex flex-1 flex-col">
       {/* Mobile Header */}
@@ -426,7 +513,11 @@ export default function DriverDashboard() {
       <main className="flex-1 overflow-auto p-4 md:p-6">
         <div className="mb-6 flex items-center justify-between">
           <h1 className="text-2xl font-bold">Driver Dashboard</h1>
-          <NotificationComponent onNewOrder={handleNewOrder} />
+          <NotificationComponent
+            onNewOrder={handleNewOrder}
+            onInvalidateOrder={handleInvalidateOrder}
+            acceptedOrderIds={acceptedOrderIds}
+          />
         </div>
 
         <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-3">

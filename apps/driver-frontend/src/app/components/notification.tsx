@@ -1,24 +1,29 @@
 "use client";
 
 import { useCallback, useEffect, useRef } from "react";
-import { RefreshCcw } from "lucide-react";
 
+import { authClient } from "@repo/auth-client";
 import { getServiceBaseUrl } from "@repo/service-discovery";
 import { useToast } from "@repo/ui/hooks/use-toast";
-import { ToastAction } from "@repo/ui/toast";
 
 let wsReuse: WebSocket | null = null;
 
 interface NotificationComponentProps {
   onNewOrder?: (orderData?: any) => void;
+  onInvalidateOrder?: (orderId: string) => void;
+  acceptedOrderIds?: Set<string>; // Add this prop
 }
 
 export default function NotificationComponent({
   onNewOrder,
+  onInvalidateOrder,
+  acceptedOrderIds = new Set(), // Default to empty set
 }: NotificationComponentProps) {
   const { toast } = useToast();
   const wsRef = useRef<WebSocket | null>(null);
   const pingIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const { useSession } = authClient;
+  const { data: session } = useSession();
 
   const connectWebSocket = useCallback(() => {
     if (wsReuse && wsReuse.readyState === WebSocket.OPEN) {
@@ -72,7 +77,28 @@ export default function NotificationComponent({
         switch (message.event) {
           case "invalidateOrder":
             console.log("Invalidating order:", message.data);
+
+            // Skip invalidation if this driver has accepted this order
+            if (acceptedOrderIds.has(message.data.id)) {
+              console.log(
+                "Ignoring invalidation for order accepted by this driver:",
+                message.data.id,
+              );
+              return;
+            }
+
+            // Only call onInvalidateOrder if this isn't the driver who accepted it
+            if (onInvalidateOrder && message.data && message.data.id) {
+              onInvalidateOrder(message.data.id);
+              toast({
+                title: "Order No Longer Available",
+                description: `Order ID: ${message.data.displayId || ""} has been accepted by another driver.`,
+                variant: "destructive",
+                duration: 5000,
+              });
+            }
             break;
+
           case "broadcastOrder":
             if (onNewOrder && message.data) {
               onNewOrder(message.data);
@@ -84,6 +110,7 @@ export default function NotificationComponent({
               duration: 10000,
             });
             break;
+
           default:
             console.warn("Unknown event type:", message.event);
         }
@@ -103,7 +130,13 @@ export default function NotificationComponent({
         pingIntervalRef.current = null;
       }
     };
-  }, [onNewOrder]);
+  }, [
+    onNewOrder,
+    onInvalidateOrder,
+    session?.user?.id,
+    toast,
+    acceptedOrderIds,
+  ]); // Add acceptedOrderIds to deps
 
   useEffect(() => {
     connectWebSocket();
