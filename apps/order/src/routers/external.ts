@@ -162,7 +162,6 @@ const externalRouter = new OpenAPIHono()
                   toAddressLine1: true,
                   toAddressLine2: true,
                   toZipCode: true,
-                  userId: true,
                 }),
               }),
             },
