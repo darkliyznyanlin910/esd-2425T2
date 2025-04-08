@@ -279,6 +279,8 @@ export default function DriverDashboard() {
       if (response.ok) {
         const data = await response.json();
         setOrders(Array.isArray(data) ? data : []);
+        setHasNewOrder(false);
+        setNewOrderIds([]);
         toast({
           title: "Orders Refreshed",
           description: "Available orders list has been updated.",

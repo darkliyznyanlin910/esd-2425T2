@@ -420,6 +420,35 @@ const driverRouter = new OpenAPIHono<HonoExtension>()
         return c.json({ message: "Order delivered" }, 201);
       }
     },
+  )
+  .openapi(
+    createRoute({
+      method: "delete",
+      path: "/orderAssignment/:orderId",
+      middleware: [
+        authMiddleware({
+          bearer: {
+            tokens: [env.INTERNAL_COMMUNICATION_SECRET],
+          },
+        }),
+      ] as const,
+      description: "Delete order assignment",
+      request: {
+        params: z.object({ orderId: z.string() }).strict(),
+      },
+      responses: {
+        200: { description: "Order assignment deleted" },
+        404: { description: "Order assignment not found" },
+      },
+    }),
+    async (c) => {
+      const { orderId } = c.req.valid("param");
+      const assignment = await db.orderAssignment.findMany({
+        where: { orderId },
+      });
+      if (!assignment) return c.json({ message: "Assignment not found" }, 404);
+      await db.orderAssignment.deleteMany({ where: { orderId } });
+      return c.json({ message: "Order assignment deleted" }, 200);
+    },
   );
-
 export { driverRouter };
