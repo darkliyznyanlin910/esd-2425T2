@@ -40,7 +40,28 @@ export async function updateOrderStatus(
   const data = await res.json();
   log.info("Updated order status", { data });
 }
-
+export async function removeOrderAssignment(
+  orderId: Order["id"],
+): Promise<void> {
+  const res = await fetch(
+    `${getServiceBaseUrl("driver")}/driver/orderAssignment/${orderId}`,
+    {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${env.INTERNAL_COMMUNICATION_SECRET}`,
+        "Content-Type": "application/json",
+      },
+    },
+  );
+  if (!res.ok) {
+    throw ApplicationFailure.create({
+      nonRetryable: true,
+      message: "Failed to remove order assignment",
+    });
+  }
+  const data = await res.json();
+  log.info("Removed order assignment", { data });
+}
 export async function getOrderStatus(
   orderId: Order["id"],
 ): Promise<OrderStatus> {

@@ -9,8 +9,8 @@ import {
 import type * as activities from "@repo/temporal-activities";
 import type { Order, OrderStatus } from "@repo/temporal-common";
 
-export const PICKUP_TIMEOUT = "10 min";
-export const DELIVERY_TIMEOUT = "2 days";
+export const PICKUP_TIMEOUT = "30s";
+export const DELIVERY_TIMEOUT = "30s";
 
 export const driverFoundSignal = defineSignal<[string]>("DRIVER_FOUND");
 export const pickedUpSignal = defineSignal("PICKED_UP");
@@ -22,6 +22,7 @@ const {
   notifyAdmin,
   assignOrderToDriver,
   invalidateOrder,
+  removeOrderAssignment,
 } = proxyActivities<typeof activities>({
   startToCloseTimeout: "1m",
   retry: {
@@ -77,6 +78,7 @@ export async function delivery(
     } catch (error) {
       console.error(error);
       await updateOrderStatus(order.id, "DELAYED");
+      await removeOrderAssignment(order.id);
       await notifyAdmin(order);
       throw ApplicationFailure.create({
         message: "Failed to send order to drivers",
