@@ -19,6 +19,7 @@
     "@repo/eslint-config": "workspace:*",
     "@repo/prettier-config": "workspace:*",
     "@repo/tsconfig": "workspace:*",
+    "@types/pdfkit": "^0.13.9",
     "eslint": "catalog:",
     "prettier": "catalog:",
     "typescript": "catalog:"
@@ -34,6 +35,7 @@
     "@temporalio/activity": "^1.11.7",
     "axios": "^1.8.4",
     "form-data": "^4.0.2",
+    "pdfkit": "^0.16.0",
     "stripe": "^17.7.0",
     "zod": "catalog:"
   }
