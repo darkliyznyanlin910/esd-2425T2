@@ -21,9 +21,16 @@ export default function ChatPage() {
       router.push(`${getServiceBaseUrl("admin-frontend")}/auth`);
     }
   }, [session, router]);
+
   return (
-    <div className="flex h-screen items-center justify-center">
-      <div className="h-96 w-full max-w-sm">
+    <div className="flex h-full w-full flex-1 flex-col">
+      <div className="mb-4 flex-none">
+        <h1 className="text-2xl font-bold">Chat Assistant</h1>
+        <p className="text-muted-foreground">
+          Ask about your orders or get help with anything related to our service
+        </p>
+      </div>
+      <div className="min-h-0 w-full flex-1">
         <CustomChat />
       </div>
     </div>
