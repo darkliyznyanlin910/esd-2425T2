@@ -169,11 +169,20 @@ export async function assignOrderToDriver(
   });
 }
 
-export async function invalidateOrder(order: Order): Promise<void> {
+export async function invalidateOrder(
+  order: Order,
+  driverId?: string,
+): Promise<void> {
   try {
+    // Include the driverId in the invalidation message
+    const payload = {
+      ...order,
+      acceptedByDriverId: driverId, // This will be used by the frontend
+    };
+
     const res = await NotificationClient.driver.invalidate.$post(
       {
-        json: order,
+        json: payload,
       },
       {
         init: {
