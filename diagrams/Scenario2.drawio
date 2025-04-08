@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram name="Page-1" id="AIPoxRdhrtce3UdJt4KN">
-        <mxGraphModel dx="569" dy="323" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="345" dy="193" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -44,11 +44,11 @@
                 <mxCell id="sGVSHZmp7kZCRn9jOwzH-2" value="Invoice Service" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
                     <mxGeometry x="491" y="357" width="121" height="57.5" as="geometry"/>
                 </mxCell>
-                <mxCell id="sGVSHZmp7kZCRn9jOwzH-3" value="3. Order Service initiates External Order Workflow in Temporal" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
-                    <mxGeometry x="558" y="123" width="195" height="30" as="geometry"/>
+                <mxCell id="sGVSHZmp7kZCRn9jOwzH-3" value="3. Order Service initiates External Order Workflow in Temporal, starting a new session" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+                    <mxGeometry x="559" y="126" width="195" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="sGVSHZmp7kZCRn9jOwzH-4" value="4. Generates custom invoice" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
-                    <mxGeometry x="554" y="305" width="166" height="30" as="geometry"/>
+                    <mxGeometry x="554" y="295" width="166" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="sGVSHZmp7kZCRn9jOwzH-5" value="" style="endArrow=classic;startArrow=classic;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" parent="1" source="sGVSHZmp7kZCRn9jOwzH-2" target="sGVSHZmp7kZCRn9jOwzH-1" edge="1">
                     <mxGeometry width="50" height="50" relative="1" as="geometry">
@@ -59,11 +59,29 @@
                 <mxCell id="sGVSHZmp7kZCRn9jOwzH-7" value="6. Start Delivery Workflow with created Order" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
                     <mxGeometry x="189" y="235" width="150" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="11" value="&lt;span style=&quot;color: rgb(0, 0, 0); font-family: Helvetica; font-size: 12px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: rgb(251, 251, 251); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important;&quot;&gt;5. Order Workflow calls Order Service to trigger Delivery Worklow&lt;/span&gt;" style="text;whiteSpace=wrap;html=1;align=left;" parent="1" vertex="1">
-                    <mxGeometry x="558" y="153" width="198" height="36" as="geometry"/>
+                <mxCell id="11" value="&lt;span style=&quot;color: rgb(0, 0, 0); font-family: Helvetica; font-size: 12px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: rgb(251, 251, 251); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important;&quot;&gt;5. Order Workflow calls Order Service to trigger Delivery Workflow&lt;/span&gt;" style="text;whiteSpace=wrap;html=1;align=left;" parent="1" vertex="1">
+                    <mxGeometry x="414" y="116.25" width="158" height="36" as="geometry"/>
                 </mxCell>
                 <mxCell id="12" value="&lt;h5&gt;&lt;font style=&quot;font-size: 15px;&quot; face=&quot;Lucida Console&quot;&gt;&lt;i&gt;HTTP Post&lt;/i&gt;&lt;/font&gt;&lt;/h5&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
                     <mxGeometry x="327" y="28.75" width="100" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="13" value="&lt;h5&gt;&lt;font style=&quot;font-size: 15px;&quot; face=&quot;Lucida Console&quot;&gt;&lt;i&gt;HTTP Post&lt;/i&gt;&lt;/font&gt;&lt;/h5&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="559" y="160" width="100" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="14" value="&lt;h5&gt;&lt;font style=&quot;font-size: 15px;&quot; face=&quot;Lucida Console&quot;&gt;&lt;i&gt;HTTP Post&lt;/i&gt;&lt;/font&gt;&lt;/h5&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="554" y="312" width="100" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="15" value="&lt;h5&gt;&lt;font style=&quot;font-size: 15px;&quot; face=&quot;Lucida Console&quot;&gt;&lt;i&gt;HTTP Post&lt;/i&gt;&lt;/font&gt;&lt;/h5&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="193" y="260" width="100" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="16" value="" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=5;perimeterSpacing=6;" vertex="1" parent="1">
+                    <mxGeometry x="622" y="460" width="190" height="118" as="geometry"/>
+                </mxCell>
+                <mxCell id="17" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+                    <mxGeometry x="638" y="500" width="65" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="18" value="Microservice" style="text;whiteSpace=wrap;align=left;fontColor=#000000;labelBackgroundColor=none;" vertex="1" parent="1">
+                    <mxGeometry x="712.5" y="507.75" width="73" height="24.5" as="geometry"/>
                 </mxCell>
             </root>
         </mxGraphModel>
