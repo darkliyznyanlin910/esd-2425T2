@@ -66,6 +66,11 @@ export default function DriverDashboard() {
     getAcceptedOrdersFromStorage(),
   );
 
+  // First, let's add separate refresh states for each tab
+  const [isRefreshingAvailable, setIsRefreshingAvailable] = useState(false);
+  const [isRefreshingPickup, setIsRefreshingPickup] = useState(false);
+  const [isRefreshingDelivery, setIsRefreshingDelivery] = useState(false);
+
   // Update localStorage when acceptedOrderIds changes
   useEffect(() => {
     saveAcceptedOrdersToStorage(acceptedOrderIds);
@@ -318,6 +323,134 @@ export default function DriverDashboard() {
     } finally {
       setDisabledButtons((prev) => ({ ...prev, [orderId]: false }));
     }
+  };
+
+  // Then let's create separate fetch functions for each tab
+  const fetchAvailableOrders = async () => {
+    setIsRefreshingAvailable(true);
+    try {
+      const response = await fetch(
+        `${getServiceBaseUrl("order")}/order/finding/initialOrders`,
+        {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      );
+      if (response.ok) {
+        const data = await response.json();
+        setOrders(Array.isArray(data) ? data : []);
+        setHasNewOrder(false);
+        setNewOrderIds([]);
+        toast({
+          title: "Available Orders Refreshed",
+          description: "Available orders list has been updated.",
+          variant: "success",
+          duration: 2000,
+        });
+      }
+    } catch (error) {
+      console.error("Failed to fetch available orders:", error);
+      toast({
+        title: "Refresh Failed",
+        description: "Could not refresh available orders. Please try again.",
+        variant: "destructive",
+        duration: 3000,
+      });
+    } finally {
+      setIsRefreshingAvailable(false);
+    }
+  };
+
+  const fetchPickupOrders = async () => {
+    if (!session?.user.id) return;
+
+    setIsRefreshingPickup(true);
+    try {
+      const url = new URL(
+        `${getServiceBaseUrl("driver")}/driver/assignments/${session.user.id}`,
+      );
+      url.searchParams.append("status", "DRIVER_FOUND");
+      const response = await fetch(url, {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setPickupOrder(Array.isArray(data) ? data : []);
+        toast({
+          title: "Pickup Orders Refreshed",
+          description: "Your orders to pick up have been updated.",
+          variant: "success",
+          duration: 2000,
+        });
+      }
+    } catch (error) {
+      console.error("Failed to fetch pickup orders:", error);
+      toast({
+        title: "Refresh Failed",
+        description: "Could not refresh pickup orders. Please try again.",
+        variant: "destructive",
+        duration: 3000,
+      });
+    } finally {
+      setIsRefreshingPickup(false);
+    }
+  };
+
+  const fetchDeliveryOrders = async () => {
+    if (!session?.user.id) return;
+
+    setIsRefreshingDelivery(true);
+    try {
+      const url = new URL(
+        `${getServiceBaseUrl("driver")}/driver/assignments/${session.user.id}`,
+      );
+      url.searchParams.append("status", "PICKED_UP");
+      const response = await fetch(url, {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setDeliveryOrder(Array.isArray(data) ? data : []);
+        toast({
+          title: "Delivery Orders Refreshed",
+          description: "Your orders to deliver have been updated.",
+          variant: "success",
+          duration: 2000,
+        });
+      }
+    } catch (error) {
+      console.error("Failed to fetch delivery orders:", error);
+      toast({
+        title: "Refresh Failed",
+        description: "Could not refresh delivery orders. Please try again.",
+        variant: "destructive",
+        duration: 3000,
+      });
+    } finally {
+      setIsRefreshingDelivery(false);
+    }
+  };
+
+  // Update the fetchOrders function to call all three fetch functions
+  const fetchAllOrders = async () => {
+    await Promise.all([
+      fetchAvailableOrders(),
+      fetchPickupOrders(),
+      fetchDeliveryOrders(),
+    ]);
   };
 
   const fetchOrders = async () => {
@@ -589,21 +722,21 @@ export default function DriverDashboard() {
                 <Button
                   variant="outline"
                   size="icon"
-                  onClick={fetchOrders}
-                  disabled={isRefreshing}
-                  title="Refresh orders list"
+                  onClick={fetchAvailableOrders}
+                  disabled={isRefreshingAvailable}
+                  title="Refresh available orders list"
                 >
                   <RefreshCcw
-                    className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`}
+                    className={`h-4 w-4 ${isRefreshingAvailable ? "animate-spin" : ""}`}
                   />
                 </Button>
               </CardHeader>
               <CardContent>
                 <div className="overflow-x-auto">
-                  {isRefreshing ? (
+                  {isRefreshingAvailable ? (
                     <div className="flex items-center justify-center py-8">
                       <div className="text-muted-foreground">
-                        Refreshing orders...
+                        Refreshing available orders...
                       </div>
                     </div>
                   ) : (
@@ -654,51 +787,74 @@ export default function DriverDashboard() {
 
           <TabsContent value="pickup">
             <Card>
-              <CardHeader>
-                <CardTitle>Orders to Pick Up</CardTitle>
-                <CardDescription>
-                  Orders you need to collect from first location
-                </CardDescription>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle>Orders to Pick Up</CardTitle>
+                  <CardDescription>
+                    Orders you need to collect from first location
+                  </CardDescription>
+                </div>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={fetchPickupOrders}
+                  disabled={isRefreshingPickup}
+                  title="Refresh pickup orders list"
+                >
+                  <RefreshCcw
+                    className={`h-4 w-4 ${isRefreshingPickup ? "animate-spin" : ""}`}
+                  />
+                </Button>
               </CardHeader>
               <CardContent>
                 <div className="overflow-x-auto">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Order ID</TableHead>
-                        <TableHead>Order Details</TableHead>
-                        <TableHead>From Address</TableHead>
-                        <TableHead>To Address</TableHead>
-                        <TableHead>Action</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {pickupOrder.map((data) => (
-                        <TableRow key={data.id}>
-                          <TableCell className="font-medium">
-                            {data.orderDetails?.displayId}
-                          </TableCell>
-                          <TableCell>
-                            {data.orderDetails?.orderDetails}
-                          </TableCell>
-                          <TableCell>{`${data.orderDetails?.fromAddressLine1}, ${data.orderDetails?.fromAddressLine2 || ""}, ${data.orderDetails?.fromZipCode}`}</TableCell>
-                          <TableCell>{`${data.orderDetails?.toAddressLine1}, ${data.orderDetails?.toAddressLine2 || ""}, ${data.orderDetails?.toZipCode}`}</TableCell>
-                          <TableCell>
-                            <Button
-                              onClick={() =>
-                                handlePickupOrder(data.orderDetails?.id)
-                              }
-                              size="sm"
-                              disabled={disabledButtons[data.orderDetails?.id]}
-                            >
-                              <Package className="mr-2 h-4 w-4" />
-                              Picked Up
-                            </Button>
-                          </TableCell>
+                  {isRefreshingPickup ? (
+                    <div className="flex items-center justify-center py-8">
+                      <div className="text-muted-foreground">
+                        Refreshing pickup orders...
+                      </div>
+                    </div>
+                  ) : (
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Order ID</TableHead>
+                          <TableHead>Order Details</TableHead>
+                          <TableHead>From Address</TableHead>
+                          <TableHead>To Address</TableHead>
+                          <TableHead>Action</TableHead>
                         </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
+                      </TableHeader>
+                      <TableBody>
+                        {pickupOrder.map((data) => (
+                          <TableRow key={data.id}>
+                            <TableCell className="font-medium">
+                              {data.orderDetails?.displayId}
+                            </TableCell>
+                            <TableCell>
+                              {data.orderDetails?.orderDetails}
+                            </TableCell>
+                            <TableCell>{`${data.orderDetails?.fromAddressLine1}, ${data.orderDetails?.fromAddressLine2 || ""}, ${data.orderDetails?.fromZipCode}`}</TableCell>
+                            <TableCell>{`${data.orderDetails?.toAddressLine1}, ${data.orderDetails?.toAddressLine2 || ""}, ${data.orderDetails?.toZipCode}`}</TableCell>
+                            <TableCell>
+                              <Button
+                                onClick={() =>
+                                  handlePickupOrder(data.orderDetails?.id)
+                                }
+                                size="sm"
+                                disabled={
+                                  disabledButtons[data.orderDetails?.id]
+                                }
+                              >
+                                <Package className="mr-2 h-4 w-4" />
+                                Picked Up
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -706,51 +862,74 @@ export default function DriverDashboard() {
 
           <TabsContent value="dropoff">
             <Card>
-              <CardHeader>
-                <CardTitle>Orders to Deliver</CardTitle>
-                <CardDescription>
-                  Orders you need to deliver to second location
-                </CardDescription>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle>Orders to Deliver</CardTitle>
+                  <CardDescription>
+                    Orders you need to deliver to second location
+                  </CardDescription>
+                </div>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={fetchDeliveryOrders}
+                  disabled={isRefreshingDelivery}
+                  title="Refresh delivery orders list"
+                >
+                  <RefreshCcw
+                    className={`h-4 w-4 ${isRefreshingDelivery ? "animate-spin" : ""}`}
+                  />
+                </Button>
               </CardHeader>
               <CardContent>
                 <div className="overflow-x-auto">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Order ID</TableHead>
-                        <TableHead>Order Details</TableHead>
-                        <TableHead>From Address</TableHead>
-                        <TableHead>To Address</TableHead>
-                        <TableHead>Action</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {deliveryOrder.map((data) => (
-                        <TableRow key={data.id}>
-                          <TableCell className="font-medium">
-                            {data.orderDetails?.displayId}
-                          </TableCell>
-                          <TableCell>
-                            {data.orderDetails?.orderDetails}
-                          </TableCell>
-                          <TableCell>{`${data.orderDetails?.fromAddressLine1}, ${data.orderDetails?.fromAddressLine2 || ""}, ${data.orderDetails?.fromZipCode}`}</TableCell>
-                          <TableCell>{`${data.orderDetails?.toAddressLine1}, ${data.orderDetails?.toAddressLine2 || ""}, ${data.orderDetails?.toZipCode}`}</TableCell>
-                          <TableCell>
-                            <Button
-                              onClick={() =>
-                                handleDeliveryOrder(data.orderDetails?.id)
-                              }
-                              size="sm"
-                              disabled={disabledButtons[data.orderDetails?.id]}
-                            >
-                              <CheckCircle className="mr-2 h-4 w-4" />
-                              Delivered
-                            </Button>
-                          </TableCell>
+                  {isRefreshingDelivery ? (
+                    <div className="flex items-center justify-center py-8">
+                      <div className="text-muted-foreground">
+                        Refreshing delivery orders...
+                      </div>
+                    </div>
+                  ) : (
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Order ID</TableHead>
+                          <TableHead>Order Details</TableHead>
+                          <TableHead>From Address</TableHead>
+                          <TableHead>To Address</TableHead>
+                          <TableHead>Action</TableHead>
                         </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
+                      </TableHeader>
+                      <TableBody>
+                        {deliveryOrder.map((data) => (
+                          <TableRow key={data.id}>
+                            <TableCell className="font-medium">
+                              {data.orderDetails?.displayId}
+                            </TableCell>
+                            <TableCell>
+                              {data.orderDetails?.orderDetails}
+                            </TableCell>
+                            <TableCell>{`${data.orderDetails?.fromAddressLine1}, ${data.orderDetails?.fromAddressLine2 || ""}, ${data.orderDetails?.fromZipCode}`}</TableCell>
+                            <TableCell>{`${data.orderDetails?.toAddressLine1}, ${data.orderDetails?.toAddressLine2 || ""}, ${data.orderDetails?.toZipCode}`}</TableCell>
+                            <TableCell>
+                              <Button
+                                onClick={() =>
+                                  handleDeliveryOrder(data.orderDetails?.id)
+                                }
+                                size="sm"
+                                disabled={
+                                  disabledButtons[data.orderDetails?.id]
+                                }
+                              >
+                                <CheckCircle className="mr-2 h-4 w-4" />
+                                Delivered
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  )}
                 </div>
               </CardContent>
             </Card>

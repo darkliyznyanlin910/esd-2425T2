@@ -11,6 +11,7 @@ import type { Order, OrderStatus } from "@repo/temporal-common";
 
 export const PICKUP_TIMEOUT = "30s";
 export const DELIVERY_TIMEOUT = "30s";
+export const DRIVER_FOUND_TIMEOUT = "30s";
 
 export const driverFoundSignal = defineSignal<[string]>("DRIVER_FOUND");
 export const pickedUpSignal = defineSignal("PICKED_UP");
@@ -39,7 +40,6 @@ export async function delivery(
   if (manualAssignDriverId) {
     await updateOrderStatus(order.id, "DRIVER_FOUND");
     await assignOrderToDriver(order, manualAssignDriverId);
-    await invalidateOrder(order);
     orderStatus = "DRIVER_FOUND";
   }
 
@@ -79,7 +79,6 @@ export async function delivery(
     } catch (error) {
       console.error(error);
       await updateOrderStatus(order.id, "DELAYED");
-      await removeOrderAssignment(order.id);
       await notifyAdmin(order);
       throw ApplicationFailure.create({
         message: "Failed to send order to drivers",
@@ -87,6 +86,20 @@ export async function delivery(
         nonRetryable: true,
       });
     }
+  }
+  const noDriverFoundInTime = !(await condition(
+    () => orderStatus === "DRIVER_FOUND",
+    DRIVER_FOUND_TIMEOUT,
+  ));
+  if (noDriverFoundInTime) {
+    await updateOrderStatus(order.id, "DELAYED");
+    await invalidateOrder(order);
+    await notifyAdmin(order);
+    throw ApplicationFailure.create({
+      message: "No driver found in time",
+      type: "DELAYED",
+      nonRetryable: true,
+    });
   }
 
   const notPickedUpInTime = !(await condition(
@@ -96,6 +109,7 @@ export async function delivery(
 
   if (notPickedUpInTime) {
     await updateOrderStatus(order.id, "DELAYED");
+    await removeOrderAssignment(order.id);
     await notifyAdmin(order);
     throw ApplicationFailure.create({
       message: "Order not picked up in time",
@@ -111,6 +125,7 @@ export async function delivery(
 
   if (notDeliveredInTime) {
     await updateOrderStatus(order.id, "DELAYED");
+    await removeOrderAssignment(order.id);
     await notifyAdmin(order);
     throw ApplicationFailure.create({
       message: "Order not delivered in time",

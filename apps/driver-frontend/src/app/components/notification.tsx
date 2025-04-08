@@ -90,12 +90,23 @@ export default function NotificationComponent({
             // Only call onInvalidateOrder if this isn't the driver who accepted it
             if (onInvalidateOrder && message.data && message.data.id) {
               onInvalidateOrder(message.data.id);
-              toast({
-                title: "Order No Longer Available",
-                description: `Order ID: ${message.data.displayId || ""} has been accepted by another driver.`,
-                variant: "destructive",
-                duration: 5000,
-              });
+
+              // Check if order was accepted by another driver
+              if (message.data.acceptedByDriverId) {
+                toast({
+                  title: "Order Accepted",
+                  description: `Order ID: ${message.data.displayId || ""} has been accepted by another driver.`,
+                  variant: "destructive",
+                  duration: 5000,
+                });
+              } else {
+                toast({
+                  title: "Order No Longer Available",
+                  description: `Order ID: ${message.data.displayId || ""} is no longer available for delivery.`,
+                  variant: "warning",
+                  duration: 5000,
+                });
+              }
             }
             break;
 
