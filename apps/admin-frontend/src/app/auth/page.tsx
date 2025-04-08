@@ -2,14 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { X } from "lucide-react";
 
 import { authClient } from "@repo/auth-client";
 import { Button } from "@repo/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@repo/ui/card";
+import { useToast } from "@repo/ui/hooks/use-toast";
 import { Input } from "@repo/ui/input";
 import { Label } from "@repo/ui/label";
-import { toast } from "@repo/ui/toast";
 
 export default function AuthPage() {
   const router = useRouter();
@@ -18,16 +17,15 @@ export default function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const { toast } = useToast();
 
   useEffect(() => {
     if (error !== "") {
-      toast.error(error, {
+      toast({
+        title: "Error",
+        variant: "destructive",
         description: "Please check your credentials and try again.",
         duration: 10000,
-        action: {
-          label: <X className="h-4 w-4" />,
-          onClick: () => toast.dismiss(),
-        },
       });
     }
   }, [error]);

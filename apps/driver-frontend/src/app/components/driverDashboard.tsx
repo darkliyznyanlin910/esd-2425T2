@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Car, CheckCircle, Package } from "lucide-react";
+import { Car, CheckCircle, Package, RefreshCcw } from "lucide-react";
 
 import { authClient } from "@repo/auth-client";
 import { Order } from "@repo/db-order/zod";
@@ -14,6 +14,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@repo/ui/card";
+import { useToast } from "@repo/ui/hooks/use-toast";
 import {
   Table,
   TableBody,
@@ -23,7 +24,6 @@ import {
   TableRow,
 } from "@repo/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@repo/ui/tabs";
-import { toast } from "@repo/ui/toast";
 
 import NotificationComponent from "./notification";
 
@@ -37,9 +37,15 @@ export default function DriverDashboard() {
   const [disabledButtons, setDisabledButtons] = useState<{
     [key: string]: boolean;
   }>({});
+  const { toast } = useToast();
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [newOrderIds, setNewOrderIds] = useState<string[]>([]);
 
   const handleAcceptOrder = async (orderId: string) => {
     setDisabledButtons((prev) => ({ ...prev, [orderId]: true }));
+    // Clear the new order notification when accepting any order
+    setHasNewOrder(false);
+
     try {
       const response = await fetch(
         `${getServiceBaseUrl("driver")}/driver/state/DRIVER_FOUND`,
@@ -56,12 +62,17 @@ export default function DriverDashboard() {
         },
       );
       if (response.ok) {
-        toast("Order Accepted", {
+        toast({
+          title: "Order Accepted",
           description: "You have successfully accepted the order.",
+          variant: "success",
           duration: 3000,
         });
       }
-      if (!session?.user.id) return;
+      if (!session?.user.id) {
+        console.error("Session user ID is not available.");
+        return;
+      }
       try {
         const url = new URL(
           `${getServiceBaseUrl("driver")}/driver/assignments/${session.user.id}`,
@@ -77,6 +88,7 @@ export default function DriverDashboard() {
 
         if (response.ok) {
           const data = await response.json();
+          console.log("Pickup order data:", data);
           setPickupOrder(Array.isArray(data) ? data : []);
         }
       } catch (error) {
@@ -95,6 +107,7 @@ export default function DriverDashboard() {
         );
         if (response.ok) {
           const data = await response.json();
+          console.log("Available order data:", data);
           setOrders(Array.isArray(data) ? data : []);
         }
       } catch (error) {
@@ -102,7 +115,9 @@ export default function DriverDashboard() {
       }
     } catch (error) {
       console.error("Failed to accept order:", error);
-      toast("Error", {
+      toast({
+        title: "Error",
+        variant: "destructive",
         description: "Failed to accept order. Please try again.",
         duration: 3000,
       });
@@ -128,7 +143,9 @@ export default function DriverDashboard() {
         },
       );
       if (response.ok) {
-        toast("Order Picked Up", {
+        toast({
+          title: "Order Picked Up",
+          variant: "success",
           description: "You have successfully picked the order up.",
           duration: 3000,
         });
@@ -176,7 +193,9 @@ export default function DriverDashboard() {
         console.error("Failed to fetch delivery orders:", error);
       }
     } catch (error) {
-      toast("Error", {
+      toast({
+        title: "Error",
+        variant: "destructive",
         description: "Failed to pick order up. Please try again.",
         duration: 3000,
       });
@@ -202,7 +221,9 @@ export default function DriverDashboard() {
         },
       );
       if (response.ok) {
-        toast("Order Delivered", {
+        toast({
+          title: "Order Delivered",
+          variant: "success",
           description: "You have successfully delivered the order.",
           duration: 3000,
         });
@@ -231,12 +252,50 @@ export default function DriverDashboard() {
         console.error("Failed to fetch delivery orders:", error);
       }
     } catch (error) {
-      toast("Error", {
+      toast({
+        title: "Error",
+        variant: "destructive",
         description: "Failed to deliver the order. Please try again.",
         duration: 3000,
       });
     } finally {
       setDisabledButtons((prev) => ({ ...prev, [orderId]: false }));
+    }
+  };
+
+  const fetchOrders = async () => {
+    setIsRefreshing(true);
+    try {
+      const response = await fetch(
+        `${getServiceBaseUrl("order")}/order/finding/initialOrders`,
+        {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      );
+      if (response.ok) {
+        const data = await response.json();
+        setOrders(Array.isArray(data) ? data : []);
+        toast({
+          title: "Orders Refreshed",
+          description: "Available orders list has been updated.",
+          variant: "success",
+          duration: 2000,
+        });
+      }
+    } catch (error) {
+      console.error("Failed to fetch orders:", error);
+      toast({
+        title: "Refresh Failed",
+        description: "Could not refresh orders. Please try again.",
+        variant: "destructive",
+        duration: 3000,
+      });
+    } finally {
+      setIsRefreshing(false);
     }
   };
 
@@ -317,8 +376,36 @@ export default function DriverDashboard() {
     fetchPickupOrder();
     fetchDeliveryOrder();
   }, [session]);
-  const handleNewOrder = () => {
+  const handleNewOrder = (orderData?: any) => {
     setHasNewOrder(true);
+
+    // If we received order data, track its ID as new
+    if (orderData && orderData.id) {
+      setNewOrderIds((prev) => [...prev, orderData.id]);
+      // Auto-clear the highlight after 30 seconds
+      setTimeout(() => {
+        setNewOrderIds((prev) => prev.filter((id) => id !== orderData.id));
+      }, 30000);
+    }
+
+    // If we received order data, add it to the orders list
+    if (orderData) {
+      setOrders((prevOrders) => {
+        // Check if this order already exists in the list
+        const orderExists = prevOrders.some(
+          (order) => order.id === orderData.id,
+        );
+
+        // Only add if it doesn't exist yet
+        if (!orderExists) {
+          return [...prevOrders, orderData];
+        }
+        return prevOrders;
+      });
+    } else {
+      // If no order data was passed, refresh the orders list from the API
+      fetchOrders();
+    }
   };
 
   return (
@@ -399,46 +486,74 @@ export default function DriverDashboard() {
 
           <TabsContent value="available">
             <Card>
-              <CardHeader>
-                <CardTitle>Available Orders</CardTitle>
-                <CardDescription>
-                  Orders you can accept for delivery
-                </CardDescription>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle>Available Orders</CardTitle>
+                  <CardDescription>
+                    Orders you can accept for delivery
+                  </CardDescription>
+                </div>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={fetchOrders}
+                  disabled={isRefreshing}
+                  title="Refresh orders list"
+                >
+                  <RefreshCcw
+                    className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`}
+                  />
+                </Button>
               </CardHeader>
               <CardContent>
                 <div className="overflow-x-auto">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Order ID</TableHead>
-                        <TableHead>Order Details</TableHead>
-                        <TableHead>From Address</TableHead>
-                        <TableHead>To Address</TableHead>
-                        <TableHead>Action</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {orders.map((data) => (
-                        <TableRow key={data.id}>
-                          <TableCell className="font-medium">
-                            {data.id}
-                          </TableCell>
-                          <TableCell>{data.orderDetails}</TableCell>
-                          <TableCell>{`${data.fromAddressLine1}, ${data.fromAddressLine2 || ""}, ${data.fromZipCode}`}</TableCell>
-                          <TableCell>{`${data.toAddressLine1}, ${data.toAddressLine2 || ""}, ${data.toZipCode}`}</TableCell>
-                          <TableCell>
-                            <Button
-                              onClick={() => handleAcceptOrder(data.id)}
-                              size="sm"
-                              disabled={disabledButtons[data.id]}
-                            >
-                              Accept Order
-                            </Button>
-                          </TableCell>
+                  {isRefreshing ? (
+                    <div className="flex items-center justify-center py-8">
+                      <div className="text-muted-foreground">
+                        Refreshing orders...
+                      </div>
+                    </div>
+                  ) : (
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Order ID</TableHead>
+                          <TableHead>Order Details</TableHead>
+                          <TableHead>From Address</TableHead>
+                          <TableHead>To Address</TableHead>
+                          <TableHead>Action</TableHead>
                         </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
+                      </TableHeader>
+                      <TableBody>
+                        {orders.map((data) => (
+                          <TableRow
+                            key={data.id}
+                            className={
+                              newOrderIds.includes(data.id)
+                                ? "animate-pulse bg-yellow-50 dark:bg-yellow-900/20"
+                                : ""
+                            }
+                          >
+                            <TableCell className="font-medium">
+                              {data.displayId}
+                            </TableCell>
+                            <TableCell>{data.orderDetails}</TableCell>
+                            <TableCell>{`${data.fromAddressLine1}, ${data.fromAddressLine2 || ""}, ${data.fromZipCode}`}</TableCell>
+                            <TableCell>{`${data.toAddressLine1}, ${data.toAddressLine2 || ""}, ${data.toZipCode}`}</TableCell>
+                            <TableCell>
+                              <Button
+                                onClick={() => handleAcceptOrder(data.id)}
+                                size="sm"
+                                disabled={disabledButtons[data.id]}
+                              >
+                                Accept Order
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -468,7 +583,7 @@ export default function DriverDashboard() {
                       {pickupOrder.map((data) => (
                         <TableRow key={data.id}>
                           <TableCell className="font-medium">
-                            {data.orderDetails?.id}
+                            {data.orderDetails?.displayId}
                           </TableCell>
                           <TableCell>
                             {data.orderDetails?.orderDetails}
@@ -520,7 +635,7 @@ export default function DriverDashboard() {
                       {deliveryOrder.map((data) => (
                         <TableRow key={data.id}>
                           <TableCell className="font-medium">
-                            {data.orderDetails?.id}
+                            {data.orderDetails?.displayId}
                           </TableCell>
                           <TableCell>
                             {data.orderDetails?.orderDetails}
