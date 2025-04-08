@@ -1,5 +1,6 @@
 import { ApplicationFailure, log } from "@temporalio/activity";
 import axios from "axios";
+import PDFDocument from "pdfkit";
 
 import type { User } from "@repo/db-auth/zod";
 import type { Invoice, Order, OrderStatus } from "@repo/temporal-common";
@@ -8,7 +9,6 @@ import { UserSchema } from "@repo/db-auth/zod";
 import { HonoClient as NotificationClient } from "@repo/notification-backend/type";
 import { getServiceBaseUrl } from "@repo/service-discovery";
 
-import { app } from "../../../apps/auth/src/app";
 import { env } from "./env";
 
 export * from "./stripe";
@@ -209,116 +209,246 @@ export async function generateInvoice(
   stripeInvoiceUrl?: string,
   stripeInvoiceId?: string,
 ): Promise<Invoice> {
-  let status: Invoice["status"] = "PENDING";
-
-  if (!stripeInvoiceUrl) {
-    throw ApplicationFailure.create({
-      nonRetryable: true,
-      message: `No invoice URL provided for order ID ${order.id}`,
-    });
-  }
-
-  try {
-    // Download PDF from Stripe
-    const response = await axios.get(stripeInvoiceUrl, {
-      responseType: "arraybuffer",
-      maxRedirects: 5,
-    });
-    const pdfBuffer = Buffer.from(response.data);
-
-    if (!pdfBuffer) {
-      // throw new Error("Failed to download PDF from Stripe");
-      throw ApplicationFailure.create({
-        nonRetryable: true,
-        message: `Failed to download pdf from stripe`,
+  if (!!stripeInvoiceUrl && !!stripeInvoiceId) {
+    try {
+      // Download PDF from Stripe
+      const response = await axios.get(stripeInvoiceUrl, {
+        responseType: "arraybuffer",
+        maxRedirects: 5,
       });
-    }
+      const pdfBuffer = Buffer.from(response.data);
 
-    // Get S3 Upload URL
-    const urlResponse = await fetch(
-      `${getServiceBaseUrl("invoice")}/invoice/uploadURL`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      if (!pdfBuffer) {
+        // throw new Error("Failed to download PDF from Stripe");
+        throw ApplicationFailure.create({
+          nonRetryable: true,
+          message: `Failed to download pdf from stripe`,
+        });
+      }
+
+      // Get S3 Upload URL
+      const urlResponse = await fetch(
+        `${getServiceBaseUrl("invoice")}/invoice/uploadURL`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ orderId: order.id }),
         },
-        body: JSON.stringify({ orderId: order.id }),
-      },
-    );
+      );
 
-    if (!urlResponse.ok) {
-      // throw new Error(`Failed to get upload URL: ${urlResponse.status}`);
-      throw ApplicationFailure.create({
-        nonRetryable: true,
-        message: `Failed to get upload url pdf to stripe`,
-      });
-    }
+      if (!urlResponse.ok) {
+        // throw new Error(`Failed to get upload URL: ${urlResponse.status}`);
+        throw ApplicationFailure.create({
+          nonRetryable: true,
+          message: `Failed to get upload url pdf to stripe`,
+        });
+      }
 
-    const { uploadUrl, key } = (await urlResponse.json()) as {
-      uploadUrl: string;
-      key: string;
-    };
+      const { uploadUrl, key } = (await urlResponse.json()) as {
+        uploadUrl: string;
+        key: string;
+      };
 
-    const uploadResponse = await axios.put(uploadUrl, pdfBuffer, {
-      headers: {
-        "Content-Type": "application/pdf",
-      },
-    });
-
-    if (uploadResponse.status !== 200) {
-      // throw new Error(`Failed to upload PDF to S3: ${uploadResponse.status}`);
-      throw ApplicationFailure.create({
-        nonRetryable: true,
-        message: `Failed to upload PDF to S3`,
-      });
-    }
-
-    // Create Invoice Record
-    const invoicePayload = {
-      orderId: order.id,
-      customerId: order.userId,
-      status: "COMPLETED",
-      path: key,
-      amount: amount,
-    };
-
-    const createInvoiceResponse = await fetch(
-      `${getServiceBaseUrl("invoice")}/invoice/invoices`,
-      {
-        method: "POST",
+      const uploadResponse = await axios.put(uploadUrl, pdfBuffer, {
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "application/pdf",
         },
-        body: JSON.stringify(invoicePayload),
-      },
-    );
+      });
 
-    if (!createInvoiceResponse.ok) {
-      // throw new Error(
-      //   `Failed to create invoice: ${createInvoiceResponse.status}`,
-      // );
+      if (uploadResponse.status !== 200) {
+        // throw new Error(`Failed to upload PDF to S3: ${uploadResponse.status}`);
+        throw ApplicationFailure.create({
+          nonRetryable: true,
+          message: `Failed to upload PDF to S3`,
+        });
+      }
+
+      // Create Invoice Record
+      const invoicePayload = {
+        orderId: order.id,
+        customerId: order.userId,
+        status: "COMPLETED",
+        path: key,
+        amount: amount,
+      };
+
+      const createInvoiceResponse = await fetch(
+        `${getServiceBaseUrl("invoice")}/invoice/invoices`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(invoicePayload),
+        },
+      );
+
+      if (!createInvoiceResponse.ok) {
+        // throw new Error(
+        //   `Failed to create invoice: ${createInvoiceResponse.status}`,
+        // );
+        throw ApplicationFailure.create({
+          nonRetryable: true,
+          message: `Failed to create invoice`,
+        });
+      }
+
+      return {
+        id: stripeInvoiceId as unknown as string,
+        orderId: order.id,
+        customerId: order.userId,
+        status: "COMPLETED",
+        amount,
+        path: key,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+    } catch (error) {
+      console.error("Invoice generation error:", error);
       throw ApplicationFailure.create({
         nonRetryable: true,
-        message: `Failed to create invoice`,
+        message: `Failed to process invoice for order ID ${order.id}: ${error instanceof Error ? error.message : String(error)}`,
       });
     }
+  } else {
+    try {
+      // Create a custom PDF invoice
+      const doc = new PDFDocument({ margin: 50 });
 
-    return {
-      id: stripeInvoiceId as unknown as string,
-      orderId: order.id,
-      customerId: order.userId,
-      status: "COMPLETED",
-      amount,
-      path: key,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-  } catch (error) {
-    console.error("Invoice generation error:", error);
-    throw ApplicationFailure.create({
-      nonRetryable: true,
-      message: `Failed to process invoice for order ID ${order.id}: ${error instanceof Error ? error.message : String(error)}`,
-    });
+      // Create a buffer to store PDF
+      const chunks: Buffer[] = [];
+      doc.on("data", (chunk) => chunks.push(chunk));
+
+      // Create a promise to resolve when PDF is complete
+      const pdfBufferPromise = new Promise<Buffer>((resolve) => {
+        doc.on("end", () => {
+          const pdfBuffer = Buffer.concat(chunks);
+          resolve(pdfBuffer);
+        });
+      });
+
+      // Add invoice content
+      doc.fontSize(25).text("INVOICE", { align: "center" });
+      doc.moveDown();
+
+      // Add order details
+      doc.fontSize(14);
+      doc.text(`Order ID: ${order.displayId || order.id}`);
+      doc.moveDown(0.5);
+
+      doc.text(
+        `From: ${[order.fromAddressLine1, order.fromAddressLine2, order.fromZipCode].filter(Boolean).join(", ")}`,
+      );
+      doc.moveDown(0.5);
+
+      doc.text(
+        `To: ${[order.toAddressLine1, order.toAddressLine2, order.toZipCode].filter(Boolean).join(", ")}`,
+      );
+      doc.moveDown(0.5);
+
+      doc.text(`Created at: ${new Date(order.createdAt).toLocaleString()}`);
+      doc.moveDown();
+
+      // Add amount
+      doc
+        .fontSize(16)
+        .text(`Amount: $${amount.toFixed(2)}`, { align: "right" });
+      doc.moveDown(2);
+
+      doc
+        .fontSize(10)
+        .text("Thank you for your business!", { align: "center" });
+
+      // Finalize PDF
+      doc.end();
+
+      // Wait for PDF to be generated
+      const pdfBuffer = await pdfBufferPromise;
+
+      // Get S3 Upload URL
+      const urlResponse = await fetch(
+        `${getServiceBaseUrl("invoice")}/invoice/uploadURL`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ orderId: order.id }),
+        },
+      );
+
+      if (!urlResponse.ok) {
+        throw ApplicationFailure.create({
+          nonRetryable: true,
+          message: `Failed to get upload URL for custom invoice PDF`,
+        });
+      }
+
+      const { uploadUrl, key } = (await urlResponse.json()) as {
+        uploadUrl: string;
+        key: string;
+      };
+
+      const uploadResponse = await axios.put(uploadUrl, pdfBuffer, {
+        headers: {
+          "Content-Type": "application/pdf",
+        },
+      });
+
+      if (uploadResponse.status !== 200) {
+        throw ApplicationFailure.create({
+          nonRetryable: true,
+          message: `Failed to upload custom PDF to S3`,
+        });
+      }
+
+      // Create Invoice Record with a generated ID
+      const invoiceId = `custom_invoice_${order.id}_${Date.now()}`;
+      const invoicePayload = {
+        orderId: order.id,
+        customerId: order.userId,
+        status: "COMPLETED",
+        path: key,
+        amount: amount,
+      };
+
+      const createInvoiceResponse = await fetch(
+        `${getServiceBaseUrl("invoice")}/invoice/invoices`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(invoicePayload),
+        },
+      );
+
+      if (!createInvoiceResponse.ok) {
+        throw ApplicationFailure.create({
+          nonRetryable: true,
+          message: `Failed to create custom invoice record`,
+        });
+      }
+
+      return {
+        id: invoiceId,
+        orderId: order.id,
+        customerId: order.userId,
+        status: "COMPLETED",
+        amount,
+        path: key,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+    } catch (error) {
+      console.error("Custom invoice generation error:", error);
+      throw ApplicationFailure.create({
+        nonRetryable: true,
+        message: `Failed to generate custom invoice for order ID ${order.id}: ${error instanceof Error ? error.message : String(error)}`,
+      });
+    }
   }
 }
 
