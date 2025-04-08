@@ -1,11 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { X } from "lucide-react";
 
 import { getServiceBaseUrl } from "@repo/service-discovery";
 import { Alert, AlertDescription, AlertTitle } from "@repo/ui/alert";
-import { toast } from "@repo/ui/toast";
+import { useToast } from "@repo/ui/hooks/use-toast";
 
 let wsReuse: WebSocket | null = null;
 
@@ -21,6 +20,7 @@ export default function NotificationComponent({
   const [data, setData] = useState<string>("Nothing as of now...");
   const wsRef = useRef<WebSocket | null>(null);
   const pingIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const { toast } = useToast();
 
   const connectWebSocket = useCallback(() => {
     if (wsReuse && wsReuse.readyState === WebSocket.OPEN) {
@@ -64,36 +64,22 @@ export default function NotificationComponent({
       switch (message.event) {
         case "receiveDelay":
           setData(`Delay: ${message.data}`);
-          toast(
-            typeof message.data === "object" ? "Order Delayed" : message.data,
-            {
-              description: "An order has been delayed",
-              duration: 5000,
-              action: {
-                label: <X className="h-4 w-4" />,
-                onClick: () => toast.dismiss(),
-              },
-            },
-          );
+          toast({
+            title: "Order Delay Notification",
+            description: "An order has been delayed",
+            duration: 5000,
+          });
           if (onNotification) {
             onNotification();
           }
           break;
         case "manualAssignment":
           setData(`Reassigned: ${message.data}`);
-          toast(
-            typeof message.data === "object"
-              ? "Order Reassignment Required"
-              : message.data,
-            {
-              description: "Please check the To Assign page",
-              duration: 5000,
-              action: {
-                label: <X className="h-4 w-4" />,
-                onClick: () => toast.dismiss(),
-              },
-            },
-          );
+          toast({
+            title: "Order Reassignment Required",
+            description: "Please check the To Assign page",
+            duration: 5000,
+          });
           if (onNotification) {
             onNotification();
           }
