@@ -11,8 +11,11 @@ import { Input } from "@repo/ui/input";
 import {
   Pagination,
   PaginationContent,
+  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
 } from "@repo/ui/pagination";
 import {
   Select,
@@ -34,6 +37,7 @@ interface DeliveryHistoryItem {
   id: string;
   orderDetails: {
     id: string;
+    displayId: string;
     orderDetails: string;
     fromAddressLine1: string;
     fromAddressLine2?: string;
@@ -151,7 +155,6 @@ export default function DeliveryHistory() {
         <div className="mb-6 flex items-center justify-between">
           <h1 className="text-2xl font-bold">Delivery History</h1>
         </div>
-
         {/* Filters */}
         <Card className="mb-6">
           <CardContent className="flex flex-col space-y-4 p-4 md:flex-row md:space-x-4 md:space-y-0">
@@ -193,7 +196,6 @@ export default function DeliveryHistory() {
             </div>
           </CardContent>
         </Card>
-
         {/* Orders Table */}
         <Card>
           <CardHeader>
@@ -217,7 +219,7 @@ export default function DeliveryHistory() {
                     paginatedOrders.map((order) => (
                       <TableRow key={order.id}>
                         <TableCell className="font-medium">
-                          {order.orderDetails?.id || order.id}
+                          {order.orderDetails?.displayId || ""}
                         </TableCell>
                         <TableCell>
                           {order.orderDetails?.orderDetails}
@@ -257,14 +259,38 @@ export default function DeliveryHistory() {
             </div>
           </CardContent>
         </Card>
-
         {/* Pagination */}
         {totalPages > 1 && (
           <div className="mt-6">
             <Pagination>
               <PaginationContent>
-                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                  const pageNumber = i + 1;
+                <PaginationItem>
+                  <PaginationPrevious
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.max(prev - 1, 1))
+                    }
+                  />
+                </PaginationItem>
+
+                {/* First page */}
+                {currentPage > 3 && (
+                  <PaginationItem>
+                    <PaginationLink onClick={() => setCurrentPage(1)}>
+                      1
+                    </PaginationLink>
+                  </PaginationItem>
+                )}
+                {currentPage > 3 && (
+                  <PaginationItem>
+                    <PaginationEllipsis />
+                  </PaginationItem>
+                )}
+                {Array.from({ length: Math.min(3, totalPages) }, (_, i) => {
+                  const pageOffset = currentPage > 2 ? currentPage - 1 : 1;
+                  const pageNumber = pageOffset + i;
+
+                  if (pageNumber > totalPages) return null;
+
                   return (
                     <PaginationItem key={pageNumber}>
                       <PaginationLink
@@ -276,21 +302,26 @@ export default function DeliveryHistory() {
                     </PaginationItem>
                   );
                 })}
-                {totalPages > 5 && (
-                  <>
-                    <PaginationItem>
-                      <PaginationLink>...</PaginationLink>
-                    </PaginationItem>
-                    <PaginationItem>
-                      <PaginationLink
-                        onClick={() => setCurrentPage(totalPages)}
-                        isActive={totalPages === currentPage}
-                      >
-                        {totalPages}
-                      </PaginationLink>
-                    </PaginationItem>
-                  </>
+                {currentPage < totalPages - 2 && (
+                  <PaginationItem>
+                    <PaginationEllipsis />
+                  </PaginationItem>
                 )}
+                {currentPage < totalPages - 1 && (
+                  <PaginationItem>
+                    <PaginationLink onClick={() => setCurrentPage(totalPages)}>
+                      {totalPages}
+                    </PaginationLink>
+                  </PaginationItem>
+                )}
+
+                <PaginationItem>
+                  <PaginationNext
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                    }
+                  />
+                </PaginationItem>
               </PaginationContent>
             </Pagination>
           </div>

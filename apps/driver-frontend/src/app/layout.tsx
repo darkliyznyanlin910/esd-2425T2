@@ -4,7 +4,7 @@ import { GeistSans } from "geist/font/sans";
 
 import { cn } from "@repo/ui";
 import { ThemeProvider, ThemeToggle } from "@repo/ui/theme";
-import { Toaster } from "@repo/ui/toast";
+import { Toaster } from "@repo/ui/toaster";
 
 import "~/styles/globals.css";
 

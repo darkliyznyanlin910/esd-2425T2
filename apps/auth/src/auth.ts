@@ -9,7 +9,7 @@ import { getServiceBaseUrl, SERVICES } from "@repo/service-discovery";
 import type { HonoExtension } from "./type";
 import { env } from "./env";
 
-export const auth = betterAuth({
+export const auth: any = betterAuth({
   emailAndPassword: {
     enabled: true,
   },

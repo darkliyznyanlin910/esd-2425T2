@@ -4,17 +4,19 @@ import { useCallback, useEffect, useRef } from "react";
 import { RefreshCcw } from "lucide-react";
 
 import { getServiceBaseUrl } from "@repo/service-discovery";
-import { toast } from "@repo/ui/toast";
+import { useToast } from "@repo/ui/hooks/use-toast";
+import { ToastAction } from "@repo/ui/toast";
 
 let wsReuse: WebSocket | null = null;
 
 interface NotificationComponentProps {
-  onNewOrder?: () => void;
+  onNewOrder?: (orderData?: any) => void;
 }
 
 export default function NotificationComponent({
   onNewOrder,
 }: NotificationComponentProps) {
+  const { toast } = useToast();
   const wsRef = useRef<WebSocket | null>(null);
   const pingIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -57,41 +59,36 @@ export default function NotificationComponent({
           return;
         }
       }
-      const message = JSON.parse(event.data);
-      console.log("WebSocket message received:", message);
 
-      if (!message || message.data === undefined) {
-        console.warn("Received message with missing data:", message);
-        return;
-      }
+      try {
+        const message = JSON.parse(event.data);
+        console.log("WebSocket message received:", message);
 
-      switch (message.event) {
-        case "invalidateOrder":
-          console.log("Invalidating order:", message.data);
-          break;
-        case "broadcastOrder":
-          // Call the callback to notify parent component
-          if (onNewOrder) {
-            onNewOrder();
-          }
+        if (!message || !message.data) {
+          console.warn("Received message with missing data:", message);
+          return;
+        }
 
-          toast("New Order Available", {
-            description: `New order available for you!\n
-          Order ID: ${message.data.id}\n
-          Order Details: ${message.data.orderDetails}
-          `,
-            duration: 10000,
-            action: {
-              label: <RefreshCcw className="h-4 w-4" />,
-              onClick: () => {
-                toast.dismiss();
-                window.location.reload();
-              },
-            },
-          });
-          break;
-        default:
-          console.warn("Unknown event type:", message.event);
+        switch (message.event) {
+          case "invalidateOrder":
+            console.log("Invalidating order:", message.data);
+            break;
+          case "broadcastOrder":
+            if (onNewOrder && message.data) {
+              onNewOrder(message.data);
+            }
+
+            toast({
+              title: "New Order Available",
+              description: `Order ID: ${message.data.displayId || ""}\n\nOrder Details: ${message.data.orderDetails || ""}`,
+              duration: 10000,
+            });
+            break;
+          default:
+            console.warn("Unknown event type:", message.event);
+        }
+      } catch (error) {
+        console.error("Error parsing WebSocket message:", error);
       }
     };
 
