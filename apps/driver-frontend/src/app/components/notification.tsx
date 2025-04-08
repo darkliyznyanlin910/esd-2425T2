@@ -1,23 +1,25 @@
 "use client";
 
 import { useCallback, useEffect, useRef } from "react";
+import { RefreshCcw } from "lucide-react";
 
 import { authClient } from "@repo/auth-client";
 import { getServiceBaseUrl } from "@repo/service-discovery";
 import { useToast } from "@repo/ui/hooks/use-toast";
+import { ToastAction } from "@repo/ui/toast";
 
 let wsReuse: WebSocket | null = null;
 
 interface NotificationComponentProps {
   onNewOrder?: (orderData?: any) => void;
   onInvalidateOrder?: (orderId: string) => void;
-  acceptedOrderIds?: Set<string>; // Add this prop
+  acceptedOrderIds?: Set<string>;
 }
 
 export default function NotificationComponent({
   onNewOrder,
   onInvalidateOrder,
-  acceptedOrderIds = new Set(), // Default to empty set
+  acceptedOrderIds = new Set(),
 }: NotificationComponentProps) {
   const { toast } = useToast();
   const wsRef = useRef<WebSocket | null>(null);
@@ -122,6 +124,29 @@ export default function NotificationComponent({
             });
             break;
 
+          case "manualAssignment":
+            console.log("Manual assignment received:", message.data);
+            console.log("Current user ID:", session?.user?.id);
+            console.log("Message driver ID:", message.data.driverId);
+
+            // Check if this assignment is for the current driver
+            toast({
+              title: "Order Assigned to You",
+              description: `An administrator has assigned order ${message.data.order?.displayId || ""} to you for delivery.`,
+              variant: "success",
+              duration: 10000,
+              action: (
+                <ToastAction
+                  altText="View"
+                  onClick={() => window.location.reload()}
+                >
+                  View
+                </ToastAction>
+              ),
+            });
+
+            break;
+
           default:
             console.warn("Unknown event type:", message.event);
         }
@@ -147,7 +172,7 @@ export default function NotificationComponent({
     session?.user?.id,
     toast,
     acceptedOrderIds,
-  ]); // Add acceptedOrderIds to deps
+  ]);
 
   useEffect(() => {
     connectWebSocket();

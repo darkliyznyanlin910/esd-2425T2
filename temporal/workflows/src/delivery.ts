@@ -24,6 +24,7 @@ const {
   assignOrderToDriver,
   invalidateOrder,
   removeOrderAssignment,
+  notifyDriverOfManualAssignment,
 } = proxyActivities<typeof activities>({
   startToCloseTimeout: "1m",
   retry: {
@@ -40,6 +41,7 @@ export async function delivery(
   if (manualAssignDriverId) {
     await updateOrderStatus(order.id, "DRIVER_FOUND");
     await assignOrderToDriver(order, manualAssignDriverId);
+    await notifyDriverOfManualAssignment(order, manualAssignDriverId);
     orderStatus = "DRIVER_FOUND";
   }
 
