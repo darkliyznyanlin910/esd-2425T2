@@ -81,6 +81,43 @@ const driverRouter = new OpenAPIHono()
       return c.json({ success: true });
     },
   )
+  .openapi(
+    createRoute({
+      method: "post",
+      path: "/manualAssign",
+      middleware: [bearerAuth({ token: env.INTERNAL_COMMUNICATION_SECRET })],
+      request: {
+        body: {
+          content: {
+            "application/json": {
+              schema: z.object({
+                order: OrderSchema,
+                driverId: z.string().optional(),
+              }),
+            },
+          },
+        },
+      },
+      responses: {
+        200: {
+          description: "Success",
+        },
+      },
+    }),
+    async (c) => {
+      const input = c.req.valid("json");
+      console.log("Manual Assignment", input);
+      if (input.driverId) {
+        console.log("Driver ID is present:", input.driverId);
+      } else {
+        console.log(
+          "WARNING: Driver ID is missing from manual assignment payload!",
+        );
+      }
+      emitterDriver.emit("manualAssignment", input);
+      return c.json({ success: true });
+    },
+  )
   .get(
     "/ws",
     authMiddleware({
@@ -99,6 +136,10 @@ const driverRouter = new OpenAPIHono()
           emitterDriver.on("invalidateOrder", (data) => {
             console.log("invalidateOrder", data);
             ws.send(JSON.stringify({ event: "invalidateOrder", data }));
+          });
+          emitterDriver.on("manualAssignment", (data) => {
+            console.log("manualAssignment", data);
+            ws.send(JSON.stringify({ event: "manualAssignment", data }));
           });
         },
         onMessage(evt, ws) {
