@@ -507,52 +507,57 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
 
       return c.json(order);
     },
+  )
+  .openapi(
+    createRoute({
+      method: "post",
+      path: "/bulk",
+      description: "Get multiple orders by their IDs",
+      request: {
+        body: {
+          content: {
+            "application/json": {
+              schema: z.object({
+                ids: z.array(z.string()),
+              }),
+            },
+          },
+        },
+      },
+      responses: {
+        200: {
+          content: {
+            "application/json": {
+              schema: z.array(OrderSchema),
+            },
+          },
+          description: "Orders retrieved successfully",
+        },
+        400: {
+          description: "Bad request",
+        },
+      },
+    }),
+    async (c) => {
+      const { ids } = c.req.valid("json");
+
+      if (!ids || !Array.isArray(ids) || ids.length === 0) {
+        return c.json({ error: "Invalid order IDs provided" }, 400);
+      }
+
+      try {
+        const orders = await db.order.findMany({
+          where: {
+            id: { in: ids },
+          },
+        });
+
+        return c.json(orders);
+      } catch (error) {
+        console.error("Error fetching orders in bulk:", error);
+        return c.json({ error: "Failed to fetch orders" }, 500);
+      }
+    },
   );
-// .openapi(
-//   createRoute({
-//     method: "get",
-//     path: "/user/:id",
-//     description: "Get all orders by user ID",
-//     middleware: [
-//       authMiddleware({
-//         authBased: {
-//           allowedRoles: ["client", "admin"],
-//         },
-//       }),
-//     ] as const,
-//     request: {
-//       params: z.object({
-//         id: z.string(),
-//       }),
-//     },
-//     responses: {
-//       200: {
-//         content: {
-//           "application/json": {
-//             schema: z.array(OrderSchema),
-//           },
-//         },
-//         description: "Orders fetched by user ID",
-//       },
-//       401: {
-//         description: "Unauthorized to fetch orders by user ID",
-//       },
-//       404: {
-//         description: "Orders not found",
-//       },
-//     },
-//   }),
-//   async (c) => {
-//     const { id } = c.req.valid("param");
-
-//     const orders = await db.order.findMany({
-//       where: {
-//         userId: id,
-//       },
-//     });
-
-//     return c.json(orders);
-//   },
-// );
 
 export { orderRouter };

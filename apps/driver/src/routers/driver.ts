@@ -4,8 +4,6 @@ import { z } from "zod";
 import type { HonoExtension } from "@repo/auth/type";
 import { authMiddleware } from "@repo/auth/auth";
 import { db } from "@repo/db-driver";
-import { db as orderDb } from "@repo/db-order";
-import { OrderSchema } from "@repo/db-order/zod";
 import { connectToTemporal } from "@repo/temporal-common/temporal-client";
 import {
   deliveredSignal,
@@ -280,14 +278,13 @@ const driverRouter = new OpenAPIHono<HonoExtension>()
                   ]),
                   createdAt: z.string(),
                   updatedAt: z.string(),
-                  orderDetails: OrderSchema.optional(),
                 }),
               ),
             },
           },
-          description: "Get all orders of driver by orderStatus",
+          description: "Get all assignments of driver by orderStatus",
         },
-        404: { description: "Assignment not found" },
+        404: { description: "Driver or assignments not found" },
       },
     }),
     async (c) => {
@@ -312,33 +309,10 @@ const driverRouter = new OpenAPIHono<HonoExtension>()
       });
 
       if (!driverAssignments || driverAssignments.length === 0) {
-        return c.json({});
+        return c.json([]);
       }
 
-      // Extract order IDs from the assignments
-      const orderIds = driverAssignments.map(
-        (assignment) => assignment.orderId,
-      );
-
-      // Get the order details from the order database
-      const orderDetails = await orderDb.order.findMany({
-        where: {
-          id: { in: orderIds },
-        },
-      });
-
-      // Combine the assignment data with the order details
-      const combinedResults = driverAssignments.map((assignment) => {
-        const matchingOrder = orderDetails.find(
-          (order) => order.id === assignment.orderId,
-        );
-        return {
-          ...assignment,
-          orderDetails: matchingOrder || null,
-        };
-      });
-
-      return c.json(combinedResults);
+      return c.json(driverAssignments);
     },
   )
   .openapi(
