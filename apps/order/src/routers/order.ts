@@ -139,6 +139,13 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
       responses: {
         200: {
           description: "Process order",
+          content: {
+            "application/json": {
+              schema: z.object({
+                message: z.string(),
+              }),
+            },
+          },
         },
         401: {
           description: "Unauthorized to process order",
