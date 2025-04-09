@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e" pages="2">
     <diagram name="Page-1" id="jY7Wt-v1LxDKGmgFNE5M">
-        <mxGraphModel dx="962" dy="539" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+        <mxGraphModel dx="1487" dy="833" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -13,7 +13,7 @@
                 <mxCell id="ZCIKir5QU30v5sFeuKnt-3" value="Order Service" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
                     <mxGeometry x="490" y="58.75" width="121" height="57.5" as="geometry"/>
                 </mxCell>
-                <mxCell id="ZCIKir5QU30v5sFeuKnt-4" value="1. User creates order with &lt;br&gt;required details" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+                <mxCell id="ZCIKir5QU30v5sFeuKnt-4" value="1. Customer creates order with &lt;br&gt;required details" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
                     <mxGeometry x="32" y="20" width="239" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="ZCIKir5QU30v5sFeuKnt-5" value="" style="endArrow=classic;startArrow=classic;html=1;rounded=0;" parent="1" source="ZCIKir5QU30v5sFeuKnt-1" target="ZCIKir5QU30v5sFeuKnt-3" edge="1">
@@ -46,8 +46,8 @@
                         </Array>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="ZCIKir5QU30v5sFeuKnt-11" value="4.Gets user details&#xa;from user service" style="text;whiteSpace=wrap;align=left;" parent="1" vertex="1">
-                    <mxGeometry x="707" y="336" width="113" height="40" as="geometry"/>
+                <mxCell id="ZCIKir5QU30v5sFeuKnt-11" value="4.Gets customer details" style="text;whiteSpace=wrap;align=left;" parent="1" vertex="1">
+                    <mxGeometry x="707" y="321" width="113" height="40" as="geometry"/>
                 </mxCell>
                 <mxCell id="ZCIKir5QU30v5sFeuKnt-12" value="Stripe Payment&lt;br&gt;Service" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
                     <mxGeometry x="490" y="428" width="121" height="57.5" as="geometry"/>
@@ -61,7 +61,7 @@
                 <mxCell id="ZCIKir5QU30v5sFeuKnt-14" value="6. Using Stripe customer ID to create a checkout session" style="text;whiteSpace=wrap;align=left;" parent="1" vertex="1">
                     <mxGeometry x="447" y="336" width="113" height="72" as="geometry"/>
                 </mxCell>
-                <mxCell id="ZCIKir5QU30v5sFeuKnt-15" value="5. Create Stripe&#xa;Customer and link&#xa;to user account if not already linked" style="text;whiteSpace=wrap;align=left;" parent="1" vertex="1">
+                <mxCell id="ZCIKir5QU30v5sFeuKnt-15" value="5. Create Stripe&#xa;Customer and link&#xa;to customer account if not already linked" style="text;whiteSpace=wrap;align=left;" parent="1" vertex="1">
                     <mxGeometry x="555" y="336" width="113" height="72" as="geometry"/>
                 </mxCell>
                 <mxCell id="ZCIKir5QU30v5sFeuKnt-16" value="7. Update Order Service with Stripe checkout ID" style="text;whiteSpace=wrap;align=left;" parent="1" vertex="1">
@@ -91,7 +91,7 @@
                 <mxCell id="ZCIKir5QU30v5sFeuKnt-22" value="9b4. Extracts Stripe invoice for record keeping" style="text;whiteSpace=wrap;align=left;fontColor=#4D9900;labelBackgroundColor=none;" parent="1" vertex="1">
                     <mxGeometry x="230" y="346" width="142.5" height="52" as="geometry"/>
                 </mxCell>
-                <mxCell id="ZCIKir5QU30v5sFeuKnt-23" value="9c. If user cancels checkout, remove ID from Order Service" style="text;whiteSpace=wrap;align=left;fontColor=#990000;labelBackgroundColor=none;" parent="1" vertex="1">
+                <mxCell id="ZCIKir5QU30v5sFeuKnt-23" value="9c. If customer cancels checkout, remove ID from Order Service" style="text;whiteSpace=wrap;align=left;fontColor=#990000;labelBackgroundColor=none;" parent="1" vertex="1">
                     <mxGeometry x="259.5" y="160" width="180" height="72" as="geometry"/>
                 </mxCell>
                 <mxCell id="ZCIKir5QU30v5sFeuKnt-24" value="Delivery Workflow (Temporal)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=light-dark(#FFF4C3,var(--ge-dark-color, #121212));strokeColor=light-dark(#FFD966,#FFFFFF);" parent="1" vertex="1">
