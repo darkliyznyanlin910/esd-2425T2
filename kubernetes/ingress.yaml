@@ -47,6 +47,16 @@ spec:
                 name: esd-nginx
                 port:
                   number: 80
+    - host: esd-order.johnnyknl.me
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: esd-order
+                port:
+                  number: 80
     - host: temporal.esd.local
       http:
         paths:

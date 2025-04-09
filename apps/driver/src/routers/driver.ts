@@ -4,8 +4,6 @@ import { z } from "zod";
 import type { HonoExtension } from "@repo/auth/type";
 import { authMiddleware } from "@repo/auth/auth";
 import { db } from "@repo/db-driver";
-import { db as orderDb } from "@repo/db-order";
-import { OrderSchema } from "@repo/db-order/zod";
 import { connectToTemporal } from "@repo/temporal-common/temporal-client";
 import {
   deliveredSignal,
@@ -102,7 +100,25 @@ const driverRouter = new OpenAPIHono<HonoExtension>()
         },
       },
       responses: {
-        200: { description: "Driver updated" },
+        200: {
+          description: "Driver updated successfully",
+          content: {
+            "application/json": {
+              schema: z.object({
+                success: z.boolean(),
+                message: z.string(),
+                driver: z.object({
+                  id: z.string(),
+                  phone: z.string(),
+                  userId: z.string(),
+                  availability: z.enum(["AVAILABLE", "ON_DELIVERY", "OFFLINE"]),
+                  createdAt: z.string(),
+                  updatedAt: z.string(),
+                }),
+              }),
+            },
+          },
+        },
         404: { description: "Driver not found" },
       },
     }),
@@ -113,7 +129,10 @@ const driverRouter = new OpenAPIHono<HonoExtension>()
         where: { id },
         data: updateData,
       });
-      return c.json({ message: "Driver updated", driver: updatedDriver });
+      return c.json(
+        { success: true, message: "Driver updated", driver: updatedDriver },
+        200,
+      );
     },
   )
   .openapi(
@@ -134,7 +153,25 @@ const driverRouter = new OpenAPIHono<HonoExtension>()
         },
       },
       responses: {
-        200: { description: "Driver availability updated" },
+        200: {
+          description: "Availability updated successfully",
+          content: {
+            "application/json": {
+              schema: z.object({
+                success: z.boolean(),
+                message: z.string(),
+                driver: z.object({
+                  id: z.string(),
+                  phone: z.string(),
+                  userId: z.string(),
+                  availability: z.enum(["AVAILABLE", "ON_DELIVERY", "OFFLINE"]),
+                  createdAt: z.string(),
+                  updatedAt: z.string(),
+                }),
+              }),
+            },
+          },
+        },
         404: { description: "Driver not found" },
       },
     }),
@@ -148,6 +185,7 @@ const driverRouter = new OpenAPIHono<HonoExtension>()
         data: { availability },
       });
       return c.json({
+        success: true,
         message: "Driver availability updated",
         driver: updatedDriver,
       });
@@ -213,7 +251,14 @@ const driverRouter = new OpenAPIHono<HonoExtension>()
       description: "Delete driver by userId",
       request: { params: z.object({ id: z.string() }) },
       responses: {
-        200: { description: "Driver deleted" },
+        200: {
+          description: "Driver deleted successfully",
+          content: {
+            "application/json": {
+              schema: z.object({ message: z.string() }),
+            },
+          },
+        },
         404: { description: "Driver not found" },
       },
     }),
@@ -241,7 +286,17 @@ const driverRouter = new OpenAPIHono<HonoExtension>()
         },
       },
       responses: {
-        201: { description: "Order assigned to driver" },
+        201: {
+          description: "Order assigned to driver",
+          content: {
+            "application/json": {
+              schema: z.object({
+                id: z.string(),
+                message: z.string(),
+              }),
+            },
+          },
+        },
       },
     }),
     async (c) => {
@@ -280,14 +335,13 @@ const driverRouter = new OpenAPIHono<HonoExtension>()
                   ]),
                   createdAt: z.string(),
                   updatedAt: z.string(),
-                  orderDetails: OrderSchema.optional(),
                 }),
               ),
             },
           },
-          description: "Get all orders of driver by orderStatus",
+          description: "Get all assignments of driver by orderStatus",
         },
-        404: { description: "Assignment not found" },
+        404: { description: "Driver or assignments not found" },
       },
     }),
     async (c) => {
@@ -312,33 +366,10 @@ const driverRouter = new OpenAPIHono<HonoExtension>()
       });
 
       if (!driverAssignments || driverAssignments.length === 0) {
-        return c.json({});
+        return c.json([]);
       }
 
-      // Extract order IDs from the assignments
-      const orderIds = driverAssignments.map(
-        (assignment) => assignment.orderId,
-      );
-
-      // Get the order details from the order database
-      const orderDetails = await orderDb.order.findMany({
-        where: {
-          id: { in: orderIds },
-        },
-      });
-
-      // Combine the assignment data with the order details
-      const combinedResults = driverAssignments.map((assignment) => {
-        const matchingOrder = orderDetails.find(
-          (order) => order.id === assignment.orderId,
-        );
-        return {
-          ...assignment,
-          orderDetails: matchingOrder || null,
-        };
-      });
-
-      return c.json(combinedResults);
+      return c.json(driverAssignments);
     },
   )
   .openapi(
@@ -371,7 +402,20 @@ const driverRouter = new OpenAPIHono<HonoExtension>()
           state: z.enum(["DRIVER_FOUND", "PICKED_UP", "DELIVERED"]),
         }),
       },
-      responses: { 200: { description: "Signal sent" } },
+      responses: {
+        201: {
+          description: "Order assigned",
+          content: {
+            "application/json": {
+              schema: z.object({
+                id: z.string(),
+                message: z.string(),
+              }),
+            },
+          },
+        },
+        404: { description: "Driver not found" },
+      },
     }),
     async (c) => {
       const { orderId, driverId } = c.req.valid("json");
@@ -437,7 +481,16 @@ const driverRouter = new OpenAPIHono<HonoExtension>()
         params: z.object({ orderId: z.string() }).strict(),
       },
       responses: {
-        200: { description: "Order assignment deleted" },
+        200: {
+          description: "Order assignment deleted",
+          content: {
+            "application/json": {
+              schema: z.object({
+                message: z.string(),
+              }),
+            },
+          },
+        },
         404: { description: "Order assignment not found" },
       },
     }),
