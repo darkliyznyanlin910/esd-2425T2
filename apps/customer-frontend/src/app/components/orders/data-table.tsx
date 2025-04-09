@@ -81,6 +81,7 @@ export function DataTable<TData, TValue>({
             <option value="displayId">Order ID</option>
             <option value="userId">Customer ID</option>
             <option value="orderDetails">Order Details</option>
+            <option value="orderStatus">Status</option>
           </select>
 
           <Input
@@ -89,7 +90,9 @@ export function DataTable<TData, TValue>({
                 ? "Order ID"
                 : selectedColumn === "userId"
                   ? "Customer ID"
-                  : "Order Details"
+                  : selectedColumn === "orderDetails"
+                    ? "Order Details"
+                    : "Status"
             }`}
             value={filterValue}
             onChange={handleFilterChange}

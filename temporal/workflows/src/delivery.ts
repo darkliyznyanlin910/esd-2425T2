@@ -9,9 +9,9 @@ import {
 import type * as activities from "@repo/temporal-activities";
 import type { Order, OrderStatus } from "@repo/temporal-common";
 
-export const PICKUP_TIMEOUT = "30s";
-export const DELIVERY_TIMEOUT = "30s";
-export const DRIVER_FOUND_TIMEOUT = "30s";
+export const PICKUP_TIMEOUT = "10s";
+export const DELIVERY_TIMEOUT = "10s";
+export const DRIVER_FOUND_TIMEOUT = "10s";
 
 export const driverFoundSignal = defineSignal<[string]>("DRIVER_FOUND");
 export const pickedUpSignal = defineSignal("PICKED_UP");
