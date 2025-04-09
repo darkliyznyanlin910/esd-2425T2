@@ -9,7 +9,7 @@ import { getServiceBaseUrl } from "@repo/service-discovery";
 import { columns } from "./orders/columns";
 import { DataTable } from "./orders/data-table";
 
-async function getOrders(userId: string): Promise<Order[]> {
+async function getOrders(): Promise<Order[]> {
   try {
     const response = await fetch(`${getServiceBaseUrl("order")}/order/order`, {
       method: "GET",
@@ -39,7 +39,7 @@ export default function OrderTablePage() {
 
   const fetchOrders = async () => {
     if (!userId) return;
-    const fetchedData = await getOrders(userId);
+    const fetchedData = await getOrders();
     setOrders(fetchedData);
   };
 
