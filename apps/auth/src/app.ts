@@ -33,7 +33,7 @@ const routes = app
     info: {
       title: "Auth API",
       version: "1.0.0",
-      description: "Auth API",
+      description: "ESD Auth API",
     },
   })
   .get("/", (c) => c.json({ ok: true, service: "auth" }))

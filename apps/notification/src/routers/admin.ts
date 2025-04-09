@@ -70,13 +70,21 @@ const adminRouter = new OpenAPIHono()
       responses: {
         200: {
           description: "Success",
+          content: {
+            "application/json": {
+              schema: z.object({
+                success: z.boolean(),
+                order: OrderSchema,
+              }),
+            },
+          },
         },
       },
     }),
     async (c) => {
       const input = c.req.valid("json");
       emitterAdmin.emit("manualAssignment", input);
-      return c.json({ success: true });
+      return c.json({ success: true, order: input });
     },
   )
   .get(
