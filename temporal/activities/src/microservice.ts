@@ -530,3 +530,57 @@ export async function startDeliveryProcess(order: Order): Promise<void> {
     });
   }
 }
+
+export async function notifyDriverOfManualAssignment(
+  order: Order,
+  driverId: string,
+): Promise<void> {
+  try {
+    log.info("Notifying driver of manual assignment", {
+      orderId: order.id,
+      driverId: driverId,
+    });
+
+    // Prepare the payload - the order should be nested under 'order' property
+    const payload = {
+      order: order,
+      driverId: driverId,
+    };
+    const res = await NotificationClient.driver.manualAssign.$post(
+      {
+        json: payload,
+      },
+      {
+        init: {
+          headers: {
+            Authorization: `Bearer ${env.INTERNAL_COMMUNICATION_SECRET}`,
+            "Content-Type": "application/json",
+          },
+        },
+      },
+    );
+
+    if (!res.ok) {
+      throw new Error(`API responded with status ${res.status}`);
+    }
+
+    log.info("Successfully notified driver of manual assignment", {
+      orderId: order.id,
+      driverId: driverId,
+      status: res.status,
+    });
+  } catch (error) {
+    log.error("Failed to notify driver of manual assignment", {
+      orderId: order.id,
+      driverId: driverId,
+      error: error instanceof Error ? error.message : String(error),
+    });
+
+    throw ApplicationFailure.create({
+      nonRetryable: true,
+      message: `Failed to notify driver of manual assignment: ${
+        error instanceof Error ? error.message : String(error)
+      }`,
+    });
+  }
+}
