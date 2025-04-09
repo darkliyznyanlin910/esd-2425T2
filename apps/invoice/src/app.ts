@@ -28,9 +28,9 @@ const routes = app
       },
     ],
     info: {
-      title: "Template API",
+      title: "Invoice API",
       version: "1.0.0",
-      description: "Template API",
+      description: "ESD Invoice API",
     },
   })
   .get("/", (c) => c.json({ ok: true, service: "invoice" }))

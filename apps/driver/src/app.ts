@@ -24,9 +24,9 @@ const routes = app
   .doc("/openapi", {
     openapi: "3.0.0",
     info: {
-      title: "Template API",
+      title: "Driver API",
       version: "1.0.0",
-      description: "Template API",
+      description: "ESD Driver API",
     },
   })
   .get("/", (c) => c.json({ ok: true, service: "driver" }))

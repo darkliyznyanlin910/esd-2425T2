@@ -48,8 +48,31 @@ const invoiceRouter = router
         },
       },
       responses: {
-        200: { description: "Pre-signed URL generated successfully" },
-        400: { description: "Failed to generate pre-signed URL" },
+        200: {
+          description: "Pre-signed URL generated successfully",
+          content: {
+            "application/json": {
+              schema: z.object({
+                success: z.boolean(),
+                uploadUrl: z.string(),
+                key: z.string(),
+                bucket: z.string(),
+                expiresIn: z.number(),
+              }),
+            },
+          },
+        },
+        400: {
+          description: "Failed to generate pre-signed URL",
+          content: {
+            "application/json": {
+              schema: z.object({
+                success: z.boolean(),
+                error: z.string(),
+              }),
+            },
+          },
+        },
       },
     }),
     async (c) => {
@@ -58,6 +81,7 @@ const invoiceRouter = router
 
         const filename = `invoice-${Date.now()}.pdf`;
         const key = `${orderId}/${filename}`;
+        const expiresIn = 300; // 5 minutes
 
         const command = new PutObjectCommand({
           Bucket: env.S3_BUCKET,
@@ -66,20 +90,29 @@ const invoiceRouter = router
         });
 
         const uploadUrl = await getSignedUrl(s3Client, command, {
-          expiresIn: 300,
+          expiresIn,
         });
 
         return c.json(
           {
+            success: true,
             uploadUrl,
             key,
-            bucket: process.env.S3_BUCKET || "invoice-bucket",
+            bucket: env.S3_BUCKET || "invoice-bucket",
+            expiresIn,
           },
           200,
         );
       } catch (error) {
         console.error("Error generating pre-signed URL:", error);
-        return c.json({ error: "Failed to generate pre-signed URL" }, 400);
+        return c.json(
+          {
+            success: false,
+            error: "Failed to generate pre-signed URL",
+            message: error instanceof Error ? error.message : "Unknown error",
+          },
+          400,
+        );
       }
     },
   )
@@ -108,14 +141,63 @@ const invoiceRouter = router
         },
       },
       responses: {
-        201: { description: "Invoice created successfully" },
-        400: { description: "Invalid input" },
+        201: {
+          description: "Invoice created successfully",
+          content: {
+            "application/json": {
+              schema: z.object({
+                success: z.boolean(),
+                message: z.string(),
+                invoice: z.object({
+                  id: z.string(),
+                  orderId: z.string(),
+                  customerId: z.string(),
+                  status: z.enum(["PENDING", "CANCELLED", "COMPLETED"]),
+                  path: z.string(),
+                  amount: z.number(),
+                  createdAt: z.string(),
+                  updatedAt: z.string(),
+                }),
+              }),
+            },
+          },
+        },
+        400: {
+          description: "Invalid input",
+          content: {
+            "application/json": {
+              schema: z.object({
+                success: z.boolean(),
+                error: z.string(),
+              }),
+            },
+          },
+        },
       },
     }),
     async (c) => {
-      const data = c.req.valid("json");
-      const createdInvoice = await db.invoice.create({ data });
-      return c.json(createdInvoice, 201);
+      try {
+        const data = c.req.valid("json");
+        const createdInvoice = await db.invoice.create({ data });
+        return c.json(
+          {
+            success: true,
+            message: "Invoice created successfully",
+            invoice: createdInvoice,
+          },
+          201,
+        );
+      } catch (error) {
+        console.error("Error creating invoice:", error);
+        return c.json(
+          {
+            success: false,
+            error: "Failed to create invoice",
+            message: error instanceof Error ? error.message : "Unknown error",
+          },
+          400,
+        );
+      }
     },
   )
 
@@ -131,35 +213,108 @@ const invoiceRouter = router
         }),
       },
       responses: {
-        200: { description: "Invoice found" },
-        404: { description: "Invoice not found" },
+        200: {
+          description: "Invoice found",
+          content: {
+            "application/json": {
+              schema: z.object({
+                success: z.boolean(),
+                invoice: z.object({
+                  id: z.string(),
+                  orderId: z.string(),
+                  customerId: z.string(),
+                  status: z.enum(["PENDING", "CANCELLED", "COMPLETED"]),
+                  path: z.string(),
+                  amount: z.number(),
+                  createdAt: z.string(),
+                  updatedAt: z.string(),
+                  invoiceUrl: z.string(),
+                }),
+              }),
+            },
+          },
+        },
+        404: {
+          description: "Invoice not found",
+          content: {
+            "application/json": {
+              schema: z.object({
+                success: z.boolean(),
+                error: z.string(),
+              }),
+            },
+          },
+        },
+        500: {
+          description: "Server error",
+          content: {
+            "application/json": {
+              schema: z.object({
+                success: z.boolean(),
+                error: z.string(),
+                message: z.string().optional(),
+              }),
+            },
+          },
+        },
       },
     }),
     async (c) => {
       const { id } = c.req.valid("param");
-      const invoice = await db.invoice.findUnique({ where: { id } });
-      if (!invoice) return c.json({ error: "Invoice not found" }, 404);
-      const command = new GetObjectCommand({
-        Bucket: env.S3_BUCKET,
-        Key: invoice.path,
-      });
-      const invoiceUrl = await getSignedUrl(s3Client, command, {
-        expiresIn: 300,
-      });
-      return c.json({
-        ...invoice,
-        invoiceUrl: invoiceUrl.replace(
-          env.S3_ENDPOINT,
-          "http://localhost:4566",
-        ),
-      });
+
+      try {
+        const invoice = await db.invoice.findUnique({ where: { id } });
+
+        if (!invoice) {
+          return c.json(
+            {
+              success: false,
+              error: "Invoice not found",
+            },
+            404,
+          );
+        }
+
+        const command = new GetObjectCommand({
+          Bucket: env.S3_BUCKET,
+          Key: invoice.path,
+        });
+
+        const invoiceUrl = await getSignedUrl(s3Client, command, {
+          expiresIn: 300,
+        });
+
+        return c.json(
+          {
+            success: true,
+            invoice: {
+              ...invoice,
+              invoiceUrl: invoiceUrl.replace(
+                env.S3_ENDPOINT,
+                "http://localhost:4566",
+              ),
+            },
+          },
+          200,
+        );
+      } catch (error) {
+        console.error("Error retrieving invoice:", error);
+        return c.json(
+          {
+            success: false,
+            error: "Failed to retrieve invoice",
+            message: error instanceof Error ? error.message : "Unknown error",
+          },
+          500,
+        );
+      }
     },
   )
   .openapi(
     createRoute({
       method: "get",
       path: "/invoices/order/:orderId",
-      description: "Get invoice by ID",
+      description: "Get invoice by order ID",
       request: {
         params: z.object({
           orderId: z.string(),
@@ -176,36 +331,114 @@ const invoiceRouter = router
         }),
       ] as const,
       responses: {
-        200: { description: "Invoice found" },
-        404: { description: "Invoice not found" },
+        200: {
+          description: "Invoice found",
+          content: {
+            "application/json": {
+              schema: z.object({
+                success: z.boolean(),
+                invoice: z.object({
+                  id: z.string(),
+                  orderId: z.string(),
+                  customerId: z.string(),
+                  status: z.enum(["PENDING", "CANCELLED", "COMPLETED"]),
+                  path: z.string(),
+                  amount: z.number(),
+                  createdAt: z.string(),
+                  updatedAt: z.string(),
+                  invoiceUrl: z.string(),
+                }),
+              }),
+            },
+          },
+        },
+        404: {
+          description: "Invoice not found",
+          content: {
+            "application/json": {
+              schema: z.object({
+                success: z.boolean(),
+                error: z.string(),
+              }),
+            },
+          },
+        },
+        500: {
+          description: "Server error",
+          content: {
+            "application/json": {
+              schema: z.object({
+                success: z.boolean(),
+                error: z.string(),
+                message: z.string().optional(),
+              }),
+            },
+          },
+        },
       },
     }),
     async (c) => {
       const { orderId } = c.req.valid("param");
-      let userId: string | undefined = undefined;
-      const user = c.get("user");
-      if (!!user && user.role === "client" && !c.req.header("Authorization")) {
-        userId = user.id;
-      }
 
-      const invoice = await db.invoice.findFirst({
-        where: { orderId, customerId: userId },
-      });
-      if (!invoice) return c.json({ error: "Invoice not found" }, 404);
-      const command = new GetObjectCommand({
-        Bucket: env.S3_BUCKET,
-        Key: invoice.path,
-      });
-      const invoiceUrl = await getSignedUrl(s3Client, command, {
-        expiresIn: 300,
-      });
-      return c.json({
-        ...invoice,
-        invoiceUrl: invoiceUrl.replace(
-          env.S3_ENDPOINT,
-          "http://localhost:4566",
-        ),
-      });
+      try {
+        let userId: string | undefined = undefined;
+        const user = c.get("user");
+
+        if (
+          !!user &&
+          user.role === "client" &&
+          !c.req.header("Authorization")
+        ) {
+          userId = user.id;
+        }
+
+        const invoice = await db.invoice.findFirst({
+          where: { orderId, customerId: userId },
+        });
+
+        if (!invoice) {
+          return c.json(
+            {
+              success: false,
+              error: "Invoice not found for this order",
+            },
+            404,
+          );
+        }
+
+        const command = new GetObjectCommand({
+          Bucket: env.S3_BUCKET,
+          Key: invoice.path,
+        });
+
+        const invoiceUrl = await getSignedUrl(s3Client, command, {
+          expiresIn: 300,
+        });
+
+        return c.json(
+          {
+            success: true,
+            invoice: {
+              ...invoice,
+              invoiceUrl: invoiceUrl.replace(
+                env.S3_ENDPOINT,
+                "http://localhost:4566",
+              ),
+            },
+          },
+          200,
+        );
+      } catch (error) {
+        console.error("Error retrieving invoice by order ID:", error);
+        return c.json(
+          {
+            success: false,
+            error: "Failed to retrieve invoice",
+            message: error instanceof Error ? error.message : "Unknown error",
+          },
+          500,
+        );
+      }
     },
   )
 
@@ -214,24 +447,94 @@ const invoiceRouter = router
     createRoute({
       method: "get",
       path: "/invoices",
-      description: "List all invoices",
+      description: "List all invoices with pagination",
       request: {
         query: z.object({
-          page: z.number().default(1),
-          limit: z.number().default(10),
+          page: z.coerce.number().default(1),
+          limit: z.coerce.number().default(10),
         }),
       },
       responses: {
-        200: { description: "Invoices retrieved successfully" },
+        200: {
+          description: "Invoices retrieved successfully",
+          content: {
+            "application/json": {
+              schema: z.object({
+                success: z.boolean(),
+                invoices: z.array(
+                  z.object({
+                    id: z.string(),
+                    orderId: z.string(),
+                    customerId: z.string(),
+                    status: z.enum(["PENDING", "CANCELLED", "COMPLETED"]),
+                    path: z.string(),
+                    amount: z.number(),
+                    createdAt: z.string(),
+                    updatedAt: z.string(),
+                  }),
+                ),
+                pagination: z.object({
+                  page: z.number(),
+                  limit: z.number(),
+                  totalCount: z.number(),
+                  totalPages: z.number(),
+                }),
+              }),
+            },
+          },
+        },
+        500: {
+          description: "Server error",
+          content: {
+            "application/json": {
+              schema: z.object({
+                success: z.boolean(),
+                error: z.string(),
+                message: z.string().optional(),
+              }),
+            },
+          },
+        },
       },
     }),
     async (c) => {
-      const { page, limit } = c.req.valid("query");
-      const invoices = await db.invoice.findMany({
-        skip: (page - 1) * limit,
-        take: limit,
-      });
-      return c.json(invoices);
+      try {
+        const { page, limit } = c.req.valid("query");
+
+        // Get total count for pagination info
+        const totalCount = await db.invoice.count();
+        const totalPages = Math.ceil(totalCount / limit);
+
+        const invoices = await db.invoice.findMany({
+          skip: (page - 1) * limit,
+          take: limit,
+          orderBy: { createdAt: "desc" },
+        });
+
+        return c.json(
+          {
+            success: true,
+            invoices,
+            pagination: {
+              page,
+              limit,
+              totalCount,
+              totalPages,
+            },
+          },
+          200,
+        );
+      } catch (error) {
+        console.error("Error retrieving invoices:", error);
+        return c.json(
+          {
+            success: false,
+            error: "Failed to retrieve invoices",
+            message: error instanceof Error ? error.message : "Unknown error",
+          },
+          500,
+        );
+      }
     },
   )
 
@@ -256,8 +559,50 @@ const invoiceRouter = router
         },
       },
       responses: {
-        200: { description: "Invoice updated successfully" },
-        404: { description: "Invoice not found" },
+        200: {
+          description: "Invoice updated successfully",
+          content: {
+            "application/json": {
+              schema: z.object({
+                success: z.boolean(),
+                message: z.string(),
+                invoice: z.object({
+                  id: z.string(),
+                  orderId: z.string(),
+                  customerId: z.string(),
+                  status: z.enum(["PENDING", "CANCELLED", "COMPLETED"]),
+                  path: z.string(),
+                  amount: z.number(),
+                  createdAt: z.string(),
+                  updatedAt: z.string(),
+                }),
+              }),
+            },
+          },
+        },
+        404: {
+          description: "Invoice not found",
+          content: {
+            "application/json": {
+              schema: z.object({
+                success: z.boolean(),
+                error: z.string(),
+              }),
+            },
+          },
+        },
+        500: {
+          description: "Server error",
+          content: {
+            "application/json": {
+              schema: z.object({
+                success: z.boolean(),
+                error: z.string(),
+                message: z.string().optional(),
+              }),
+            },
+          },
+        },
       },
     }),
     async (c) => {
@@ -269,10 +614,36 @@ const invoiceRouter = router
           where: { id },
           data: { status },
         });
-        return c.json(updatedInvoice);
+
+        return c.json(
+          {
+            success: true,
+            message: `Invoice status updated to ${status}`,
+            invoice: updatedInvoice,
+          },
+          200,
+        );
       } catch (error) {
-        console.error(error);
-        return c.json({ error: "Invoice not found" }, 404);
+        console.error("Error updating invoice:", error);
+
+        if ((error as any)?.code === "P2025") {
+          return c.json(
+            {
+              success: false,
+              error: "Invoice not found",
+            },
+            404,
+          );
+        }
+
+        return c.json(
+          {
+            success: false,
+            error: "Failed to update invoice",
+            message: error instanceof Error ? error.message : "Unknown error",
+          },
+          500,
+        );
       }
     },
   )
@@ -289,8 +660,50 @@ const invoiceRouter = router
         }),
       },
       responses: {
-        204: { description: "Invoice deleted successfully" },
-        404: { description: "Invoice not found" },
+        200: {
+          description: "Invoice deleted successfully",
+          content: {
+            "application/json": {
+              schema: z.object({
+                success: z.boolean(),
+                message: z.string(),
+                deletedInvoice: z.object({
+                  id: z.string(),
+                  orderId: z.string(),
+                  customerId: z.string(),
+                  status: z.enum(["PENDING", "CANCELLED", "COMPLETED"]),
+                  path: z.string(),
+                  amount: z.number(),
+                  createdAt: z.string(),
+                  updatedAt: z.string(),
+                }),
+              }),
+            },
+          },
+        },
+        404: {
+          description: "Invoice not found",
+          content: {
+            "application/json": {
+              schema: z.object({
+                success: z.boolean(),
+                error: z.string(),
+              }),
+            },
+          },
+        },
+        500: {
+          description: "Server error",
+          content: {
+            "application/json": {
+              schema: z.object({
+                success: z.boolean(),
+                error: z.string(),
+                message: z.string().optional(),
+              }),
+            },
+          },
+        },
       },
     }),
     async (c) => {
@@ -300,16 +713,37 @@ const invoiceRouter = router
         const deletedInvoice = await db.invoice.delete({
           where: { id },
         });
+
         return c.json(
           {
+            success: true,
             message: "Invoice deleted successfully",
             deletedInvoice,
           },
           200,
         );
       } catch (error) {
-        console.error(error);
-        return c.json({ error: "Invoice not found" }, 404);
+        console.error("Error deleting invoice:", error);
+
+        // Check if it's a Prisma "record not found" error
+        if ((error as any)?.code === "P2025") {
+          return c.json(
+            {
+              success: false,
+              error: "Invoice not found",
+            },
+            404,
+          );
+        }
+
+        return c.json(
+          {
+            success: false,
+            error: "Failed to delete invoice",
+            message: error instanceof Error ? error.message : "Unknown error",
+          },
+          500,
+        );
       }
     },
   );

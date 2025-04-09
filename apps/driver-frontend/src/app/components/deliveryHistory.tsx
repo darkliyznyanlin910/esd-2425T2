@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { Search } from "lucide-react";
 
 import { authClient } from "@repo/auth-client";
-import { getServiceBaseUrl } from "@repo/service-discovery";
 import { Badge } from "@repo/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@repo/ui/card";
 import { Input } from "@repo/ui/input";
@@ -33,27 +32,36 @@ import {
   TableRow,
 } from "@repo/ui/table";
 
+import { getEnrichedDriverAssignments } from "../services/assignmentService";
+
 interface DeliveryHistoryItem {
   id: string;
+  driverId: string;
+  orderId: string;
+  orderStatus: "DELIVERED";
+  createdAt: string;
+  updatedAt: string;
   orderDetails: {
     id: string;
     displayId: string;
     orderDetails: string;
+    orderStatus: string;
     fromAddressLine1: string;
     fromAddressLine2?: string;
     fromZipCode: string;
     toAddressLine1: string;
     toAddressLine2?: string;
     toZipCode: string;
-    status: string;
     createdAt: string;
-  };
+    updatedAt: string;
+  } | null;
 }
 
 export default function DeliveryHistory() {
   const [deliveryHistory, setDeliveryHistory] = useState<DeliveryHistoryItem[]>(
     [],
   );
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [dateFilter, setDateFilter] = useState("all");
@@ -64,66 +72,76 @@ export default function DeliveryHistory() {
 
   useEffect(() => {
     const fetchDeliveryHistory = async () => {
+      setLoading(true);
       try {
-        if (!session) {
-          console.error("Session not found after sign-in.");
+        if (!session?.user?.id) {
+          console.error("Session not found or user ID missing.");
           return;
         }
-        const url = new URL(
-          `${getServiceBaseUrl("driver")}/driver/assignments/${session.user.id}`,
-        );
-        url.searchParams.append("status", "DELIVERED");
-        const response = await fetch(url, {
-          method: "GET",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
 
-        if (response.ok) {
-          const data = await response.json();
-          setDeliveryHistory(Array.isArray(data) ? data : []);
+        // Use the enriched assignments service
+        const enrichedAssignments = await getEnrichedDriverAssignments(
+          session.user.id,
+          "DELIVERED",
+        );
+
+        if (Array.isArray(enrichedAssignments)) {
+          setDeliveryHistory(enrichedAssignments);
+        } else {
+          console.error("Unexpected response format:", enrichedAssignments);
+          setDeliveryHistory([]);
         }
       } catch (error) {
         console.error("Failed to fetch delivery history:", error);
+        setDeliveryHistory([]);
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchDeliveryHistory();
-  }, []);
+    if (session?.user?.id) {
+      fetchDeliveryHistory();
+    }
+  }, [session]);
 
   // Filter orders based on search term, status, and date
   const filteredOrders = deliveryHistory.filter((order) => {
+    // Skip items without order details
+    if (!order.orderDetails) return false;
+
     const matchesSearch =
-      order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.orderDetails?.orderDetails
+      order.orderId.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      order.orderDetails.displayId
         ?.toLowerCase()
         .includes(searchTerm.toLowerCase()) ||
-      order.orderDetails?.fromAddressLine1
+      order.orderDetails.orderDetails
         ?.toLowerCase()
         .includes(searchTerm.toLowerCase()) ||
-      order.orderDetails?.toAddressLine1
+      order.orderDetails.fromAddressLine1
+        ?.toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      order.orderDetails.toAddressLine1
         ?.toLowerCase()
         .includes(searchTerm.toLowerCase());
 
     const matchesStatus =
       statusFilter === "all" ||
-      order.orderDetails?.status?.toLowerCase() === statusFilter.toLowerCase();
+      order.orderDetails.orderStatus?.toLowerCase() ===
+        statusFilter.toLowerCase();
 
     let matchesDate = true;
     if (dateFilter === "today") {
       const today = new Date().toISOString().split("T")[0];
-      matchesDate = order.orderDetails?.createdAt?.includes(String(today));
+      matchesDate = order.orderDetails.createdAt?.includes(String(today));
     } else if (dateFilter === "week") {
       const oneWeekAgo = new Date();
       oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-      const orderDate = new Date(order.orderDetails?.createdAt);
+      const orderDate = new Date(order.orderDetails.createdAt);
       matchesDate = orderDate >= oneWeekAgo;
     } else if (dateFilter === "month") {
       const oneMonthAgo = new Date();
       oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
-      const orderDate = new Date(order.orderDetails?.createdAt);
+      const orderDate = new Date(order.orderDetails.createdAt);
       matchesDate = orderDate >= oneMonthAgo;
     }
 
@@ -215,14 +233,20 @@ export default function DeliveryHistory() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {paginatedOrders.length > 0 ? (
+                  {loading ? (
+                    <TableRow>
+                      <TableCell colSpan={6} className="py-4 text-center">
+                        Loading delivery history...
+                      </TableCell>
+                    </TableRow>
+                  ) : paginatedOrders.length > 0 ? (
                     paginatedOrders.map((order) => (
                       <TableRow key={order.id}>
                         <TableCell className="font-medium">
                           {order.orderDetails?.displayId || ""}
                         </TableCell>
                         <TableCell>
-                          {order.orderDetails?.orderDetails}
+                          {order.orderDetails?.orderDetails || ""}
                         </TableCell>
                         <TableCell>
                           {`${order.orderDetails?.fromAddressLine1 || ""}, ${
@@ -235,7 +259,7 @@ export default function DeliveryHistory() {
                           }, ${order.orderDetails?.toZipCode || ""}`}
                         </TableCell>
                         <TableCell>
-                          {formatDate(order.orderDetails?.createdAt)}
+                          {formatDate(order.orderDetails?.createdAt || "")}
                         </TableCell>
                         <TableCell>
                           <Badge

@@ -71,6 +71,14 @@ const driverRouter = new OpenAPIHono()
       responses: {
         200: {
           description: "Success",
+          content: {
+            "application/json": {
+              schema: z.object({
+                success: z.boolean(),
+                order: OrderSchema,
+              }),
+            },
+          },
         },
       },
     }),
@@ -78,7 +86,7 @@ const driverRouter = new OpenAPIHono()
       const input = c.req.valid("json");
       console.log("Invalidate order", input);
       emitterDriver.emit("invalidateOrder", input);
-      return c.json({ success: true });
+      return c.json({ order: input, success: true });
     },
   )
   .openapi(
@@ -101,6 +109,14 @@ const driverRouter = new OpenAPIHono()
       responses: {
         200: {
           description: "Success",
+          content: {
+            "application/json": {
+              schema: z.object({
+                success: z.boolean(),
+                order: OrderSchema,
+              }),
+            },
+          },
         },
       },
     }),
@@ -115,7 +131,7 @@ const driverRouter = new OpenAPIHono()
         );
       }
       emitterDriver.emit("manualAssignment", input);
-      return c.json({ success: true });
+      return c.json({ success: true, order: input.order });
     },
   )
   .get(
