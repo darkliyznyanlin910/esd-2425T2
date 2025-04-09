@@ -335,7 +335,9 @@ export async function generateInvoice(
 
       // Add order details
       doc.fontSize(14);
-      doc.text(`Order ID: ${order.displayId || order.id}`);
+      doc.text(`Order ID: ${order.id}`);
+      doc.moveDown(0.5);
+      doc.text(`Display ID: ${order.displayId}`);
       doc.moveDown(0.5);
 
       doc.text(
