@@ -26,6 +26,7 @@ const driverRouter = new OpenAPIHono<HonoExtension>()
             "application/json": {
               schema: z.object({
                 phone: z.string(),
+                id: z.string(),
                 userId: z.string(),
               }),
             },
@@ -45,7 +46,13 @@ const driverRouter = new OpenAPIHono<HonoExtension>()
     }),
     async (c) => {
       const driverData = c.req.valid("json");
-      const newDriver = await db.driver.create({ data: driverData });
+      const newDriver = await db.driver.create({
+        data: {
+          id: driverData.id,
+          userId: driverData.userId,
+          phone: driverData.phone,
+        },
+      });
       return c.json({ id: newDriver.id, message: "Driver created" }, 201);
     },
   )

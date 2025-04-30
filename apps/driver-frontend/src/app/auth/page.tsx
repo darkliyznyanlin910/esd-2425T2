@@ -40,11 +40,10 @@ export default function AuthPage() {
         { json: { email, password, name } },
         { init: { credentials: "include" } },
       );
-
       const data: SignupResponse = (await res.json()) as SignupResponse;
 
       await DriverHonoClient.driver.$post({
-        json: { phone, userId: data.id },
+        json: { phone, id: data.id, userId: name },
       });
       setIsSignUp(!isSignUp);
       console.log(data);
@@ -127,7 +126,7 @@ export default function AuthPage() {
                 <>
                   <div className="space-y-2 text-left">
                     <Label htmlFor="name" className="text-sm sm:text-base">
-                      Name
+                      Username
                     </Label>
                     <Input
                       id="name"
