@@ -78,10 +78,17 @@ export function DataTable<TData, TValue>({
           >
             <option value="id">Order ID</option>
             <option value="userId">Customer ID</option>
+            <option value="orderStatus">Status</option>
           </select>
 
           <Input
-            placeholder="Filter by Order ID or User ID..."
+            placeholder={`Search by ${
+              selectedColumn === "id"
+                ? "Order ID"
+                : selectedColumn === "userId"
+                  ? "Customer ID"
+                  : "Status"
+            }`}
             value={filterValue}
             onChange={handleFilterChange}
             className="max-w-sm"
@@ -104,7 +111,7 @@ export function DataTable<TData, TValue>({
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id}>
+                    <TableHead key={header.id} className="text-foreground">
                       {header.isPlaceholder
                         ? null
                         : flexRender(
