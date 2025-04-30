@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -12,6 +14,7 @@ import {
   User,
 } from "lucide-react";
 
+import { getServiceBaseUrl } from "@repo/service-discovery";
 import { Button } from "@repo/ui/button";
 import {
   Card,
@@ -29,7 +32,13 @@ export default function LandingPage() {
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-16 items-center justify-between">
           <div className="flex items-center gap-2">
-            <Truck className="h-6 w-6 text-blue-600" />
+            <Image
+              src="/auth-images/vannova-icon.png"
+              alt="VanNova Logo"
+              width={50}
+              height={50}
+              className="rounded-full"
+            />
             <span className="text-xl font-bold">VanNova</span>
           </div>
           <nav className="hidden gap-6 md:flex">
@@ -96,9 +105,9 @@ export default function LandingPage() {
                   </Link>
                 </div>
               </div>
-              <div className="relative h-[400px] w-full overflow-hidden rounded-xl">
+              <div className="relative h-[400px] w-full overflow-hidden rounded-xl shadow-lg">
                 <Image
-                  src="/placeholder.svg?height=800&width=1200"
+                  src="/delivery-van.jpg"
                   alt="Delivery van on the road"
                   fill
                   className="object-cover"
@@ -165,11 +174,6 @@ export default function LandingPage() {
                         </li>
                       </ul>
                     </CardContent>
-                    <CardFooter>
-                      <Button className="w-full bg-blue-600 hover:bg-blue-700">
-                        Learn More
-                      </Button>
-                    </CardFooter>
                   </Card>
 
                   <Card>
@@ -197,11 +201,6 @@ export default function LandingPage() {
                         </li>
                       </ul>
                     </CardContent>
-                    <CardFooter>
-                      <Button className="w-full bg-blue-600 hover:bg-blue-700">
-                        Learn More
-                      </Button>
-                    </CardFooter>
                   </Card>
 
                   <Card>
@@ -228,11 +227,6 @@ export default function LandingPage() {
                         </li>
                       </ul>
                     </CardContent>
-                    <CardFooter>
-                      <Button className="w-full bg-blue-600 hover:bg-blue-700">
-                        Learn More
-                      </Button>
-                    </CardFooter>
                   </Card>
                 </div>
               </TabsContent>
@@ -263,11 +257,6 @@ export default function LandingPage() {
                         </li>
                       </ul>
                     </CardContent>
-                    <CardFooter>
-                      <Button className="w-full bg-blue-600 hover:bg-blue-700">
-                        Learn More
-                      </Button>
-                    </CardFooter>
                   </Card>
 
                   <Card>
@@ -294,11 +283,6 @@ export default function LandingPage() {
                         </li>
                       </ul>
                     </CardContent>
-                    <CardFooter>
-                      <Button className="w-full bg-blue-600 hover:bg-blue-700">
-                        Learn More
-                      </Button>
-                    </CardFooter>
                   </Card>
 
                   <Card>
@@ -325,11 +309,6 @@ export default function LandingPage() {
                         </li>
                       </ul>
                     </CardContent>
-                    <CardFooter>
-                      <Button className="w-full bg-blue-600 hover:bg-blue-700">
-                        Learn More
-                      </Button>
-                    </CardFooter>
                   </Card>
                 </div>
               </TabsContent>
@@ -382,7 +361,13 @@ export default function LandingPage() {
 
               <div className="flex flex-col items-center text-center">
                 <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-blue-100 text-blue-600">
-                  <Truck className="h-8 w-8" />
+                  <Image
+                    src="/auth-images/vannova-icon.png"
+                    alt="VanNova Logo"
+                    width={50}
+                    height={50}
+                    className="rounded-full"
+                  />
                 </div>
                 <h3 className="mb-2 text-xl font-bold">
                   3. Track Your Delivery
@@ -417,7 +402,7 @@ export default function LandingPage() {
                   <div className="flex items-center gap-4">
                     <div className="h-12 w-12 overflow-hidden rounded-full bg-gray-200">
                       <Image
-                        src="/placeholder.svg?height=100&width=100"
+                        src="/landing/person.jpeg"
                         alt="Profile picture"
                         width={48}
                         height={48}
@@ -446,7 +431,7 @@ export default function LandingPage() {
                   <div className="flex items-center gap-4">
                     <div className="h-12 w-12 overflow-hidden rounded-full bg-gray-200">
                       <Image
-                        src="/placeholder.svg?height=100&width=100"
+                        src="/landing/person.jpeg"
                         alt="Profile picture"
                         width={48}
                         height={48}
@@ -473,7 +458,7 @@ export default function LandingPage() {
                   <div className="flex items-center gap-4">
                     <div className="h-12 w-12 overflow-hidden rounded-full bg-gray-200">
                       <Image
-                        src="/placeholder.svg?height=100&width=100"
+                        src="/landing/person.jpeg"
                         alt="Profile picture"
                         width={48}
                         height={48}
@@ -545,7 +530,7 @@ export default function LandingPage() {
                   </ul>
                 </CardContent>
                 <CardFooter>
-                  <Link href="/register/client" className="w-full">
+                  <Link href="/auth" className="w-full">
                     <Button className="w-full bg-blue-600 hover:bg-blue-700">
                       Sign Up as Client
                     </Button>
@@ -581,11 +566,16 @@ export default function LandingPage() {
                   </ul>
                 </CardContent>
                 <CardFooter>
-                  <Link href="/register/driver" className="w-full">
-                    <Button className="w-full bg-blue-600 hover:bg-blue-700">
-                      Sign Up as Driver
-                    </Button>
-                  </Link>
+                  <Button
+                    className="w-full bg-blue-600 hover:bg-blue-700"
+                    onClick={() =>
+                      (window.location.href = `${getServiceBaseUrl(
+                        "driver-frontend",
+                      )}/auth`)
+                    }
+                  >
+                    Sign Up as Driver
+                  </Button>
                 </CardFooter>
               </Card>
             </div>
@@ -748,7 +738,13 @@ export default function LandingPage() {
           <div className="grid gap-8 lg:grid-cols-4">
             <div className="space-y-4">
               <div className="flex items-center gap-2">
-                <Truck className="h-6 w-6 text-blue-600" />
+                <Image
+                  src="/auth-images/vannova-icon.png"
+                  alt="VanNova Logo"
+                  width={50}
+                  height={50}
+                  className="rounded-full"
+                />
                 <span className="text-xl font-bold">VanNova</span>
               </div>
               <p className="text-sm text-muted-foreground">

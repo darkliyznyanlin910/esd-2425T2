@@ -31,7 +31,7 @@ const orderSchema = z.object({
   toCountry: z.string().min(1, "Required"),
 });
 
-export default function CreateOrderPage() {
+export default function CreateOrderPage({ onClose }: { onClose: () => void }) {
   const form = useForm({
     schema: orderSchema,
     defaultValues: {
@@ -440,9 +440,19 @@ export default function CreateOrderPage() {
             </div>
           </div>
 
-          <Button type="submit" className="mt-4 w-full text-lg md:w-auto">
-            Submit Order
-          </Button>
+          <div className="mt-4 flex justify-between gap-4">
+            <Button type="submit" className="text-sm">
+              Create
+            </Button>
+            <Button
+              type="button"
+              variant={"outline"}
+              className="text-sm"
+              onClick={onClose}
+            >
+              Cancel
+            </Button>
+          </div>
         </form>
       </Form>
     </div>

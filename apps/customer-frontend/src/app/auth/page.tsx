@@ -38,9 +38,9 @@ export default function AuthPage() {
     if (session) {
       console.log(session);
       if (session.user.role === "client") {
-        router.push("/order");
+        router.push("/orders");
       } else if (session.user.role === "admin") {
-        window.location.href = `${getServiceBaseUrl("admin-frontend")}/dashboard`;
+        window.location.href = `${getServiceBaseUrl("admin-frontend")}/order`;
       } else if (session.user.role === "driver") {
         window.location.href = `${getServiceBaseUrl("driver-frontend")}/home`;
       }
