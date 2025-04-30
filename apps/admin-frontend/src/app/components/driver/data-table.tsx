@@ -12,6 +12,7 @@ import {
   SortingState,
   useReactTable,
 } from "@tanstack/react-table";
+import { RefreshCcw } from "lucide-react";
 
 import { Button } from "@repo/ui/button";
 import { Input } from "@repo/ui/input";
@@ -27,11 +28,13 @@ import {
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  onRefresh?: () => void;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  onRefresh,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -66,22 +69,35 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="flex flex-col">
-      <div className="flex flex-wrap items-center gap-2 py-4">
-        <select
-          value={selectedColumn}
-          onChange={(e) => setSelectedColumn(e.target.value)}
-          className="rounded border border-gray-300 p-2"
-        >
-          <option value="id">Order ID</option>
-          <option value="userId">Customer ID</option>
-        </select>
+      <div className="flex justify-between">
+        <div className="flex gap-2 py-4">
+          <select
+            value={selectedColumn}
+            onChange={(e) => setSelectedColumn(e.target.value)}
+            className="rounded border border-gray-300 p-2"
+          >
+            <option value="id">Order ID</option>
+            <option value="userId">Customer ID</option>
+          </select>
 
-        <Input
-          placeholder="Filter by Order ID or User ID..."
-          value={filterValue}
-          onChange={handleFilterChange}
-          className="max-w-sm"
-        />
+          <Input
+            placeholder={`Search by ${
+              selectedColumn === "id" ? "Order ID" : "Customer ID"
+            }`}
+            value={filterValue}
+            onChange={handleFilterChange}
+            className="max-w-sm"
+          />
+        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={onRefresh}
+          className="ml-2 mt-4 text-sm"
+        >
+          <RefreshCcw className="mr-2 h-4 w-4" />
+          Refresh
+        </Button>
       </div>
       <div className="rounded-md border">
         <Table>
@@ -90,7 +106,7 @@ export function DataTable<TData, TValue>({
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id}>
+                    <TableHead key={header.id} className="text-foreground">
                       {header.isPlaceholder
                         ? null
                         : flexRender(

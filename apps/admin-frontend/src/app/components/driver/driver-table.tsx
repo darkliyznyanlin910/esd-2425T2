@@ -79,8 +79,10 @@ export default function AssignTablePage() {
         showComponent={false}
         onNotification={handleNotification}
       />
-      <div className="text-xl font-semibold">To Assign</div>
-      <DataTable columns={columns} data={orders} />{" "}
+      <div className="mb-4 text-xl font-semibold">To Assign</div>
+      <div className="rounded-lg bg-background p-4 shadow">
+        <DataTable columns={columns} data={orders} />{" "}
+      </div>
     </div>
   );
 }

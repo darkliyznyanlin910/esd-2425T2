@@ -107,7 +107,7 @@ export default function NotificationComponent({
   }
 
   return (
-    <div className="p-4">
+    <div className="w-full p-4">
       <Alert className="h-20">
         <AlertTitle>Notification</AlertTitle>
         <AlertDescription>{data}</AlertDescription>

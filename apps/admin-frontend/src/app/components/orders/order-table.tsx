@@ -74,10 +74,10 @@ export default function OrderTablePage() {
   return (
     <div className="container h-screen py-6">
       <NotificationComponent showComponent={false} />
-      <div className="mb-4 flex items-center justify-between">
-        <div className="text-xl font-semibold">Order Records</div>
+      <div className="mb-4 text-xl font-semibold">Order Records</div>
+      <div className="rounded-lg bg-background p-4 shadow">
+        <DataTable columns={columns} data={orders} onRefresh={handleRefresh} />
       </div>
-      <DataTable columns={columns} data={orders} onRefresh={handleRefresh} />
     </div>
   );
 }

@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { authClient } from "@repo/auth-client";
 import { getServiceBaseUrl } from "@repo/service-discovery";
 
-import CreateOrderPage from "~/app/components/create-order";
+import NotificationComponent from "~/app/components/notifications/notification";
 
 export default function Main() {
   const { useSession } = authClient;
@@ -18,9 +18,9 @@ export default function Main() {
   //     router.push("/auth");
   //   } else if (session.user.role === "driver") {
   //     router.push(`${getServiceBaseUrl("driver-frontend")}/auth`);
-  //   } else if (session.user.role === "admin") {
-  //     router.push(`${getServiceBaseUrl("admin-frontend")}/auth`);
+  //   } else if (session.user.role === "customer") {
+  //     router.push(`${getServiceBaseUrl("customer-frontend")}/auth`);
   //   }
   // }, [session, router]);
-  return <CreateOrderPage />;
+  return <NotificationComponent showComponent={true} />;
 }
