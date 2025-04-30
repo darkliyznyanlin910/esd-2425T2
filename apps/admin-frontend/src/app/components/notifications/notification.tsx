@@ -67,6 +67,7 @@ export default function NotificationComponent({
           toast({
             title: "Order Delay Notification",
             description: "An order has been delayed",
+            variant: "info",
             duration: 5000,
           });
           if (onNotification) {
@@ -78,6 +79,7 @@ export default function NotificationComponent({
           toast({
             title: "Order Reassignment Required",
             description: "Please check the To Assign page",
+            variant: "info",
             duration: 5000,
           });
           if (onNotification) {
