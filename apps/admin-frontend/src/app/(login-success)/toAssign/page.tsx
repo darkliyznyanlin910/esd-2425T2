@@ -14,15 +14,15 @@ export default function Main() {
   const { data: session } = useSession();
   const router = useRouter();
 
-  // useEffect(() => {
-  //   if (!session) {
-  //     router.push("/auth");
-  //   } else if (session.user.role === "driver") {
-  //     router.push(`${getServiceBaseUrl("driver-frontend")}/auth`);
-  //   } else if (session.user.role === "customer") {
-  //     router.push(`${getServiceBaseUrl("customer-frontend")}/auth`);
-  //   }
-  // }, [session, router]);
+  useEffect(() => {
+    if (!session) {
+      router.push("/auth");
+    } else if (session.user.role === "driver") {
+      router.push(`${getServiceBaseUrl("driver-frontend")}/auth`);
+    } else if (session.user.role === "customer") {
+      router.push(`${getServiceBaseUrl("customer-frontend")}/auth`);
+    }
+  }, [session, router]);
 
   return (
     <OrderProvider>
