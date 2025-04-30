@@ -12,8 +12,15 @@ import { getServiceBaseUrl } from "@repo/service-discovery";
 
 export const metadata: Metadata = {
   metadataBase: new URL(getServiceBaseUrl("customer-frontend")),
-  title: "Create T3 Turbo",
+  title: "VanNova",
   description: "Simple monorepo with shared backend for web & mobile apps",
+  icons: {
+    icon: [
+      {
+        url: "/auth-images/vannova-icon.png",
+      },
+    ],
+  },
   openGraph: {
     title: "Create T3 Turbo",
     description: "Simple monorepo with shared backend for web & mobile apps",
