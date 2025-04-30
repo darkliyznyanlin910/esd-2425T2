@@ -6,7 +6,6 @@ import { UserSchema } from "@repo/db-auth/zod";
 import { getServiceBaseUrl } from "@repo/service-discovery";
 
 import { auth, authMiddleware } from "../auth";
-import { env } from "../env";
 
 const userRouter = new OpenAPIHono()
   .openapi(
