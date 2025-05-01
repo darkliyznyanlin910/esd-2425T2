@@ -33,16 +33,16 @@ export const LOCAL_SERVICE_MAP: Record<Service, string> = {
 
 export const KUBERNETES_SERVICE_MAP: Record<Service, string> = {
   // Frontend
-  "admin-frontend": "http://admin.esd.local",
-  "customer-frontend": "http://customer.esd.local",
-  "driver-frontend": "http://driver.esd.local",
+  "admin-frontend": `http://admin.${env.NEXT_PUBLIC_DOMAIN}`,
+  "customer-frontend": `http://customer.${env.NEXT_PUBLIC_DOMAIN}`,
+  "driver-frontend": `http://driver.${env.NEXT_PUBLIC_DOMAIN}`,
   // Backend
-  auth: "http://api.esd.local/auth",
-  chatbot: "http://api.esd.local/chatbot",
-  notification: "http://api.esd.local/notification",
-  order: "http://api.esd.local/order",
-  driver: "http://api.esd.local/driver",
-  invoice: "http://api.esd.local/invoice",
+  auth: `http://api.${env.NEXT_PUBLIC_DOMAIN}/auth`,
+  chatbot: `http://api.${env.NEXT_PUBLIC_DOMAIN}/chatbot`,
+  notification: `http://api.${env.NEXT_PUBLIC_DOMAIN}/notification`,
+  order: `http://api.${env.NEXT_PUBLIC_DOMAIN}/order`,
+  driver: `http://api.${env.NEXT_PUBLIC_DOMAIN}/driver`,
+  invoice: `http://api.${env.NEXT_PUBLIC_DOMAIN}/invoice`,
 };
 
 export const KUBERNETES_INTERNAL_SERVICE_MAP: Record<Service, string> = {

@@ -36,7 +36,18 @@ spec:
             name: argocd-proxy
             port:
               number: 443
+  - host: temporal.jknl.dev
+    http:
+      paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: temporal-service
+              port:
+                number: 80
   tls:
     - hosts:
         - argocd.jknl.dev
+        - temporal.jknl.dev
       secretName: argocd-tls-cert
