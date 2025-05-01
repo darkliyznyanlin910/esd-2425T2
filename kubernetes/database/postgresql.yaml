@@ -14,11 +14,7 @@ spec:
     #     - CREATE DATABASE driver_database;
     #     - CREATE DATABASE invoice_database;
     recovery:
-      volumeSnapshots:
-        storage:
-          name: postgres-pv-snapshot
-          kind: VolumeSnapshot
-          apiGroup: snapshot.storage.k8s.io
+      source: cluster-backup
 
   enableSuperuserAccess: true # By default superuser access is not created on cluster bootstrap
   imageName: ghcr.io/cloudnative-pg/postgresql:13.20-8
@@ -42,27 +38,32 @@ spec:
       wal_buffers: 16MB
       work_mem: 30MB
   storage:
-    storageClass: postgres-storage
-    size: 10Gi
----
-apiVersion: storage.k8s.io/v1
-kind: StorageClass
-metadata:
-  name: postgres-storage
-provisioner: kubernetes.io/host-path
-parameters:
-  path: /data/k8s/postgres
----
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: postgres-pv
-spec:
-  storageClassName: postgres-storage
-  capacity:
-    storage: 10Gi
-  accessModes:
-    - ReadWriteOnce
-  hostPath:
-    path: ${WORKSPACE_DIR}/data/k8s/postgres
-    type: DirectoryOrCreate
+    pvcTemplate:
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 10Gi
+  backup:
+    barmanObjectStore:
+      destinationPath: https://tfstate20250430.blob.core.windows.net/cnpg
+      azureCredentials:
+        connectionString:
+          name: azure-creds
+          key: AZURE_STORAGE_CONNECTION_STRING
+    retentionPolicy: "30d"
+  externalClusters:
+    - name: cluster-backup
+      barmanObjectStore:
+        destinationPath: https://tfstate20250430.blob.core.windows.net/cnpg
+        azureCredentials:
+          storageAccount:
+            name: azure-creds
+            key: AZURE_STORAGE_ACCOUNT
+          storageKey:
+            name: azure-creds
+            key: AZURE_STORAGE_KEY
+        wal:
+          maxParallel: 8
+  monitoring:
+    enablePodMonitor: true
