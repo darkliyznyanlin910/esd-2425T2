@@ -66,6 +66,15 @@ case "$ACTION" in
         ;;
     esac
     ;;
+  up)
+    case "$2" in
+      "app")
+        kubectl create secret generic app-environment --from-env-file=kubernetes/.env.k8s
+        kubectl apply -k kubernetes/backend
+        kubectl apply -k kubernetes/frontend
+        kubectl apply -k kubernetes/nginx
+        ;;
+    esac
   *)
     echo "Invalid action: $ACTION"
     exit 1
