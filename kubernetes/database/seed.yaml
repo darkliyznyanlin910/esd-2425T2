@@ -7,8 +7,8 @@ spec:
     spec:
       containers:
       - name: seeder
-        image: esd-db-seeder:latest
-        imagePullPolicy: Never
+        image: esdproject.azurecr.io/esd-db-seeder:latest
+        imagePullPolicy: Always
         command: [
           "/bin/sh", 
           "-c", 
@@ -34,4 +34,6 @@ spec:
           - name: ORDER_POSTGRES_URL
             value: "postgresql://$(PGUSER):$(PGPASSWORD)@postgres-rw.default.svc.cluster.local:5432/order_database"
       restartPolicy: Never
-  backoffLimit: 4
+      imagePullSecrets:
+        - name: acr-secret
+  backoffLimit: 1

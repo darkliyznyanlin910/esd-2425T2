@@ -1,0 +1,51 @@
+---
+metrics:
+  enabled: true
+
+config:
+  registries:
+    - name: Azure Container Registry
+      api_url: https://esdproject.azurecr.io
+      ping: yes
+      credentials: ext:/custom-tools/get-credentials.sh
+      limit: 20
+      default: true
+
+initContainers:
+  - name: extract-acr-credentials
+    image: bitnami/kubectl
+    command: [sh, -c]
+    args:
+      - |
+        # Get the secret and extract the dockerconfigjson field
+        SECRET=$(kubectl get secret acr-secret -n default -o jsonpath='{.data.\.dockerconfigjson}')
+
+        # Decode the base64-encoded secret
+        DECODED=$(echo $SECRET | base64 -d)
+
+        # Extract username and password using jq
+        USERNAME=$(echo $DECODED | jq -r '.auths."esdproject.azurecr.io".username')
+        PASSWORD=$(echo $DECODED | jq -r '.auths."esdproject.azurecr.io".password')
+
+        # Create environment file
+        echo "ACR_USERNAME=$USERNAME" > /custom-tools/acr.env
+        echo "ACR_PASSWORD=$PASSWORD" >> /custom-tools/acr.env
+
+        # Create script to read environment file and output credentials
+        cat > /custom-tools/get-credentials.sh << 'EOF'
+        #!/bin/sh
+        source /custom-tools/acr.env
+        echo "$ACR_USERNAME:$ACR_PASSWORD"
+        EOF
+        chmod +x /custom-tools/get-credentials.sh
+    volumeMounts:
+      - mountPath: /custom-tools
+        name: custom-tools
+
+volumeMounts:
+  - mountPath: /custom-tools
+    name: custom-tools
+
+volumes:
+  - name: custom-tools
+    emptyDir: {}
