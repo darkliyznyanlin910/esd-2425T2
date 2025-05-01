@@ -16,8 +16,8 @@ spec:
     spec:
       containers:
         - name: esd-customer-frontend
-          image: esd-customer-frontend:latest
-          imagePullPolicy: Never
+          image: esdproject.azurecr.io/esd-customer-frontend:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 5500
           resources:

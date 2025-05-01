@@ -5,6 +5,10 @@ metadata:
 spec:
   template:
     spec:
+      initContainers:
+      - name: wait-for-postgres
+        image: busybox:1.28
+        command: ['sh', '-c', 'until nslookup postgres-rw.default.svc.cluster.local && nc -z postgres-rw.default.svc.cluster.local 5432; do echo waiting for postgres-rw; sleep 2; done;']
       containers:
       - name: seeder
         image: esdproject.azurecr.io/esd-db-seeder:latest

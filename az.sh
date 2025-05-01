@@ -27,13 +27,38 @@ case "$ACTION" in
     ;;
   push)
     az acr login --name $ACR_NAME
-    docker build --platform linux/amd64 -t esdproject.azurecr.io/esd-temporal:latest -f apps/temporal/Dockerfile . --push
-    docker build --platform linux/amd64 -t esdproject.azurecr.io/esd-db-seeder:latest -f dbSeeder.Dockerfile . --push
+    # Temporal
+    docker build -t esdproject.azurecr.io/esd-temporal:latest -f apps/temporal/Dockerfile . --push
+
+    # DB Seeder
+    docker build -t esdproject.azurecr.io/esd-db-seeder:latest -f dbSeeder.Dockerfile . --push
+
+    # Backend
+    docker build -t esdproject.azurecr.io/esd-auth:latest -f apps/auth/Dockerfile . --push
+    docker build -t esdproject.azurecr.io/esd-chatbot-backend:latest -f apps/chatbot-backend/Dockerfile . --push
+    docker build -t esdproject.azurecr.io/esd-driver:latest -f apps/driver/Dockerfile . --push
+    docker build -t esdproject.azurecr.io/esd-invoice:latest -f apps/invoice/Dockerfile . --push
+    docker build -t esdproject.azurecr.io/esd-notification:latest -f apps/notification/Dockerfile . --push
+    docker build -t esdproject.azurecr.io/esd-order:latest -f apps/order/Dockerfile . --push
+
+    # Frontend
+    docker build -t esdproject.azurecr.io/esd-admin-frontend:latest -f apps/admin-frontend/Dockerfile . --push
+    docker build -t esdproject.azurecr.io/esd-customer-frontend:latest -f apps/customer-frontend/Dockerfile . --push
+    docker build -t esdproject.azurecr.io/esd-driver-frontend:latest -f apps/driver-frontend/Dockerfile . --push
     ;;
   db)
     case "$2" in
+      init)
+        kubectl apply -k kubernetes/database
+        ;;
       backup)
         kubectl apply -f kubernetes/database/manual-backup.yaml
+        ;;
+      seed)
+        kubectl apply -f kubernetes/database/seed.yaml
+        ;;
+      delete)
+        kubectl delete -k kubernetes/database
         ;;
       *)
         echo "Invalid action: $2"
