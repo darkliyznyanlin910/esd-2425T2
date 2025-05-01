@@ -16,8 +16,8 @@ spec:
     spec:
       containers:
         - name: esd-admin-frontend
-          image: esd-admin-frontend:latest
-          imagePullPolicy: Never
+          image: esdproject.azurecr.io/esd-admin-frontend:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 4400
           resources:

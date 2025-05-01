@@ -16,8 +16,8 @@ spec:
     spec:
       containers:
       - name: temporal-runner
-        image: esd-temporal:latest
-        imagePullPolicy: Never
+        image: esdproject.azurecr.io/esd-temporal:latest
+        imagePullPolicy: Always
         env:
             - name: PGUSER
               valueFrom:

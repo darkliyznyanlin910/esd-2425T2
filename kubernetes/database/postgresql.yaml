@@ -14,7 +14,7 @@ spec:
     #     - CREATE DATABASE driver_database;
     #     - CREATE DATABASE invoice_database;
     recovery:
-      source: cluster-backup
+      source: postgres
 
   enableSuperuserAccess: true # By default superuser access is not created on cluster bootstrap
   imageName: ghcr.io/cloudnative-pg/postgresql:13.20-8
@@ -46,16 +46,22 @@ spec:
           storage: 10Gi
   backup:
     barmanObjectStore:
-      destinationPath: https://tfstate20250430.blob.core.windows.net/cnpg
+      destinationPath: https://tfstate20250430.blob.core.windows.net/cnpg/
+      serverName: "recoveredCluster"
       azureCredentials:
-        connectionString:
+        storageAccount:
           name: azure-creds
-          key: AZURE_STORAGE_CONNECTION_STRING
+          key: AZURE_STORAGE_ACCOUNT
+        storageKey:
+          name: azure-creds
+          key: AZURE_STORAGE_KEY
+      wal:
+        maxParallel: 8
     retentionPolicy: "30d"
   externalClusters:
-    - name: cluster-backup
+    - name: postgres
       barmanObjectStore:
-        destinationPath: https://tfstate20250430.blob.core.windows.net/cnpg
+        destinationPath: https://tfstate20250430.blob.core.windows.net/cnpg/
         azureCredentials:
           storageAccount:
             name: azure-creds

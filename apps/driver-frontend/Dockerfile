@@ -21,7 +21,7 @@ WORKDIR /repo
 COPY --from=builder /repo/out/full/ .
 RUN pnpm install
 
-COPY kubernetes/.env.k8s /repo/kubernetes/.env.k8s
+COPY ./kubernetes/.env.k8s /repo/kubernetes/.env.k8s
 RUN pnpm turbo run build --filter=@repo/driver-frontend...
  
 FROM base AS runner

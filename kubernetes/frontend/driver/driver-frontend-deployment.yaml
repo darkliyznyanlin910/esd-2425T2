@@ -16,8 +16,8 @@ spec:
     spec:
       containers:
         - name: esd-driver-frontend
-          image: esd-driver-frontend:latest
-          imagePullPolicy: Never
+          image: esdproject.azurecr.io/esd-driver-frontend:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 6600
           resources:
