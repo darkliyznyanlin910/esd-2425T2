@@ -18,6 +18,12 @@ dotenv.config();
 
 const router = new OpenAPIHono<HonoExtension>();
 
+function getInvoiceUrl(invoiceUrl: string) {
+  return invoiceUrl.includes("docker")
+    ? invoiceUrl.replace(env.S3_ENDPOINT, "http://localhost:4566")
+    : invoiceUrl;
+}
+
 const s3Client = new S3Client({
   region: env.AWS_REGION,
   credentials: {
@@ -289,10 +295,7 @@ const invoiceRouter = router
             success: true,
             invoice: {
               ...invoice,
-              invoiceUrl: invoiceUrl.replace(
-                env.S3_ENDPOINT,
-                "http://localhost:4566",
-              ),
+              invoiceUrl: getInvoiceUrl(invoiceUrl),
             },
           },
           200,
@@ -420,10 +423,7 @@ const invoiceRouter = router
             success: true,
             invoice: {
               ...invoice,
-              invoiceUrl: invoiceUrl.replace(
-                env.S3_ENDPOINT,
-                "http://localhost:4566",
-              ),
+              invoiceUrl: getInvoiceUrl(invoiceUrl),
             },
           },
           200,

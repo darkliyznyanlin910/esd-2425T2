@@ -9,6 +9,7 @@ resource "helm_release" "argocd" {
   chart            = "argo-cd"
   namespace        = "argocd"
   create_namespace = true
+  replace          = true
 
   values = [file("values/argocd.yaml")]
 }
@@ -24,6 +25,7 @@ resource "helm_release" "updater" {
   chart            = "argocd-image-updater"
   namespace        = "argocd"
   create_namespace = true
+  replace          = true
 
   values = [file("values/image-updater.yaml")]
 }
