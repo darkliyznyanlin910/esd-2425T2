@@ -5,7 +5,7 @@ resource "helm_release" "zitadel" {
   
   name = "zitadel"
 
-  repository       = "https://zitadel.github.io/zitadel"
+  repository       = "https://charts.zitadel.com"
   chart            = "zitadel"
   namespace        = "default"
   create_namespace = true
