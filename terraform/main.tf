@@ -45,6 +45,16 @@ resource "azurerm_resource_group" "aks" {
   location = "southeastasia"
 }
 
+data "azurerm_resource_group" "cr" {
+  name     = var.acr_rg_name
+}
+
+data "azurerm_container_registry" "acr" {
+  name                = var.acr_name
+  resource_group_name = data.azurerm_resource_group.cr.name
+}
+
+
 # AKS Cluster
 resource "azurerm_kubernetes_cluster" "aks" {
   name                = "aks-cluster"
@@ -73,31 +83,4 @@ resource "azurerm_kubernetes_cluster" "aks" {
     network_plugin = "azure"
     network_policy = "azure"
   }
-}
-
-data "azurerm_resource_group" "acr_rg" {
-  name = "esd-cr-rg"
-}
-
-data "azurerm_container_registry" "acr" {
-  name                = "esdproject"
-  resource_group_name = data.azurerm_resource_group.acr_rg.name
-}
-
-# Attach ACR to AKS by granting AcrPull role
-resource "azurerm_role_assignment" "aks_acr" {
-  principal_id                     = azurerm_kubernetes_cluster.aks.identity[0].principal_id
-  role_definition_name             = "AcrPull"
-  scope                            = data.azurerm_container_registry.acr.id
-  skip_service_principal_aad_check = true
-}
-
-# Outputs
-output "kube_config" {
-  value     = azurerm_kubernetes_cluster.aks.kube_config_raw
-  sensitive = true
-}
-
-output "cluster_name" {
-  value = azurerm_kubernetes_cluster.aks.name
 }
