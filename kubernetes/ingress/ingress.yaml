@@ -46,7 +46,7 @@ spec:
               name: temporal-service
               port:
                 number: 80
-  - host: admin.esd.local
+  - host: admin.jknl.dev
     http:
       paths:
         - path: /
@@ -56,7 +56,7 @@ spec:
               name: esd-admin-frontend
               port:
                 number: 80
-  - host: customer.esd.local
+  - host: customer.jknl.dev
     http:
       paths:
         - path: /
@@ -66,7 +66,7 @@ spec:
               name: esd-customer-frontend
               port:
                 number: 80
-  - host: driver.esd.local
+  - host: driver.jknl.dev
     http:
       paths:
         - path: /
@@ -76,7 +76,7 @@ spec:
               name: esd-driver-frontend
               port:
                 number: 80
-  - host: api.esd.local
+  - host: api.jknl.dev
     http:
       paths:
         - path: /
@@ -90,4 +90,8 @@ spec:
     - hosts:
         - argocd.jknl.dev
         - temporal.jknl.dev
+        - admin.jknl.dev
+        - customer.jknl.dev
+        - driver.jknl.dev
+        - api.jknl.dev
       secretName: argocd-tls-cert
