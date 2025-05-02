@@ -26,7 +26,6 @@ case "$ACTION" in
     az aks get-credentials --resource-group $RESOURCE_GROUP_NAME --name $AKS_CLUSTER_NAME
     ;;
   push)
-    az acr login --name $ACR_NAME
     # Temporal
     docker build -t esdproject.azurecr.io/esd-temporal:latest -f apps/temporal/Dockerfile . --push
 
