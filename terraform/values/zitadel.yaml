@@ -1,0 +1,22 @@
+zitadel:
+  env:
+    - name: ZITADEL_DATABASE_POSTGRES_HOST
+      valueFrom:
+        secretKeyRef:
+          name: postgres-pguser-postgres
+          key: host
+    - name: ZITADEL_DATABASE_POSTGRES_PORT
+      valueFrom:
+        secretKeyRef:
+          name: postgres-pguser-postgres
+          key: port
+    - name: ZITADEL_DATABASE_POSTGRES_DATABASE
+      valueFrom:
+        secretKeyRef:
+          name: postgres-pguser-postgres
+          key: user
+    - name: ZITADEL_DATABASE_POSTGRES_USER_USERNAME
+      valueFrom:
+        secretKeyRef:
+          name: postgres-pguser-postgres
+          key: password
