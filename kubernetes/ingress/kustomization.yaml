@@ -5,3 +5,4 @@ resources:
   - cert-manager.yaml
   - ingress.yaml
   - argocd-proxy-service.yaml
+  - app.yaml
