@@ -46,6 +46,46 @@ spec:
               name: temporal-service
               port:
                 number: 80
+  - host: admin.esd.local
+    http:
+      paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: esd-admin-frontend
+              port:
+                number: 80
+  - host: customer.esd.local
+    http:
+      paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: esd-customer-frontend
+              port:
+                number: 80
+  - host: driver.esd.local
+    http:
+      paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: esd-driver-frontend
+              port:
+                number: 80
+  - host: api.esd.local
+    http:
+      paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: esd-nginx
+              port:
+                number: 80
   tls:
     - hosts:
         - argocd.jknl.dev
