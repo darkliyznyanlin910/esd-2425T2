@@ -4,7 +4,7 @@ metadata:
   name: order
   namespace: argocd
   annotations:
-    argocd-image-updater.argoproj.io/image-list: repo=esdproject.azurecr.io/esd-order
+    argocd-image-updater.argoproj.io/image-list: esdproject.azurecr.io/esd-order:latest
     argocd-image-updater.argoproj.io/write-back-method: git:secret:argocd/git-creds
     argocd-image-updater.argoproj.io/git-branch: main
     argocd-image-updater.argoproj.io/update-strategy: digest
