@@ -74,6 +74,7 @@ case "$ACTION" in
         kubectl apply -k kubernetes/nginx
         ;;
     esac
+    ;;
   *)
     echo "Invalid action: $ACTION"
     exit 1
