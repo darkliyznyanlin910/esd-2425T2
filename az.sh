@@ -8,12 +8,6 @@ case "$ACTION" in
   creds)
     az acr login --name $ACR_NAME
     az aks get-credentials --resource-group $RESOURCE_GROUP_NAME --name $AKS_CLUSTER_NAME
-    kubectl create secret docker-registry acr-secret \
-      --docker-server=$ACR_NAME.azurecr.io \
-      --docker-username=$(az acr credential show --name $ACR_NAME --query username -o tsv) \
-      --docker-password=$(az acr credential show --name $ACR_NAME --query "passwords[0].value" -o tsv) \
-      --namespace=default \
-      --dry-run=client -o yaml | kubectl apply -f -
     source .env.azure
     kubectl create secret generic azure-creds \
       --from-literal=AZURE_STORAGE_ACCOUNT=$AZURE_STORAGE_ACCOUNT \

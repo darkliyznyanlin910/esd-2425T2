@@ -1,22 +1,35 @@
 zitadel:
+  masterkey: "asidvbLWEYFG82GUGFVAKDJV"
   env:
     - name: ZITADEL_DATABASE_POSTGRES_HOST
       valueFrom:
         secretKeyRef:
-          name: postgres-pguser-postgres
+          name: postgres-superuser
           key: host
     - name: ZITADEL_DATABASE_POSTGRES_PORT
       valueFrom:
         secretKeyRef:
-          name: postgres-pguser-postgres
+          name: postgres-superuser
           key: port
     - name: ZITADEL_DATABASE_POSTGRES_DATABASE
-      valueFrom:
-        secretKeyRef:
-          name: postgres-pguser-postgres
-          key: user
+      value: zitadel
     - name: ZITADEL_DATABASE_POSTGRES_USER_USERNAME
       valueFrom:
         secretKeyRef:
-          name: postgres-pguser-postgres
+          name: postgres-superuser
+          key: username
+    - name: ZITADEL_DATABASE_POSTGRES_USER_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: postgres-superuser
+          key: password
+    - name: ZITADEL_DATABASE_POSTGRES_ADMIN_USERNAME
+      valueFrom:
+        secretKeyRef:
+          name: postgres-superuser
+          key: username
+    - name: ZITADEL_DATABASE_POSTGRES_ADMIN_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: postgres-superuser
           key: password
