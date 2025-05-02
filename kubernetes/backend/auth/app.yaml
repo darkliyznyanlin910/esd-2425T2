@@ -10,7 +10,7 @@ metadata:
     argocd-image-updater.argoproj.io/write-back-method: git:secret:argocd/repo-2279814874
     argocd-image-updater.argoproj.io/git-branch: main
     argocd-image-updater.argoproj.io/update-strategy: latest
-    argocd-image-updater.argoproj.io/pull-secret: pullsecret:argocd/acr-secret
+    argocd-image-updater.argoproj.io/pull-secret: pullsecret:default/acr-secret
 spec:
   project: default
   source:
