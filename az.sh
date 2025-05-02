@@ -61,8 +61,10 @@ case "$ACTION" in
     ;;
   up)
     case "$2" in
-      "app")
+      "secret")
         kubectl create secret generic app-environment --from-env-file=kubernetes/.env.k8s
+        ;;
+      "app")
         kubectl apply -k kubernetes/backend
         kubectl apply -k kubernetes/frontend
         kubectl apply -k kubernetes/nginx
