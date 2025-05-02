@@ -49,3 +49,5 @@ spec:
           envFrom:
             - secretRef:
                 name: app-environment
+      imagePullSecrets:
+        - name: acr-secret
