@@ -192,7 +192,10 @@ export default function DriverDashboard() {
   };
 
   const handlePickupOrder = async (orderId: string) => {
+    setDisabledButtons((prev) => ({ ...prev, [orderId]: true }));
+
     try {
+      // Send state update to mark order as picked up
       const response = await fetch(
         `${getServiceBaseUrl("driver")}/driver/state/PICKED_UP`,
         {
@@ -207,6 +210,7 @@ export default function DriverDashboard() {
           }),
         },
       );
+
       if (response.ok) {
         toast({
           title: "Order Picked Up",
@@ -214,52 +218,22 @@ export default function DriverDashboard() {
           description: "You have successfully picked the order up.",
           duration: 3000,
         });
-      }
-      if (!session?.user.id) return;
-      try {
-        const url = new URL(
-          `${getServiceBaseUrl("driver")}/driver/assignments/${session.user.id}`,
-        );
-        url.searchParams.append("status", "DRIVER_FOUND");
-        const response = await fetch(url, {
-          method: "GET",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
 
-        if (response.ok) {
-          const data = await response.json();
-          setPickupOrder(Array.isArray(data) ? data : []);
-        }
-      } catch (error) {
-        console.error("Failed to fetch pickup orders:", error);
-      }
-      try {
-        const url = new URL(
-          `${getServiceBaseUrl("driver")}/driver/assignments/${session.user.id}`,
+        // Remove the order from pickup list
+        setPickupOrder((prev) =>
+          prev.filter((item) => item.orderId !== orderId),
         );
-        url.searchParams.append("status", "PICKED_UP");
-        const response = await fetch(url, {
-          method: "GET",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
 
-        if (response.ok) {
-          const data = await response.json();
-          console.log("Delivery order data:", data);
-          setDeliveryOrder(Array.isArray(data) ? data : []);
-        }
-      } catch (error) {
-        console.error("Failed to fetch delivery orders:", error);
+        // Wait a moment for the backend to update
+        await new Promise((resolve) => setTimeout(resolve, 500));
+
+        // Refresh only the delivery orders list
+        await fetchDeliveryOrders();
+      } else {
+        throw new Error("Failed to update order state");
       }
-      await fetchPickupOrders();
-      await fetchDeliveryOrders();
     } catch (error) {
+      console.error("Failed to pick up order:", error);
       toast({
         title: "Error",
         variant: "destructive",

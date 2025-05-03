@@ -3,7 +3,6 @@ import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
 
 import { cn } from "@repo/ui";
-import { ThemeProvider, ThemeToggle } from "@repo/ui/theme";
 import { Toaster } from "@repo/ui/toaster";
 
 import "~/styles/globals.css";
@@ -52,13 +51,9 @@ export default function RootLayout(props: { children: React.ReactNode }) {
           GeistMono.variable,
         )}
       >
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          {props.children}
-          <div className="absolute bottom-4 right-4">
-            <ThemeToggle />
-          </div>
-          <Toaster />
-        </ThemeProvider>
+        {props.children}
+        <div className="absolute bottom-4 right-4"></div>
+        <Toaster />
       </body>
     </html>
   );
