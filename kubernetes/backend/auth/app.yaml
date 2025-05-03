@@ -3,8 +3,6 @@ kind: Application
 metadata:
   name: auth
   namespace: argocd
-  finalizers:
-    - resources-finalizer.argocd.argoproj.io
   annotations:
     argocd-image-updater.argoproj.io/image-list: esdproject.azurecr.io/esd-auth:latest
     argocd-image-updater.argoproj.io/write-back-method: git:secret:argocd/repo-2279814874
