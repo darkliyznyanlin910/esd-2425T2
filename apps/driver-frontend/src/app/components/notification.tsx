@@ -130,20 +130,22 @@ export default function NotificationComponent({
             console.log("Message driver ID:", message.data.driverId);
 
             // Check if this assignment is for the current driver
-            toast({
-              title: "Order Assigned to You",
-              description: `An administrator has assigned order ${message.data.order?.displayId || ""} to you for delivery.`,
-              variant: "success",
-              duration: 10000,
-              action: (
-                <ToastAction
-                  altText="View"
-                  onClick={() => window.location.reload()}
-                >
-                  View
-                </ToastAction>
-              ),
-            });
+            if (session?.user?.id === message.data.driverId) {
+              toast({
+                title: "Order Assigned to You",
+                description: `An administrator has assigned order ${message.data.order?.displayId || ""} to you for delivery.`,
+                variant: "success",
+                duration: 10000,
+                action: (
+                  <ToastAction
+                    altText="View"
+                    onClick={() => window.location.reload()}
+                  >
+                    View
+                  </ToastAction>
+                ),
+              });
+            }
 
             break;
 

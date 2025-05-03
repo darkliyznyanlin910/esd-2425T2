@@ -211,6 +211,7 @@ export default function DriverDashboard() {
         },
       );
 
+      // if the response is ok, show success toast
       if (response.ok) {
         toast({
           title: "Order Picked Up",
@@ -223,10 +224,6 @@ export default function DriverDashboard() {
         setPickupOrder((prev) =>
           prev.filter((item) => item.orderId !== orderId),
         );
-
-        // Wait a moment for the backend to update
-        await new Promise((resolve) => setTimeout(resolve, 500));
-
         // Refresh only the delivery orders list
         await fetchDeliveryOrders();
       } else {
@@ -376,6 +373,7 @@ export default function DriverDashboard() {
   };
 
   const fetchDeliveryOrders = async () => {
+    // Check if the user ID is available
     if (!session?.user.id) return;
 
     setIsRefreshingDelivery(true);
