@@ -1,0 +1,3 @@
+kustomize:
+  images:
+  - esdproject.azurecr.io/esd-invoice:latest@sha256:10ba3b07309a05c64fd0398cc34918ff012a22d263b123e43746c57a7e5e8b3d
