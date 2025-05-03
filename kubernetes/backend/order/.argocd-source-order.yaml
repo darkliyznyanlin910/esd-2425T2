@@ -1,0 +1,3 @@
+kustomize:
+  images:
+  - esdproject.azurecr.io/esd-order:latest@sha256:75f3e4074bbe35f2ba7cd5a56e855d00b1dfb5cfd24ad34b99395aeaafb0e395
