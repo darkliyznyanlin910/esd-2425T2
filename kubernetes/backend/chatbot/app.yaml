@@ -3,8 +3,6 @@ kind: Application
 metadata:
   name: chatbot
   namespace: argocd
-  finalizers:
-    - resources-finalizer.argocd.argoproj.io
   annotations:
     argocd-image-updater.argoproj.io/image-list: esdproject.azurecr.io/esd-chatbot-backend:latest
     argocd-image-updater.argoproj.io/write-back-method: git:secret:argocd/repo-2279814874
