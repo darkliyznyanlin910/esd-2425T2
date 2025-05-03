@@ -16,12 +16,10 @@ import type {
   StripeSessionStatus,
 } from "@repo/temporal-common";
 
-import { env } from "./env";
-
-const ORDER_DEFAULT_UNIT_AMOUNT = env.ORDER_DEFAULT_UNIT_AMOUNT;
-const PAYMENT_TIMEOUT = env.PAYMENT_TIMEOUT;
-const ACTIVITY_TIMEOUT = env.ACTIVITY_TIMEOUT;
-const ACTIVITY_RETRY_MAX_INTERVAL = env.ACTIVITY_RETRY_MAX_INTERVAL;
+const ORDER_DEFAULT_UNIT_AMOUNT = 50;
+const PAYMENT_TIMEOUT = "5m";
+const ACTIVITY_TIMEOUT = "1m";
+const ACTIVITY_RETRY_MAX_INTERVAL = "1m";
 
 export const getPaymentInformationQuery = defineQuery<z.infer<
   typeof paymentInformationSchema
