@@ -1,3 +1,3 @@
 kustomize:
   images:
-  - esdproject.azurecr.io/esd-driver:latest@sha256:fa57ad76dfea22c5afb6eb330a81c3fdd37e39cc6e442759f4a23353b4e926fc
+  - esdproject.azurecr.io/esd-driver:latest@sha256:37712c40f02ad8a8535db9aa7fd8f46f6084a2095dbb4528021164a9b99b25f5
