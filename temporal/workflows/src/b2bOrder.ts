@@ -1,13 +1,19 @@
+import { Duration } from "@temporalio/common";
 import { proxyActivities } from "@temporalio/workflow";
 
 import type * as activities from "@repo/temporal-activities";
 import type { Order } from "@repo/temporal-common";
 
+import { env } from "./env";
+
+const ACTIVITY_TIMEOUT = env.ACTIVITY_TIMEOUT || "1m";
+const ACTIVITY_RETRY_MAX_INTERVAL = env.ACTIVITY_RETRY_MAX_INTERVAL || "1m";
+
 const { updateOrderStatus, generateInvoice, startDeliveryProcess } =
   proxyActivities<typeof activities>({
-    startToCloseTimeout: "1m",
+    startToCloseTimeout: ACTIVITY_TIMEOUT as Duration,
     retry: {
-      maximumInterval: "1m",
+      maximumInterval: ACTIVITY_RETRY_MAX_INTERVAL as Duration,
     },
   });
 

@@ -1,3 +1,4 @@
+import { Duration } from "@temporalio/common";
 import {
   ApplicationFailure,
   condition,
@@ -15,8 +16,12 @@ import type {
   StripeSessionStatus,
 } from "@repo/temporal-common";
 
+import { env } from "./env";
+
 export const ORDER_DEFAULT_UNIT_AMOUNT = 5000;
-export const PAYMENT_TIMEOUT = "5m";
+const PAYMENT_TIMEOUT = env.PAYMENT_TIMEOUT || "5m";
+const ACTIVITY_TIMEOUT = env.ACTIVITY_TIMEOUT || "1m";
+const ACTIVITY_RETRY_MAX_INTERVAL = env.ACTIVITY_RETRY_MAX_INTERVAL || "1m";
 
 export const getPaymentInformationQuery = defineQuery<z.infer<
   typeof paymentInformationSchema
@@ -40,9 +45,9 @@ const {
   sendInvoiceToCustomer,
   startDeliveryProcess,
 } = proxyActivities<typeof activities>({
-  startToCloseTimeout: "1m",
+  startToCloseTimeout: ACTIVITY_TIMEOUT as Duration,
   retry: {
-    maximumInterval: "1m",
+    maximumInterval: ACTIVITY_RETRY_MAX_INTERVAL as Duration,
   },
 });
 
@@ -152,7 +157,7 @@ Created at: ${order.createdAt.toLocaleString()}`,
 
   const isPaymentSuccessful = await condition(
     () => stripeSessionStatus === "complete",
-    PAYMENT_TIMEOUT,
+    PAYMENT_TIMEOUT as Duration,
   );
 
   if (isPaymentSuccessful) {

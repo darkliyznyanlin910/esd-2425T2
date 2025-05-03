@@ -1,3 +1,4 @@
+import { Duration } from "@temporalio/common";
 import {
   ApplicationFailure,
   condition,
@@ -9,9 +10,11 @@ import {
 import type * as activities from "@repo/temporal-activities";
 import type { Order, OrderStatus } from "@repo/temporal-common";
 
-export const PICKUP_TIMEOUT = "10s";
-export const DELIVERY_TIMEOUT = "10s";
-export const DRIVER_FOUND_TIMEOUT = "10s";
+import { env } from "./env";
+
+const PICKUP_TIMEOUT = env.PICKUP_TIMEOUT || "10s";
+const DELIVERY_TIMEOUT = env.DELIVERY_TIMEOUT || "10s";
+const DRIVER_FOUND_TIMEOUT = env.DRIVER_FOUND_TIMEOUT || "10s";
 
 export const driverFoundSignal = defineSignal<[string]>("DRIVER_FOUND");
 export const pickedUpSignal = defineSignal("PICKED_UP");
@@ -26,9 +29,9 @@ const {
   removeOrderAssignment,
   notifyDriverOfManualAssignment,
 } = proxyActivities<typeof activities>({
-  startToCloseTimeout: "1m",
+  startToCloseTimeout: env.ACTIVITY_TIMEOUT as Duration,
   retry: {
-    maximumInterval: "1m",
+    maximumInterval: env.ACTIVITY_RETRY_MAX_INTERVAL as Duration,
   },
 });
 
@@ -91,7 +94,7 @@ export async function delivery(
   }
   const noDriverFoundInTime = !(await condition(
     () => orderStatus === "DRIVER_FOUND",
-    DRIVER_FOUND_TIMEOUT,
+    DRIVER_FOUND_TIMEOUT as Duration,
   ));
   if (noDriverFoundInTime) {
     await updateOrderStatus(order.id, "DELAYED");
@@ -106,7 +109,7 @@ export async function delivery(
 
   const notPickedUpInTime = !(await condition(
     () => orderStatus === "PICKED_UP",
-    PICKUP_TIMEOUT,
+    PICKUP_TIMEOUT as Duration,
   ));
 
   if (notPickedUpInTime) {
@@ -122,7 +125,7 @@ export async function delivery(
 
   const notDeliveredInTime = !(await condition(
     () => orderStatus === "DELIVERED",
-    DELIVERY_TIMEOUT,
+    DELIVERY_TIMEOUT as Duration,
   ));
 
   if (notDeliveredInTime) {

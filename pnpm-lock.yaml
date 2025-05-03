@@ -1488,6 +1488,9 @@ importers:
 
   temporal/workflows:
     dependencies:
+      '@repo/service-discovery':
+        specifier: workspace:*
+        version: link:../../packages/service-discovery
       '@repo/temporal-activities':
         specifier: workspace:*
         version: link:../activities
