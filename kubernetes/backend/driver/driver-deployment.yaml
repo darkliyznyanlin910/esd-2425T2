@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: esd-driver
-          image: esdproject.azurecr.io/esd-driver@sha256:d147256527cacc55e360ff0266b277015ba8841ad35596f421a50228e04fdb26
+          image: esdproject.azurecr.io/esd-driver:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 3006

@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: esd-order
-          image: esdproject.azurecr.io/esd-order@sha256:5e12d8c418e1cf60c6eebcf3afc4689cb3b2e656ce397610682e2b7da62eb5b9
+          image: esdproject.azurecr.io/esd-order:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 3005
