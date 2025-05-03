@@ -53,41 +53,54 @@ export default function NotificationComponent({
     };
 
     wsReuse.onmessage = (event) => {
-      const message = JSON.parse(event.data);
-      console.log("WebSocket message received:", message);
-
-      if (!message || message.data === undefined) {
-        console.warn("Received message with missing data:", message);
-        return;
+      if (typeof event.data === "string") {
+        if (event.data.startsWith("{") || event.data.startsWith("[")) {
+          console.log("Received message:", event.data);
+        } else {
+          console.log("Is a String: ", event.data);
+          return;
+        }
       }
 
-      switch (message.event) {
-        case "receiveDelay":
-          setData(`Delay: ${message.data}`);
-          toast({
-            title: "Order Delay Notification",
-            description: "An order has been delayed",
-            variant: "info",
-            duration: 5000,
-          });
-          if (onNotification) {
-            onNotification();
-          }
-          break;
-        case "manualAssignment":
-          setData(`Reassigned: ${message.data}`);
-          toast({
-            title: "Order Reassignment Required",
-            description: "Please check the To Assign page",
-            variant: "info",
-            duration: 5000,
-          });
-          if (onNotification) {
-            onNotification();
-          }
-          break;
-        default:
-          console.warn("Unknown event type:", message.event);
+      try {
+        const message = JSON.parse(event.data);
+        console.log("WebSocket message received:", message);
+
+        if (!message || message.data === undefined) {
+          console.warn("Received message with missing data:", message);
+          return;
+        }
+
+        switch (message.event) {
+          case "receiveDelay":
+            setData(`Delay: ${message.data}`);
+            toast({
+              title: "Order Delay Notification",
+              description: "An order has been delayed",
+              variant: "info",
+              duration: 5000,
+            });
+            if (onNotification) {
+              onNotification();
+            }
+            break;
+          case "manualAssignment":
+            setData(`Reassigned: ${message.data}`);
+            toast({
+              title: "Order Reassignment Required",
+              description: "Please check the To Assign page",
+              variant: "info",
+              duration: 5000,
+            });
+            if (onNotification) {
+              onNotification();
+            }
+            break;
+          default:
+            console.warn("Unknown event type:", message.event);
+        }
+      } catch (error) {
+        console.error("Error parsing WebSocket message:", error);
       }
     };
 
