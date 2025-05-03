@@ -16,7 +16,7 @@ import type {
   StripeSessionStatus,
 } from "@repo/temporal-common";
 
-const ORDER_DEFAULT_UNIT_AMOUNT = 50;
+const ORDER_DEFAULT_UNIT_AMOUNT = 5000;
 const PAYMENT_TIMEOUT = "5m";
 const ACTIVITY_TIMEOUT = "1m";
 const ACTIVITY_RETRY_MAX_INTERVAL = "1m";
