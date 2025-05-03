@@ -1,0 +1,3 @@
+kustomize:
+  images:
+  - esdproject.azurecr.io/esd-driver-frontend:latest@sha256:a04eac330d0d968fd489634b57f60ddb5098ad3914313e31bd777b0fdc82634b
