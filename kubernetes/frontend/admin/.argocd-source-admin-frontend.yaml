@@ -1,3 +1,3 @@
 kustomize:
   images:
-  - esdproject.azurecr.io/esd-admin-frontend:latest@sha256:16c8308cb095e55ea910a6700c4863d528e10ae7505c1178c1f843302c07262d
+  - esdproject.azurecr.io/esd-admin-frontend:latest@sha256:1773287920a4124c9250a1ded53baf3232f2077249d871c70cc2604ddf1d7817
