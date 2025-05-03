@@ -72,7 +72,7 @@ export function DataTable<TData, TValue>({
   return (
     <div className="flex flex-col">
       <div className="flex justify-between">
-        <div className="flex gap-2 py-4">
+        <div className="flex gap-2 py-2">
           <select
             value={selectedColumn}
             onChange={(e) => setSelectedColumn(e.target.value)}

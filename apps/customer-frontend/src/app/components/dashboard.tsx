@@ -54,7 +54,7 @@ export default function Dashboard() {
   useEffect(() => {
     getOrders()
       .then(setOrders)
-      .catch((error) => console.error('Failed to fetch orders:', error));
+      .catch((error) => console.error("Failed to fetch orders:", error));
   }, []);
 
   const { pendingOrders, processingOrders, completedOrders, delayedOrders } =
@@ -104,9 +104,9 @@ export default function Dashboard() {
         <section className="w-full bg-blue-50 py-1 md:py-6 lg:py-6">
           <div className="container px-4 md:px-6">
             <div className="flex flex-col gap-2">
-              <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
+              <h2 className="text-3xl font-bold tracking-tighter sm:text-3xl md:text-3xl">
                 Welcome, {session?.user.name}
-              </h1>
+              </h2>
               <p className="text-muted-foreground">
                 Get started with your delivery process
               </p>
