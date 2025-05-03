@@ -24,8 +24,38 @@ spec:
             value: "temporal:7233"
           - name: TEMPORAL_CORS_ORIGINS
             value: "https://temporal.jknl.dev"
-          # - name: TEMPORAL_CSRF_COOKIE_INSECURE
-          #   value: "true"
+          - name: TEMPORAL_AUTH_ENABLED
+            value: "true"
+          - name: TEMPORAL_AUTH_TYPE
+            valueFrom:
+              secretKeyRef:
+                name: temporal-auth
+                key: TEMPORAL_AUTH_TYPE
+          - name: TEMPORAL_AUTH_PROVIDER_URL
+            valueFrom:
+              secretKeyRef:
+                name: temporal-auth
+                key: TEMPORAL_AUTH_PROVIDER_URL
+          - name: TEMPORAL_AUTH_CLIENT_ID
+            valueFrom:
+              secretKeyRef:
+                name: temporal-auth
+                key: TEMPORAL_AUTH_CLIENT_ID
+          - name: TEMPORAL_AUTH_CLIENT_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: temporal-auth
+                key: TEMPORAL_AUTH_CLIENT_SECRET
+          - name: TEMPORAL_AUTH_CALLBACK_URL
+            valueFrom:
+              secretKeyRef:
+                name: temporal-auth
+                key: TEMPORAL_AUTH_CALLBACK_URL
+          - name: TEMPORAL_AUTH_SCOPES
+            valueFrom:
+              secretKeyRef:
+                name: temporal-auth
+                key: TEMPORAL_AUTH_SCOPES
         resources:
             limits:
               cpu: 500m
