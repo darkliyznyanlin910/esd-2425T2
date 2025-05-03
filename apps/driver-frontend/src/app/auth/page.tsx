@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import { authClient } from "@repo/auth-client";
@@ -195,6 +196,18 @@ export default function AuthPage() {
             </div>
           </CardContent>
         </Card>
+        <Link
+          href={getServiceBaseUrl("customer-frontend") + "/"}
+          className="w-full"
+        >
+          <Button
+            variant="outline"
+            onClick={() => router.push("/")}
+            className="mt-4 w-full border-blue-950 text-sm text-blue-950 sm:text-base"
+          >
+            Back to Home Page
+          </Button>
+        </Link>
       </div>
     </div>
   );
