@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { Home, Truck, User2 } from "lucide-react";
 
 import { authClient } from "@repo/auth-client";
@@ -20,6 +20,7 @@ import {
 export function AppSidebar() {
   const { signOut } = authClient;
   const router = useRouter();
+  const pathname = usePathname();
 
   const handleSignOut = async () => {
     try {
@@ -73,17 +74,26 @@ export function AppSidebar() {
         <SidebarMenu>
           <SidebarGroupLabel>Applications</SidebarGroupLabel>
           <SidebarMenuItem>
-            <SidebarMenuButton onClick={() => router.push("/home")}>
+            <SidebarMenuButton
+              onClick={() => router.push("/home")}
+              isActive={pathname === "/home"}
+            >
               <Home /> Home
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
-            <SidebarMenuButton onClick={() => router.push("/orders")}>
+            <SidebarMenuButton
+              onClick={() => router.push("/orders")}
+              isActive={pathname === "/orders"}
+            >
               <Truck /> My Deliveries
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
-            <SidebarMenuButton onClick={() => router.push("/account")}>
+            <SidebarMenuButton
+              onClick={() => router.push("/account")}
+              isActive={pathname === "/account"}
+            >
               <User2 /> Account
             </SidebarMenuButton>
           </SidebarMenuItem>
