@@ -23,16 +23,21 @@ export default function ChatPage() {
   }, [session, router]);
 
   return (
-    <div className="flex h-full w-full flex-1 flex-col">
-      <div className="mb-4 flex-none">
-        <h1 className="text-2xl font-bold">Chat Assistant</h1>
-        <p className="text-muted-foreground">
-          Ask about your orders or get help with anything related to our service
-        </p>
+    <main className="min-h-screen w-full px-4 py-6 md:px-6">
+      <div className="flex h-full w-full flex-1 flex-col">
+        <div className="mb-7 flex-none">
+          <h2 className="pb-2 text-3xl font-bold tracking-tighter sm:text-3xl md:text-3xl">
+            Chat Assistant
+          </h2>
+          <p className="text-muted-foreground">
+            Ask about your orders or get help with anything related to our
+            service
+          </p>
+        </div>
+        <div className="min-h-0 w-full flex-1">
+          <CustomChat />
+        </div>
       </div>
-      <div className="min-h-0 w-full flex-1">
-        <CustomChat />
-      </div>
-    </div>
+    </main>
   );
 }

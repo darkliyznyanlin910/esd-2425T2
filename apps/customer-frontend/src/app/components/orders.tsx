@@ -57,8 +57,14 @@ export default function OrderTablePage() {
 
   return (
     <div className="container h-screen py-6">
-      <div className="mb-4 flex items-center justify-between">
-        <p className="text-xl font-semibold">Order Records</p>
+      <div className="mb-7 flex-none">
+        <h2 className="pb-2 text-3xl font-bold tracking-tighter sm:text-3xl md:text-3xl">
+          Order History
+        </h2>
+        <p className="text-muted-foreground">
+          View and manage your orders here. You can track the status of your
+          orders and get updates on their delivery.
+        </p>
       </div>
 
       <div className="rounded-lg bg-background p-4 shadow">
