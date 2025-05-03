@@ -10,11 +10,9 @@ import {
 import type * as activities from "@repo/temporal-activities";
 import type { Order, OrderStatus } from "@repo/temporal-common";
 
-import { env } from "./env";
-
-const PICKUP_TIMEOUT = env.PICKUP_TIMEOUT;
-const DELIVERY_TIMEOUT = env.DELIVERY_TIMEOUT;
-const DRIVER_FOUND_TIMEOUT = env.DRIVER_FOUND_TIMEOUT;
+const PICKUP_TIMEOUT = "5m";
+const DELIVERY_TIMEOUT = "10s";
+const DRIVER_FOUND_TIMEOUT = "10s";
 
 export const driverFoundSignal = defineSignal<[string]>("DRIVER_FOUND");
 export const pickedUpSignal = defineSignal("PICKED_UP");
@@ -29,9 +27,9 @@ const {
   removeOrderAssignment,
   notifyDriverOfManualAssignment,
 } = proxyActivities<typeof activities>({
-  startToCloseTimeout: env.ACTIVITY_TIMEOUT as Duration,
+  startToCloseTimeout: "1m" as Duration,
   retry: {
-    maximumInterval: env.ACTIVITY_RETRY_MAX_INTERVAL as Duration,
+    maximumInterval: "1m" as Duration,
   },
 });
 
