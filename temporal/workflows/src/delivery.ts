@@ -12,9 +12,9 @@ import type { Order, OrderStatus } from "@repo/temporal-common";
 
 import { env } from "./env";
 
-const PICKUP_TIMEOUT = env.PICKUP_TIMEOUT || "10s";
-const DELIVERY_TIMEOUT = env.DELIVERY_TIMEOUT || "10s";
-const DRIVER_FOUND_TIMEOUT = env.DRIVER_FOUND_TIMEOUT || "10s";
+const PICKUP_TIMEOUT = env.PICKUP_TIMEOUT;
+const DELIVERY_TIMEOUT = env.DELIVERY_TIMEOUT;
+const DRIVER_FOUND_TIMEOUT = env.DRIVER_FOUND_TIMEOUT;
 
 export const driverFoundSignal = defineSignal<[string]>("DRIVER_FOUND");
 export const pickedUpSignal = defineSignal("PICKED_UP");
