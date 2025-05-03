@@ -33,16 +33,16 @@ export const LOCAL_SERVICE_MAP: Record<Service, string> = {
 
 export const KUBERNETES_SERVICE_MAP: Record<Service, string> = {
   // Frontend
-  "admin-frontend": `http://admin.${env.NEXT_PUBLIC_DOMAIN}`,
-  "customer-frontend": `http://customer.${env.NEXT_PUBLIC_DOMAIN}`,
-  "driver-frontend": `http://driver.${env.NEXT_PUBLIC_DOMAIN}`,
+  "admin-frontend": `${env.NEXT_PUBLIC_DOMAIN.endsWith("local") ? "http" : "https"}://admin.${env.NEXT_PUBLIC_DOMAIN}`,
+  "customer-frontend": `${env.NEXT_PUBLIC_DOMAIN.endsWith("local") ? "http" : "https"}://customer.${env.NEXT_PUBLIC_DOMAIN}`,
+  "driver-frontend": `${env.NEXT_PUBLIC_DOMAIN.endsWith("local") ? "http" : "https"}://driver.${env.NEXT_PUBLIC_DOMAIN}`,
   // Backend
-  auth: `http://api.${env.NEXT_PUBLIC_DOMAIN}/auth`,
-  chatbot: `http://api.${env.NEXT_PUBLIC_DOMAIN}/chatbot`,
-  notification: `http://api.${env.NEXT_PUBLIC_DOMAIN}/notification`,
-  order: `http://api.${env.NEXT_PUBLIC_DOMAIN}/order`,
-  driver: `http://api.${env.NEXT_PUBLIC_DOMAIN}/driver`,
-  invoice: `http://api.${env.NEXT_PUBLIC_DOMAIN}/invoice`,
+  auth: `${env.NEXT_PUBLIC_DOMAIN.endsWith("local") ? "http" : "https"}://api.${env.NEXT_PUBLIC_DOMAIN}/auth`,
+  chatbot: `${env.NEXT_PUBLIC_DOMAIN.endsWith("local") ? "http" : "https"}://api.${env.NEXT_PUBLIC_DOMAIN}/chatbot`,
+  notification: `${env.NEXT_PUBLIC_DOMAIN.endsWith("local") ? "http" : "https"}://api.${env.NEXT_PUBLIC_DOMAIN}/notification`,
+  order: `${env.NEXT_PUBLIC_DOMAIN.endsWith("local") ? "http" : "https"}://api.${env.NEXT_PUBLIC_DOMAIN}/order`,
+  driver: `${env.NEXT_PUBLIC_DOMAIN.endsWith("local") ? "http" : "https"}://api.${env.NEXT_PUBLIC_DOMAIN}/driver`,
+  invoice: `${env.NEXT_PUBLIC_DOMAIN.endsWith("local") ? "http" : "https"}://api.${env.NEXT_PUBLIC_DOMAIN}/invoice`,
 };
 
 export const KUBERNETES_INTERNAL_SERVICE_MAP: Record<Service, string> = {
