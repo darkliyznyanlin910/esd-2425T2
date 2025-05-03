@@ -1488,15 +1488,15 @@ importers:
 
   temporal/workflows:
     dependencies:
-      '@repo/service-discovery':
-        specifier: workspace:*
-        version: link:../../packages/service-discovery
       '@repo/temporal-activities':
         specifier: workspace:*
         version: link:../activities
       '@repo/temporal-common':
         specifier: workspace:*
         version: link:../common
+      '@t3-oss/env-core':
+        specifier: ^0.11.1
+        version: 0.11.1(typescript@5.7.3)(zod@3.24.2)
       '@temporalio/workflow':
         specifier: ^1.11.7
         version: 1.11.7
@@ -8461,6 +8461,12 @@ snapshots:
   '@t3-oss/env-core@0.11.1(typescript@5.7.3)(zod@3.24.1)':
     dependencies:
       zod: 3.24.1
+    optionalDependencies:
+      typescript: 5.7.3
+
+  '@t3-oss/env-core@0.11.1(typescript@5.7.3)(zod@3.24.2)':
+    dependencies:
+      zod: 3.24.2
     optionalDependencies:
       typescript: 5.7.3
 
