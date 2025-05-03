@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: temporal-runner
-        image: esdproject.azurecr.io/esd-temporal:latest
+        image: esdproject.azurecr.io/esd-temporal@sha256:ad4f69c2cef13bcbc6cdce059081daa37f2cadd52ac64e491fa1ba35747d1ab9
         imagePullPolicy: Always
         env:
             - name: PGUSER
