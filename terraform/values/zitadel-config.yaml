@@ -1,0 +1,35 @@
+ExternalPort: 443
+ExternalSecure: true
+TLS:
+  Enabled: false
+Database:
+  postgres:
+    MaxIdleConns: 10
+    MaxConnLifetime: 30m
+    MaxConnIdleTime: 5m
+    MaxOpenConns: 20
+    Host: cnpg-cluster-rw
+    Port: 5432
+    Database: app
+    User:
+      Username: app
+      SSL:
+        Mode: disable
+DefaultInstance:
+  DomainPolicy:
+    UserLoginMustBeDomain: true
+  Restrictions:
+    DisallowPublicOrgRegistration: true
+# https://zitadel.com/docs/self-hosting/manage/configure#database-initialization-file
+FirstInstance:
+  InstanceName: Default
+  Org:
+    Name: Voltade
+    Human:
+      UserName: admin
+      FirstName: Voltade
+      LastName: Admin
+      Password: RootPassword1!
+      Email:
+        Address: admin@voltade.com
+        Verified: true
