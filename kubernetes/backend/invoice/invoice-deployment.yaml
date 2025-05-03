@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: esd-invoice
-          image: esdproject.azurecr.io/esd-invoice@sha256:fa3c4d69e662449f5cb2f2d08889391b48ca77a29ff834d155dbdccb837ae0e1
+          image: esdproject.azurecr.io/esd-invoice:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 3007

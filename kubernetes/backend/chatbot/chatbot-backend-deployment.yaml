@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: esd-chatbot-backend
-          image: esdproject.azurecr.io/esd-chatbot-backend@sha256:8bb8d19834a4c711d787434938434e73556a6ead7a68f35699638433d2ae7b31
+          image: esdproject.azurecr.io/esd-chatbot-backend:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 3003
