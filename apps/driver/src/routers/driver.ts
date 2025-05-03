@@ -376,7 +376,27 @@ const driverRouter = new OpenAPIHono<HonoExtension>()
         return c.json([]);
       }
 
-      return c.json(driverAssignments);
+      const uniqueAssignmentsByOrderId = new Map();
+
+      // Keep only the most recent assignment for each orderId
+      for (const assignment of driverAssignments) {
+        const existingAssignment = uniqueAssignmentsByOrderId.get(
+          assignment.orderId,
+        );
+
+        if (
+          !existingAssignment ||
+          new Date(assignment.updatedAt) >
+            new Date(existingAssignment.updatedAt)
+        ) {
+          uniqueAssignmentsByOrderId.set(assignment.orderId, assignment);
+        }
+      }
+
+      const dedupedAssignments = Array.from(
+        uniqueAssignmentsByOrderId.values(),
+      );
+      return c.json({ assignments: dedupedAssignments });
     },
   )
   .openapi(
