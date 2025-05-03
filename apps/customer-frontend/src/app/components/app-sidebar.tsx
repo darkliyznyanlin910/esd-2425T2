@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
-import { Bot, FilePlus, Notebook } from "lucide-react";
+import { Bot, Home, Notebook } from "lucide-react";
 
 import { authClient } from "@repo/auth-client";
 import { Button } from "@repo/ui/button";
@@ -42,14 +42,14 @@ export function AppSidebar() {
       <SidebarContent>
         <SidebarMenu>
           <SidebarGroupLabel>Applications</SidebarGroupLabel>
-          {/* <SidebarMenuItem>
+          <SidebarMenuItem>
             <SidebarMenuButton
-              isActive={pathname === "/order"}
-              onClick={() => router.push("/order")}
+              isActive={pathname === "/dashboard"}
+              onClick={() => router.push("/dashboard")}
             >
-              <FilePlus /> Create Order
+              <Home /> Dashboard
             </SidebarMenuButton>
-          </SidebarMenuItem> */}
+          </SidebarMenuItem>
           <SidebarMenuItem>
             <SidebarMenuButton
               isActive={pathname === "/orders"}
