@@ -1,14 +1,6 @@
 name: Azure Deploy
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - apps
-      - packages
-      - temporal
-      - tooling
   workflow_dispatch:
 
 jobs:
