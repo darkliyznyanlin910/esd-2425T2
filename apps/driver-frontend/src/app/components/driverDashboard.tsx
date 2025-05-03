@@ -67,6 +67,7 @@ export default function DriverDashboard() {
     getAcceptedOrdersFromStorage(),
   );
 
+  // First, let's add separate refresh states for each tab
   const [isRefreshingAvailable, setIsRefreshingAvailable] = useState(false);
   const [isRefreshingPickup, setIsRefreshingPickup] = useState(false);
   const [isRefreshingDelivery, setIsRefreshingDelivery] = useState(false);
@@ -214,44 +215,20 @@ export default function DriverDashboard() {
         toast({
           title: "Order Picked Up",
           variant: "success",
-          description: "You have successfully picked up the order.",
+          description: "You have successfully picked the order up.",
           duration: 3000,
         });
 
-        // Immediately update local state
-        // 1. Remove from pickup
+        // Remove the order from pickup list
         setPickupOrder((prev) =>
           prev.filter((item) => item.orderId !== orderId),
         );
 
-        // 2. Get the pickup order that was just removed
-        const pickedOrder = pickupOrder.find(
-          (item) => item.orderId === orderId,
-        );
+        // Wait a moment for the backend to update
+        await new Promise((resolve) => setTimeout(resolve, 500));
 
-        if (pickedOrder) {
-          // 3. Add to delivery with updated status
-          setDeliveryOrder((prev) => {
-            // Check if this order is already in the delivery list
-            const orderExists = prev.some((item) => item.orderId === orderId);
-            if (!orderExists) {
-              // Only add if not already there
-              return [
-                ...prev,
-                {
-                  ...pickedOrder,
-                  orderStatus: "PICKED_UP",
-                },
-              ];
-            }
-            return prev;
-          });
-        }
-
-        // Wait a moment and then refresh the delivery list from backend
-        setTimeout(() => {
-          fetchDeliveryOrders();
-        }, 1000);
+        // Refresh only the delivery orders list
+        await fetchDeliveryOrders();
       } else {
         throw new Error("Failed to update order state");
       }
@@ -260,7 +237,7 @@ export default function DriverDashboard() {
       toast({
         title: "Error",
         variant: "destructive",
-        description: "Failed to pick up order. Please try again.",
+        description: "Failed to pick order up. Please try again.",
         duration: 3000,
       });
     } finally {

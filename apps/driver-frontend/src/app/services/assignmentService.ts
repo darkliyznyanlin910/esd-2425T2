@@ -5,36 +5,19 @@ import { getServiceBaseUrl } from "@repo/service-discovery";
  */
 export async function getEnrichedDriverAssignments(
   userId: string,
-  status: string,
-): Promise<any[]> {
+  status?: string,
+) {
+  // Step 1: Get the driver assignments
   try {
-    // Get driver ID from user ID
-    const driverResponse = await fetch(
-      `${getServiceBaseUrl("driver")}/driver/${userId}`,
-      {
-        method: "GET",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      },
-    );
-
-    if (!driverResponse.ok) {
-      throw new Error(`Failed to get driver: ${driverResponse.status}`);
-    }
-
-    const driver = await driverResponse.json();
-    const driverId = driver.id;
-
     const url = new URL(
       `${getServiceBaseUrl("driver")}/driver/assignments/${userId}`,
     );
+
     if (status) {
       url.searchParams.append("status", status);
     }
 
-    const response = await fetch(url, {
+    const assignmentsResponse = await fetch(url, {
       method: "GET",
       credentials: "include",
       headers: {
@@ -42,51 +25,60 @@ export async function getEnrichedDriverAssignments(
       },
     });
 
-    if (!response.ok) {
-      throw new Error(`Failed to fetch assignments: ${response.status}`);
+    if (!assignmentsResponse.ok) {
+      console.error(
+        "Failed to fetch driver assignments",
+        assignmentsResponse.status,
+      );
+      return [];
     }
 
-    const assignments = await response.json();
+    const assignments = await assignmentsResponse.json();
 
-    // Track unique orderIds to prevent duplication
-    const uniqueOrderIds = new Set();
-    const uniqueAssignments = [];
-
-    for (const assignment of Array.isArray(assignments) ? assignments : []) {
-      if (!uniqueOrderIds.has(assignment.orderId)) {
-        uniqueOrderIds.add(assignment.orderId);
-
-        try {
-          const orderResponse = await fetch(
-            `${getServiceBaseUrl("order")}/order/${assignment.orderId}`,
-            {
-              method: "GET",
-              credentials: "include",
-              headers: {
-                "Content-Type": "application/json",
-              },
-            },
-          );
-
-          if (orderResponse.ok) {
-            const orderData = await orderResponse.json();
-            uniqueAssignments.push({
-              ...assignment,
-              orderDetails: orderData,
-            });
-          }
-        } catch (error) {
-          console.error(
-            `Error fetching order details for ${assignment.orderId}:`,
-            error,
-          );
-        }
-      }
+    if (!assignments || assignments.length === 0) {
+      return [];
     }
 
-    return uniqueAssignments;
+    // Step 2: Extract order IDs and fetch order details
+    const orderIds = assignments.map((assignment: any) => assignment.orderId);
+
+    const orderDetailsResponse = await fetch(
+      `${getServiceBaseUrl("order")}/order/bulk`,
+      {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ids: orderIds }),
+      },
+    );
+
+    if (!orderDetailsResponse.ok) {
+      console.error(
+        "Failed to fetch order details",
+        orderDetailsResponse.status,
+      );
+      return assignments; // Return assignments without order details
+    }
+
+    const orderDetails = await orderDetailsResponse.json();
+
+    // Step 3: Combine the data
+    const enrichedAssignments = assignments.map((assignment: any) => {
+      const matchingOrder = orderDetails.find(
+        (order: any) => order.id === assignment.orderId,
+      );
+
+      return {
+        ...assignment,
+        orderDetails: matchingOrder || null,
+      };
+    });
+
+    return enrichedAssignments;
   } catch (error) {
-    console.error("Error enriching driver assignments:", error);
-    throw error;
+    console.error("Error fetching enriched assignments:", error);
+    return [];
   }
 }

@@ -447,32 +447,15 @@ const driverRouter = new OpenAPIHono<HonoExtension>()
         const driver = await db.driver.findUnique({
           where: { userId: driverId },
         });
+        console.log("input ID", driverId);
         if (!driver) return c.json({ message: "Driver not found" }, 404);
-        const existingPickedUp = await db.orderAssignment.findFirst({
-          where: {
-            orderId,
-            driverId: driver.id,
-            orderStatus: "PICKED_UP",
-          },
+        console.log("Driver ID", driver.id);
+
+        await db.orderAssignment.updateMany({
+          where: { orderId, driverId: driver.id },
+          data: { orderStatus: "PICKED_UP" },
         });
-        if (!existingPickedUp) {
-          await db.orderAssignment.updateMany({
-            where: {
-              orderId,
-              driverId: driver.id,
-              orderStatus: "DRIVER_FOUND",
-            },
-            data: { orderStatus: "PICKED_UP" },
-          });
-        }
-        return c.json(
-          {
-            message: "Order picked up",
-            status: "PICKED_UP",
-            orderId,
-          },
-          201,
-        );
+        return c.json({ message: "Order picked up" }, 201);
       } else {
         await temporalClient.workflow
           .getHandle(`${orderId}-delivery`)
