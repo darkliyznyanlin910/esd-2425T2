@@ -43,7 +43,7 @@ export default function AuthPage() {
       const data: SignupResponse = (await res.json()) as SignupResponse;
 
       await DriverHonoClient.driver.$post({
-        json: { phone, id: data.id, userId: name },
+        json: { phone, id: data.id, userId: data.id },
       });
       setIsSignUp(!isSignUp);
       console.log(data);
