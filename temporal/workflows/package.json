@@ -24,10 +24,9 @@
   },
   "prettier": "@repo/prettier-config",
   "dependencies": {
-    "@repo/service-discovery": "workspace:*",
     "@repo/temporal-activities": "workspace:*",
     "@repo/temporal-common": "workspace:*",
-    "@temporalio/workflow": "^1.11.7",
-    "@t3-oss/env-core": "^0.11.1"
+    "@t3-oss/env-core": "^0.11.1",
+    "@temporalio/workflow": "^1.11.7"
   }
 }
