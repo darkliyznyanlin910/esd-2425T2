@@ -86,6 +86,16 @@ spec:
               name: esd-nginx
               port:
                 number: 80
+  - host: db.jknl.dev
+    tcp:
+      paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: postgres-rw
+              port:
+                number: 5432
   tls:
     - hosts:
         - argocd.jknl.dev
@@ -94,4 +104,5 @@ spec:
         - customer.jknl.dev
         - driver.jknl.dev
         - api.jknl.dev
+        - db.jknl.dev
       secretName: argocd-tls-cert
