@@ -26,7 +26,6 @@
   "dependencies": {
     "@repo/temporal-activities": "workspace:*",
     "@repo/temporal-common": "workspace:*",
-    "@t3-oss/env-core": "^0.11.1",
     "@temporalio/workflow": "^1.11.7"
   }
 }
