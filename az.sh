@@ -63,11 +63,15 @@ case "$ACTION" in
     case "$2" in
       "secret")
         kubectl create secret generic app-environment --from-env-file=kubernetes/.env.k8s
+        kubectl create secret generic temporal-auth --from-env-file=kubernetes/temporal/.env.temporal
         ;;
       "app")
         kubectl apply -k kubernetes/backend
         kubectl apply -k kubernetes/frontend
         kubectl apply -k kubernetes/nginx
+        ;;
+      "temporal")
+        kubectl apply -k kubernetes/temporal
         ;;
     esac
     ;;
