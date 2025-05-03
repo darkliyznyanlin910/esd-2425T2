@@ -17,7 +17,6 @@ case "$ACTION" in
     ;;
   login)
     az acr login --name $ACR_NAME
-    az aks get-credentials --resource-group $RESOURCE_GROUP_NAME --name $AKS_CLUSTER_NAME
     ;;
   push)
     # Temporal
