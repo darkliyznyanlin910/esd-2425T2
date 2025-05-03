@@ -53,6 +53,19 @@ async function getOrders(): Promise<Order[]> {
 export default function AssignTablePage() {
   const { orders, setOrders } = useOrders();
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const handleRefresh = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      const fetchedData = await getOrders();
+      setOrders(fetchedData);
+    } catch (error) {
+      console.error("Error refreshing orders:", error);
+    } finally {
+      setRefreshing(false);
+    }
+  }, []);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -81,7 +94,11 @@ export default function AssignTablePage() {
       />
       <div className="mb-4 text-xl font-semibold">To Assign</div>
       <div className="rounded-lg bg-background p-4 shadow">
-        <DataTable columns={columns} data={orders} />{" "}
+        <DataTable
+          columns={columns}
+          data={orders}
+          onRefresh={handleRefresh}
+        />{" "}
       </div>
     </div>
   );
