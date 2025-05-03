@@ -71,6 +71,15 @@ case "$ACTION" in
         ;;
     esac
     ;;
+  down)
+    case "$2" in
+      "app")
+        kubectl delete -k kubernetes/nginx
+        kubectl delete -k kubernetes/frontend
+        kubectl delete -k kubernetes/backend
+        ;;
+    esac
+    ;;
   *)
     echo "Invalid action: $ACTION"
     exit 1

@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: esd-notification
-          image: esdproject.azurecr.io/esd-notification@sha256:a61818ddbe1f04c507d7118da1e4071bcd907e46bde43ac0e37c76431502c865
+          image: esdproject.azurecr.io/esd-notification:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 3004
