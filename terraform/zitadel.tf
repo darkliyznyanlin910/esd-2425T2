@@ -13,3 +13,14 @@ resource "helm_release" "zitadel" {
 
   values = [file("values/zitadel.yaml")]
 }
+
+resource "kubernetes_secret" "zitadel_config" {
+  metadata {
+    name = "zitadel-config"
+    namespace = "default"
+  }
+
+  data = {
+    "config.yaml" = file("values/zitadel-config.yaml")
+  }
+}

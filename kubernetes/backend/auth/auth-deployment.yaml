@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: esd-auth
-          image: esdproject.azurecr.io/esd-auth:latest
+          image: esdproject.azurecr.io/esd-auth@sha256:995d5947b5a5a3dd458bff2710333975b1d0b5a8faf7de8db950f0975248791f
           imagePullPolicy: Always
           ports:
             - containerPort: 3002
