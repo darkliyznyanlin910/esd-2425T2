@@ -1,0 +1,3 @@
+kustomize:
+  images:
+  - esdproject.azurecr.io/esd-cronjob:latest@sha256:d089e716abb75be2552012d10869c7f5966052734cbfe8074315abbd91a0e2c4
