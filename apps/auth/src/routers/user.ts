@@ -6,6 +6,7 @@ import { UserSchema } from "@repo/db-auth/zod";
 import { getServiceBaseUrl } from "@repo/service-discovery";
 
 import { auth, authMiddleware } from "../auth";
+import { env } from "../env";
 
 const userRouter = new OpenAPIHono()
   .openapi(
@@ -182,6 +183,40 @@ const userRouter = new OpenAPIHono()
         console.log(error);
         return c.json({ message: "Failed to update Stripe Customer ID" }, 400);
       }
+    },
+  )
+  .openapi(
+    createRoute({
+      method: "get",
+      path: "/getAdminEmails",
+      middleware: [
+        authMiddleware({
+          bearer: {
+            tokens: [env.INTERNAL_COMMUNICATION_SECRET],
+          },
+        }),
+      ] as const,
+      responses: {
+        200: {
+          content: {
+            "application/json": {
+              schema: z.array(z.string()),
+            },
+          },
+          description: "Admin emails",
+        },
+      },
+    }),
+    async (c) => {
+      const admins = await db.user.findMany({
+        where: {
+          role: "admin",
+        },
+        select: {
+          email: true,
+        },
+      });
+      return c.json(admins.map((admin) => admin.email));
     },
   );
 

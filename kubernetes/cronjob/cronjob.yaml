@@ -1,0 +1,17 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: esd-cronjob
+spec:
+  schedule: "*/5 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: hello
+            image: esdproject.azurecr.io/esd-cronjob:latest
+            command:
+            - node
+            - /repo/apps/cronjob/dist/index.cjs
+          restartPolicy: OnFailure

@@ -22,7 +22,8 @@
     "postinstall": "pnpm lint:ws",
     "typecheck": "turbo run typecheck",
     "ui-add": "turbo run ui-add",
-    "start:temporal-runner": "turbo run start -F @repo/temporal-runner..."
+    "start:temporal-runner": "turbo run start -F @repo/temporal-runner...",
+    "start:cronjob": "turbo run start -F @repo/cronjob..."
   },
   "devDependencies": {
     "@repo/prettier-config": "workspace:*",
