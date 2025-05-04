@@ -462,11 +462,20 @@ export async function sendInvoiceToCustomer(invoice: Invoice): Promise<void> {
 
 export async function getUser(userId: string): Promise<User> {
   console.log("Getting user", userId);
-  const res = await UserClient.user[":id"].$get({
-    param: {
-      id: userId,
+  const res = await UserClient.user[":id"].$get(
+    {
+      param: {
+        id: userId,
+      },
     },
-  });
+    {
+      init: {
+        headers: {
+          Authorization: `Bearer ${env.INTERNAL_COMMUNICATION_SECRET}`,
+        },
+      },
+    },
+  );
 
   if (!res.ok) {
     throw ApplicationFailure.create({

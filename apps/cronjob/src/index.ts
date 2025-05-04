@@ -51,8 +51,8 @@ async function main() {
       },
     },
   );
-  const delayedOrdersData = (await delayedOrders.json()) as any;
-  console.log(delayedOrdersData.length);
+  const delayedOrdersData = await delayedOrders.json();
+  console.log(delayedOrdersData);
   const adminEmails = await fetch(
     `${getServiceBaseUrl("auth", IS_INTERNAL)}/admin/getAdminEmails`,
     {
@@ -66,6 +66,9 @@ async function main() {
 
   // Send delayed orders email to admin emails
   if (
+    delayedOrdersData &&
+    Array.isArray(delayedOrdersData) &&
+    delayedOrdersData.length > 0 &&
     adminEmailsData &&
     Array.isArray(adminEmailsData) &&
     adminEmailsData.length > 0
