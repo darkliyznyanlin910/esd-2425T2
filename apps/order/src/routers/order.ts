@@ -405,13 +405,13 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
         status,
         getFiveMinutesDelayedOrders,
       } = c.req.valid("query");
-      const user = c.get("user")!;
+      const user = c.get("user");
 
       console.log(take, page, sortBy, sortOrder);
 
       let userId: string | undefined = undefined;
       // Only filter by userId for regular clients
-      if (user.role === "client" && !c.req.header("Authorization")) {
+      if (user && user.role === "client" && !c.req.header("Authorization")) {
         userId = user.id;
       }
 

@@ -5,6 +5,7 @@ import { cors } from "hono/cors";
 import { getServiceBaseUrl, SERVICES } from "@repo/service-discovery";
 
 import { auth } from "./auth";
+import { adminRouter } from "./routers/admin";
 import { userRouter } from "./routers/user";
 import { HonoExtension } from "./type";
 
@@ -45,6 +46,7 @@ const routes = app
     }),
   )
   .route("/user", userRouter)
+  .route("/admin", adminRouter)
   .on(["POST", "GET", "PUT"], "/auth/**", async (c) => {
     return auth.handler(c.req.raw);
   });
