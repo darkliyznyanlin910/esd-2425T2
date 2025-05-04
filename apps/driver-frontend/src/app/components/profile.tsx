@@ -12,94 +12,213 @@ import {
   AlertDialogTitle,
 } from "@repo/ui/alert-dialog";
 import { Button } from "@repo/ui/button";
+import { useToast } from "@repo/ui/hooks/use-toast";
 import { Input } from "@repo/ui/input";
 import { Label } from "@repo/ui/label";
 
-import NotificationComponent from "./notification";
-
-interface DriverProfile {
+interface DriverProfileProps {
   driverId: string;
   phone: string;
   email: string;
-  password: string;
   updatedAt: string;
 }
 
-export function ProfileManagementWrapper({
-  profile,
-  isEditingPhone,
-  isEditingEmail,
-  isEditingPassword,
-  phoneValue,
-  emailValue,
-  passwordValue,
-  setIsEditingPhone,
-  setIsEditingEmail,
-  setIsEditingPassword,
-  setPhoneValue,
-  setEmailValue,
-  setPasswordValue,
-  handleProfileUpdate,
-  cancelEdit,
-}: {
-  profile: DriverProfile;
-  isEditingPhone: boolean;
-  isEditingEmail: boolean;
-  isEditingPassword: boolean;
-  phoneValue: string;
-  emailValue: string;
-  passwordValue: string;
-  setIsEditingPhone: (value: boolean) => void;
-  setIsEditingEmail: (value: boolean) => void;
-  setIsEditingPassword: (value: boolean) => void;
-  setPhoneValue: (value: string) => void;
-  setEmailValue: (value: string) => void;
-  setPasswordValue: (value: string) => void;
-  handleProfileUpdate: (field: "phone" | "email" | "password") => void;
-  cancelEdit: (field: "phone" | "email" | "password") => void;
-}) {
+interface ProfileManagementProps {
+  driverProfile: DriverProfileProps;
+  onUpdateProfile: (
+    field: "phone" | "email" | "password",
+    value: string,
+  ) => Promise<void>;
+}
+
+export function ProfileManagement({
+  driverProfile,
+  onUpdateProfile,
+}: ProfileManagementProps) {
+  const { toast } = useToast();
+
+  // Edit states
+  const [isEditingPhone, setIsEditingPhone] = useState(false);
+  const [isEditingEmail, setIsEditingEmail] = useState(false);
+  const [isEditingPassword, setIsEditingPassword] = useState(false);
+
+  // Form values
+  const [phoneValue, setPhoneValue] = useState(driverProfile.phone);
+  const [emailValue, setEmailValue] = useState(driverProfile.email);
+  const [passwordValue, setPasswordValue] = useState("");
+
+  // Validation errors
+  const [phoneError, setPhoneError] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+
+  // Loading states
+  const [isLoading, setIsLoading] = useState({
+    phone: false,
+    email: false,
+    password: false,
+  });
+
+  // Confirmation dialog state
+  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
+  const [currentField, setCurrentField] = useState<
+    "phone" | "email" | "password" | null
+  >(null);
+
   // Format date for display
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleString();
   };
 
-  // State for password confirmation dialog
-  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
-  const [currentField, setCurrentField] = useState<
-    "phone" | "email" | "password" | null
-  >(null);
-  const [passwordError, setPasswordError] = useState("");
+  // Field validation
+  const validatePhone = (phone: string) => {
+    const phonePattern = /^\+?[0-9]{10,15}$/;
+    if (!phone) {
+      setPhoneError("Phone number is required");
+      return false;
+    }
+    if (!phonePattern.test(phone)) {
+      setPhoneError("Please enter a valid phone number");
+      return false;
+    }
+    setPhoneError("");
+    return true;
+  };
 
-  // Function to handle update with confirmation for password
-  const handleFieldUpdate = (field: "phone" | "email" | "password") => {
-    if (field === "password") {
-      // Validate password
-      if (passwordValue.length < 8) {
-        setPasswordError("Password must be at least 8 characters long");
-        return;
-      }
-      setPasswordError("");
-      setCurrentField(field);
-      setIsConfirmDialogOpen(true);
-    } else {
-      // For non-password fields, proceed without confirmation
-      handleProfileUpdate(field);
+  const validateEmail = (email: string) => {
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email) {
+      setEmailError("Email is required");
+      return false;
+    }
+    if (!emailPattern.test(email)) {
+      setEmailError("Please enter a valid email address");
+      return false;
+    }
+    setEmailError("");
+    return true;
+  };
+
+  const validatePassword = (password: string) => {
+    if (!password) {
+      setPasswordError("Password is required");
+      return false;
+    }
+    if (password.length < 8) {
+      setPasswordError("Password must be at least 8 characters long");
+      return false;
+    }
+    setPasswordError("");
+    return true;
+  };
+
+  // Handle cancel for any field
+  const cancelEdit = (field: "phone" | "email" | "password") => {
+    switch (field) {
+      case "phone":
+        setPhoneValue(driverProfile.phone);
+        setIsEditingPhone(false);
+        setPhoneError("");
+        break;
+      case "email":
+        setEmailValue(driverProfile.email);
+        setIsEditingEmail(false);
+        setEmailError("");
+        break;
+      case "password":
+        setPasswordValue("");
+        setIsEditingPassword(false);
+        setPasswordError("");
+        break;
     }
   };
 
-  // Confirm the password change
-  const confirmUpdate = () => {
-    if (currentField) {
-      handleProfileUpdate(currentField);
+  // Handle update attempt
+  const handleUpdateAttempt = (field: "phone" | "email" | "password") => {
+    let isValid = false;
+
+    switch (field) {
+      case "phone":
+        isValid = validatePhone(phoneValue);
+        if (isValid && phoneValue === driverProfile.phone) {
+          toast({
+            title: "No Changes",
+            description: "The phone number is the same as the current one.",
+          });
+          cancelEdit("phone");
+          return;
+        }
+        break;
+      case "email":
+        isValid = validateEmail(emailValue);
+        if (isValid && emailValue === driverProfile.email) {
+          toast({
+            title: "No Changes",
+            description: "The email is the same as the current one.",
+          });
+          cancelEdit("email");
+          return;
+        }
+        break;
+      case "password":
+        isValid = validatePassword(passwordValue);
+        break;
+    }
+
+    if (!isValid) return;
+
+    // For sensitive fields, show confirmation dialog
+    if (field === "email" || field === "password") {
+      setCurrentField(field);
+      setIsConfirmDialogOpen(true);
+    } else {
+      // For less sensitive fields, update directly
+      handleConfirmUpdate(field);
+    }
+  };
+
+  // Handle confirmed update
+  const handleConfirmUpdate = async (field: "phone" | "email" | "password") => {
+    try {
+      setIsLoading({ ...isLoading, [field]: true });
+
+      // Get the appropriate value based on field
+      const value =
+        field === "phone"
+          ? phoneValue
+          : field === "email"
+            ? emailValue
+            : passwordValue;
+
+      await onUpdateProfile(field, value);
+
+      // Reset edit state
+      switch (field) {
+        case "phone":
+          setIsEditingPhone(false);
+          break;
+        case "email":
+          setIsEditingEmail(false);
+          break;
+        case "password":
+          setIsEditingPassword(false);
+          setPasswordValue("");
+          break;
+      }
+
+      // Close dialog if open
       setIsConfirmDialogOpen(false);
       setCurrentField(null);
+    } catch (error) {
+      console.error(`Error updating ${field}:`, error);
+    } finally {
+      setIsLoading({ ...isLoading, [field]: false });
     }
   };
 
   return (
     <div className="p-6">
-      <NotificationComponent />
       <h2 className="mb-6 text-xl font-semibold">Profile Management</h2>
 
       <div className="mb-6 rounded-lg border bg-white shadow-sm">
@@ -123,7 +242,7 @@ export function ProfileManagementWrapper({
               <User size={18} className="text-gray-500" />
               <Input
                 id="driverId"
-                value={profile.driverId}
+                value={driverProfile.driverId}
                 disabled
                 className="border-0 bg-transparent p-0 focus-visible:ring-0"
               />
@@ -158,26 +277,57 @@ export function ProfileManagementWrapper({
                     className="border-0 p-0 focus-visible:ring-0"
                     autoFocus
                   />
+                  {phoneError && (
+                    <p className="mt-1 text-sm text-red-500">{phoneError}</p>
+                  )}
                   <div className="mt-2 flex justify-end space-x-2">
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => cancelEdit("phone")}
+                      disabled={isLoading.phone}
                     >
                       Cancel
                     </Button>
                     <Button
                       size="sm"
-                      onClick={() => handleFieldUpdate("phone")}
+                      onClick={() => handleUpdateAttempt("phone")}
+                      disabled={isLoading.phone}
                     >
-                      <Save size={16} className="mr-1" /> Save
+                      {isLoading.phone ? (
+                        <span className="flex items-center">
+                          <svg
+                            className="mr-1 h-4 w-4 animate-spin"
+                            viewBox="0 0 24 24"
+                          >
+                            <circle
+                              className="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="4"
+                            />
+                            <path
+                              className="opacity-75"
+                              fill="currentColor"
+                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            />
+                          </svg>
+                          Saving...
+                        </span>
+                      ) : (
+                        <>
+                          <Save size={16} className="mr-1" /> Save
+                        </>
+                      )}
                     </Button>
                   </div>
                 </div>
               ) : (
                 <Input
                   id="phone"
-                  value={profile.phone}
+                  value={driverProfile.phone}
                   disabled
                   className="border-0 bg-transparent p-0 focus-visible:ring-0"
                 />
@@ -214,26 +364,57 @@ export function ProfileManagementWrapper({
                     className="border-0 p-0 focus-visible:ring-0"
                     autoFocus
                   />
+                  {emailError && (
+                    <p className="mt-1 text-sm text-red-500">{emailError}</p>
+                  )}
                   <div className="mt-2 flex justify-end space-x-2">
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => cancelEdit("email")}
+                      disabled={isLoading.email}
                     >
                       Cancel
                     </Button>
                     <Button
                       size="sm"
-                      onClick={() => handleFieldUpdate("email")}
+                      onClick={() => handleUpdateAttempt("email")}
+                      disabled={isLoading.email}
                     >
-                      <Save size={16} className="mr-1" /> Save
+                      {isLoading.email ? (
+                        <span className="flex items-center">
+                          <svg
+                            className="mr-1 h-4 w-4 animate-spin"
+                            viewBox="0 0 24 24"
+                          >
+                            <circle
+                              className="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="4"
+                            />
+                            <path
+                              className="opacity-75"
+                              fill="currentColor"
+                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            />
+                          </svg>
+                          Saving...
+                        </span>
+                      ) : (
+                        <>
+                          <Save size={16} className="mr-1" /> Save
+                        </>
+                      )}
                     </Button>
                   </div>
                 </div>
               ) : (
                 <Input
                   id="email"
-                  value={profile.email}
+                  value={driverProfile.email}
                   disabled
                   className="border-0 bg-transparent p-0 focus-visible:ring-0"
                 />
@@ -279,14 +460,42 @@ export function ProfileManagementWrapper({
                       variant="outline"
                       size="sm"
                       onClick={() => cancelEdit("password")}
+                      disabled={isLoading.password}
                     >
                       Cancel
                     </Button>
                     <Button
                       size="sm"
-                      onClick={() => handleFieldUpdate("password")}
+                      onClick={() => handleUpdateAttempt("password")}
+                      disabled={isLoading.password}
                     >
-                      <Save size={16} className="mr-1" /> Save
+                      {isLoading.password ? (
+                        <span className="flex items-center">
+                          <svg
+                            className="mr-1 h-4 w-4 animate-spin"
+                            viewBox="0 0 24 24"
+                          >
+                            <circle
+                              className="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="4"
+                            />
+                            <path
+                              className="opacity-75"
+                              fill="currentColor"
+                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            />
+                          </svg>
+                          Saving...
+                        </span>
+                      ) : (
+                        <>
+                          <Save size={16} className="mr-1" /> Save
+                        </>
+                      )}
                     </Button>
                   </div>
                 </div>
@@ -304,7 +513,7 @@ export function ProfileManagementWrapper({
         </div>
 
         <div className="border-t p-4 text-sm text-gray-500">
-          <p>Profile last updated: {formatDate(profile.updatedAt)}</p>
+          <p>Profile last updated: {formatDate(driverProfile.updatedAt)}</p>
         </div>
       </div>
 
@@ -315,18 +524,60 @@ export function ProfileManagementWrapper({
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Confirm Password Change</AlertDialogTitle>
+            <AlertDialogTitle>
+              {currentField === "email"
+                ? "Confirm Email Change"
+                : "Confirm Password Change"}
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to change your password? You'll need to use
-              your new password the next time you log in.
+              {currentField === "email"
+                ? "Are you sure you want to change your email address? You'll need to use your new email the next time you log in."
+                : "Are you sure you want to change your password? You'll need to use your new password the next time you log in."}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setIsConfirmDialogOpen(false)}>
+            <AlertDialogCancel
+              onClick={() => {
+                setIsConfirmDialogOpen(false);
+                setCurrentField(null);
+              }}
+              disabled={currentField ? isLoading[currentField] : false}
+            >
               Cancel
             </AlertDialogCancel>
-            <AlertDialogAction onClick={confirmUpdate}>
-              Confirm
+            <AlertDialogAction
+              onClick={() => {
+                if (currentField) {
+                  handleConfirmUpdate(currentField);
+                }
+              }}
+              disabled={currentField ? isLoading[currentField] : false}
+            >
+              {currentField && isLoading[currentField] ? (
+                <span className="flex items-center">
+                  <svg
+                    className="mr-1 h-4 w-4 animate-spin"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    />
+                  </svg>
+                  Confirming...
+                </span>
+              ) : (
+                "Confirm"
+              )}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
