@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { hc } from "hono/client";
-import { MapPin, Package } from "lucide-react";
+import { MapPinCheck, MapPinned, Package } from "lucide-react";
 import { z } from "zod";
 
 import type { AppType } from "@repo/order/type";
@@ -54,8 +54,6 @@ export function DeliveryForm() {
       toCountry: "",
     },
   });
-
-  console.log(name);
 
   const onSubmit = async (values: z.infer<typeof orderSchema>) => {
     try {
@@ -166,7 +164,18 @@ export function DeliveryForm() {
             >
               2
             </div>
-            <span className="mt-2 text-xs">Addresses</span>
+            <span className="mt-2 text-xs">Pickup Address</span>
+          </div>
+          <div
+            className={`mx-2 h-1 flex-1 ${step >= 3 ? "bg-blue-600" : "bg-gray-200"}`}
+          ></div>
+          <div className="flex flex-col items-center">
+            <div
+              className={`flex h-10 w-10 items-center justify-center rounded-full ${step >= 3 ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-500"}`}
+            >
+              3
+            </div>
+            <span className="mt-2 text-xs">Delivery Address</span>
           </div>
         </div>
       </div>
@@ -174,19 +183,19 @@ export function DeliveryForm() {
       <Form {...form}>
         <form
           onSubmit={
-            step !== 2
+            step === 1
               ? (e) => {
                   e.preventDefault();
                   setStep(2);
-                  setTimeout(() => {
-                    const formElement =
-                      document.getElementById("delivery-form");
-                    if (formElement) {
-                      formElement.scrollIntoView({ behavior: "smooth" });
-                    }
-                  }, 100);
+                  scrollToForm();
                 }
-              : form.handleSubmit(onSubmit)
+              : step === 2
+                ? (e) => {
+                    e.preventDefault();
+                    setStep(3);
+                    scrollToForm();
+                  }
+                : form.handleSubmit(onSubmit)
           }
           id="delivery-form"
         >
@@ -229,293 +238,297 @@ export function DeliveryForm() {
           )}
           {step === 2 && (
             <div className="space-y-6">
-              <div className="space-y-4">
-                <div className="flex items-center gap-2">
-                  <MapPin className="h-5 w-5 text-blue-600" />
-                  <h3 className="text-lg font-medium">
-                    Pickup & Delivery Addresses
-                  </h3>
+              <div className="flex items-center gap-2">
+                <MapPinCheck className="h-5 w-5 text-blue-600" />
+                <h3 className="text-lg font-medium">Pickup Address</h3>
+              </div>
+              <div className="space-y-2">
+                <FormField
+                  name="fromAddressLine1"
+                  control={form.control}
+                  render={({ field }) => (
+                    <>
+                      <FormLabel htmlFor="fromAddressLine1">
+                        Address Line 1
+                      </FormLabel>
+                      <FormControl>
+                        <input
+                          id="fromAddressLine1"
+                          {...field}
+                          type="text"
+                          placeholder="Street address"
+                          className="h-12 w-full rounded-md border border-gray-300 p-2"
+                          required
+                        />
+                      </FormControl>
+                    </>
+                  )}
+                />
+              </div>
+              <div className="space-y-2">
+                <FormField
+                  name="fromAddressLine2"
+                  control={form.control}
+                  render={({ field }) => (
+                    <>
+                      <FormLabel htmlFor="fromAddressLine2">
+                        Address Line 2 (Optional)
+                      </FormLabel>
+                      <FormControl>
+                        <input
+                          id="fromAddressLine2"
+                          {...field}
+                          type="text"
+                          placeholder="Apartment, suite, unit, etc."
+                          className="h-12 w-full rounded-md border border-gray-300 p-2"
+                        />
+                      </FormControl>
+                    </>
+                  )}
+                />
+              </div>
+              <div className="grid gap-4 sm:grid-cols-3">
+                <div className="space-y-2">
+                  <FormField
+                    name="fromCity"
+                    control={form.control}
+                    render={({ field }) => (
+                      <>
+                        <FormLabel htmlFor="fromCity">City</FormLabel>
+                        <FormControl>
+                          <input
+                            id="fromCity"
+                            {...field}
+                            type="text"
+                            placeholder="City"
+                            className="h-12 w-full rounded-md border border-gray-300 p-2"
+                            required
+                          />
+                        </FormControl>
+                      </>
+                    )}
+                  />
                 </div>
-                <div className="space-y-4 rounded-md border p-4">
-                  <h4 className="font-medium">Pickup Address</h4>
-                  <div className="space-y-2">
-                    <FormField
-                      name="fromAddressLine1"
-                      control={form.control}
-                      render={({ field }) => (
-                        <>
-                          <FormLabel htmlFor="fromAddressLine1">
-                            Address Line 1
-                          </FormLabel>
-                          <FormControl>
-                            <input
-                              id="fromAddressLine1"
-                              {...field}
-                              type="text"
-                              placeholder="Street address"
-                              className="h-12 w-full rounded-md border border-gray-300 p-2"
-                              required
-                            />
-                          </FormControl>
-                        </>
-                      )}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <FormField
-                      name="fromAddressLine2"
-                      control={form.control}
-                      render={({ field }) => (
-                        <>
-                          <FormLabel htmlFor="fromAddressLine2">
-                            Address Line 2 (Optional)
-                          </FormLabel>
-                          <FormControl>
-                            <input
-                              id="fromAddressLine2"
-                              {...field}
-                              type="text"
-                              placeholder="Apartment, suite, unit, etc."
-                              className="h-12 w-full rounded-md border border-gray-300 p-2"
-                            />
-                          </FormControl>
-                        </>
-                      )}
-                    />
-                  </div>
-                  <div className="grid gap-4 sm:grid-cols-3">
-                    <div className="space-y-2">
-                      <FormField
-                        name="fromCity"
-                        control={form.control}
-                        render={({ field }) => (
-                          <>
-                            <FormLabel htmlFor="fromCity">City</FormLabel>
-                            <FormControl>
-                              <input
-                                id="fromCity"
-                                {...field}
-                                type="text"
-                                placeholder="City"
-                                className="h-12 w-full rounded-md border border-gray-300 p-2"
-                                required
-                              />
-                            </FormControl>
-                          </>
-                        )}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <FormField
-                        name="fromState"
-                        control={form.control}
-                        render={({ field }) => (
-                          <>
-                            <FormLabel htmlFor="fromState">
-                              State/Province
-                            </FormLabel>
-                            <FormControl>
-                              <input
-                                id="fromState"
-                                {...field}
-                                type="text"
-                                placeholder="State/Province"
-                                className="h-12 w-full rounded-md border border-gray-300 p-2"
-                              />
-                            </FormControl>
-                          </>
-                        )}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <FormField
-                        name="fromZipCode"
-                        control={form.control}
-                        render={({ field }) => (
-                          <>
-                            <FormLabel htmlFor="fromZipCode">
-                              Postal Code
-                            </FormLabel>
-                            <FormControl>
-                              <input
-                                id="fromZipCode"
-                                {...field}
-                                type="text"
-                                placeholder="Postal code"
-                                className="h-12 w-full rounded-md border border-gray-300 p-2"
-                                required
-                              />
-                            </FormControl>
-                          </>
-                        )}
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <FormField
-                      name="fromCountry"
-                      control={form.control}
-                      render={({ field }) => (
-                        <>
-                          <FormLabel htmlFor="fromCountry">Country</FormLabel>
-                          <FormControl>
-                            <input
-                              id="fromCountry"
-                              {...field}
-                              type="text"
-                              placeholder="Country"
-                              className="h-12 w-full rounded-md border border-gray-300 p-2"
-                              required
-                            />
-                          </FormControl>
-                        </>
-                      )}
-                    />
-                  </div>
+                <div className="space-y-2">
+                  <FormField
+                    name="fromState"
+                    control={form.control}
+                    render={({ field }) => (
+                      <>
+                        <FormLabel htmlFor="fromState">
+                          State/Province
+                        </FormLabel>
+                        <FormControl>
+                          <input
+                            id="fromState"
+                            {...field}
+                            type="text"
+                            placeholder="State/Province"
+                            className="h-12 w-full rounded-md border border-gray-300 p-2"
+                          />
+                        </FormControl>
+                      </>
+                    )}
+                  />
                 </div>
-                <div className="space-y-4 rounded-md border p-4">
-                  <h4 className="font-medium">Delivery Address</h4>
-                  <div className="space-y-2">
-                    <FormField
-                      name="toAddressLine1"
-                      control={form.control}
-                      render={({ field }) => (
-                        <>
-                          <FormLabel htmlFor="toAddressLine1">
-                            Address Line 1
-                          </FormLabel>
-                          <FormControl>
-                            <input
-                              id="toAddressLine1"
-                              {...field}
-                              type="text"
-                              placeholder="Street address"
-                              className="h-12 w-full rounded-md border border-gray-300 p-2"
-                              required
-                            />
-                          </FormControl>
-                        </>
-                      )}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <FormField
-                      name="toAddressLine2"
-                      control={form.control}
-                      render={({ field }) => (
-                        <>
-                          <FormLabel htmlFor="toAddressLine2">
-                            Address Line 2 (Optional)
-                          </FormLabel>
-                          <FormControl>
-                            <input
-                              id="toAddressLine2"
-                              {...field}
-                              type="text"
-                              placeholder="Apartment, suite, unit, etc."
-                              className="h-12 w-full rounded-md border border-gray-300 p-2"
-                            />
-                          </FormControl>
-                        </>
-                      )}
-                    />
-                  </div>
-                  <div className="grid gap-4 sm:grid-cols-3">
-                    <div className="space-y-2">
-                      <FormField
-                        name="toCity"
-                        control={form.control}
-                        render={({ field }) => (
-                          <>
-                            <FormLabel htmlFor="toCity">City</FormLabel>
-                            <FormControl>
-                              <input
-                                id="toCity"
-                                {...field}
-                                type="text"
-                                placeholder="City"
-                                className="h-12 w-full rounded-md border border-gray-300 p-2"
-                                required
-                              />
-                            </FormControl>
-                          </>
-                        )}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <FormField
-                        name="toState"
-                        control={form.control}
-                        render={({ field }) => (
-                          <>
-                            <FormLabel htmlFor="toState">
-                              State/Province
-                            </FormLabel>
-                            <FormControl>
-                              <input
-                                id="toState"
-                                {...field}
-                                type="text"
-                                placeholder="State/Province"
-                                className="h-12 w-full rounded-md border border-gray-300 p-2"
-                              />
-                            </FormControl>
-                          </>
-                        )}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <FormField
-                        name="toZipCode"
-                        control={form.control}
-                        render={({ field }) => (
-                          <>
-                            <FormLabel htmlFor="toZipCode">
-                              Postal Code
-                            </FormLabel>
-                            <FormControl>
-                              <input
-                                id="toZipCode"
-                                {...field}
-                                type="text"
-                                placeholder="Postal code"
-                                className="h-12 w-full rounded-md border border-gray-300 p-2"
-                                required
-                              />
-                            </FormControl>
-                          </>
-                        )}
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <FormField
-                      name="toCountry"
-                      control={form.control}
-                      render={({ field }) => (
-                        <>
-                          <FormLabel htmlFor="toCountry">Country</FormLabel>
-                          <FormControl>
-                            <input
-                              id="toCountry"
-                              {...field}
-                              type="text"
-                              placeholder="Country"
-                              className="h-12 w-full rounded-md border border-gray-300 p-2"
-                              required
-                            />
-                          </FormControl>
-                        </>
-                      )}
-                    />
-                  </div>
+                <div className="space-y-2">
+                  <FormField
+                    name="fromZipCode"
+                    control={form.control}
+                    render={({ field }) => (
+                      <>
+                        <FormLabel htmlFor="fromZipCode">Postal Code</FormLabel>
+                        <FormControl>
+                          <input
+                            id="fromZipCode"
+                            {...field}
+                            type="text"
+                            placeholder="Postal code"
+                            className="h-12 w-full rounded-md border border-gray-300 p-2"
+                            required
+                          />
+                        </FormControl>
+                      </>
+                    )}
+                  />
                 </div>
+              </div>
+              <div className="space-y-2">
+                <FormField
+                  name="fromCountry"
+                  control={form.control}
+                  render={({ field }) => (
+                    <>
+                      <FormLabel htmlFor="fromCountry">Country</FormLabel>
+                      <FormControl>
+                        <input
+                          id="fromCountry"
+                          {...field}
+                          type="text"
+                          placeholder="Country"
+                          className="h-12 w-full rounded-md border border-gray-300 p-2"
+                          required
+                        />
+                      </FormControl>
+                    </>
+                  )}
+                />
               </div>
               <div className="flex justify-between">
                 <Button
                   type="button"
                   variant="outline"
                   onClick={() => setStep(1)}
+                >
+                  Back
+                </Button>
+                <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
+                  Continue
+                </Button>
+              </div>
+            </div>
+          )}
+          {step === 3 && (
+            <div className="space-y-6">
+              <div className="flex items-center gap-2">
+                <MapPinned className="h-5 w-5 text-blue-600" />
+                <h3 className="text-lg font-medium">Delivery Address</h3>
+              </div>
+              <div className="space-y-2">
+                <FormField
+                  name="toAddressLine1"
+                  control={form.control}
+                  render={({ field }) => (
+                    <>
+                      <FormLabel htmlFor="toAddressLine1">
+                        Address Line 1
+                      </FormLabel>
+                      <FormControl>
+                        <input
+                          id="toAddressLine1"
+                          {...field}
+                          type="text"
+                          placeholder="Street address"
+                          className="h-12 w-full rounded-md border border-gray-300 p-2"
+                          required
+                        />
+                      </FormControl>
+                    </>
+                  )}
+                />
+              </div>
+              <div className="space-y-2">
+                <FormField
+                  name="toAddressLine2"
+                  control={form.control}
+                  render={({ field }) => (
+                    <>
+                      <FormLabel htmlFor="toAddressLine2">
+                        Address Line 2 (Optional)
+                      </FormLabel>
+                      <FormControl>
+                        <input
+                          id="toAddressLine2"
+                          {...field}
+                          type="text"
+                          placeholder="Apartment, suite, unit, etc."
+                          className="h-12 w-full rounded-md border border-gray-300 p-2"
+                        />
+                      </FormControl>
+                    </>
+                  )}
+                />
+              </div>
+              <div className="grid gap-4 sm:grid-cols-3">
+                <div className="space-y-2">
+                  <FormField
+                    name="toCity"
+                    control={form.control}
+                    render={({ field }) => (
+                      <>
+                        <FormLabel htmlFor="toCity">City</FormLabel>
+                        <FormControl>
+                          <input
+                            id="toCity"
+                            {...field}
+                            type="text"
+                            placeholder="City"
+                            className="h-12 w-full rounded-md border border-gray-300 p-2"
+                            required
+                          />
+                        </FormControl>
+                      </>
+                    )}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <FormField
+                    name="toState"
+                    control={form.control}
+                    render={({ field }) => (
+                      <>
+                        <FormLabel htmlFor="toState">State/Province</FormLabel>
+                        <FormControl>
+                          <input
+                            id="toState"
+                            {...field}
+                            type="text"
+                            placeholder="State/Province"
+                            className="h-12 w-full rounded-md border border-gray-300 p-2"
+                          />
+                        </FormControl>
+                      </>
+                    )}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <FormField
+                    name="toZipCode"
+                    control={form.control}
+                    render={({ field }) => (
+                      <>
+                        <FormLabel htmlFor="toZipCode">Postal Code</FormLabel>
+                        <FormControl>
+                          <input
+                            id="toZipCode"
+                            {...field}
+                            type="text"
+                            placeholder="Postal code"
+                            className="h-12 w-full rounded-md border border-gray-300 p-2"
+                            required
+                          />
+                        </FormControl>
+                      </>
+                    )}
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <FormField
+                  name="toCountry"
+                  control={form.control}
+                  render={({ field }) => (
+                    <>
+                      <FormLabel htmlFor="toCountry">Country</FormLabel>
+                      <FormControl>
+                        <input
+                          id="toCountry"
+                          {...field}
+                          type="text"
+                          placeholder="Country"
+                          className="h-12 w-full rounded-md border border-gray-300 p-2"
+                          required
+                        />
+                      </FormControl>
+                    </>
+                  )}
+                />
+              </div>
+              <div className="flex justify-between">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setStep(2)}
                 >
                   Back
                 </Button>
@@ -529,4 +542,13 @@ export function DeliveryForm() {
       </Form>
     </div>
   );
+}
+
+function scrollToForm() {
+  setTimeout(() => {
+    const formElement = document.getElementById("delivery-form");
+    if (formElement) {
+      formElement.scrollIntoView({ behavior: "smooth" });
+    }
+  }, 100);
 }

@@ -41,6 +41,41 @@ export default function OrderTablePage() {
     if (!userId) return;
     const fetchedData = await getOrders();
     setOrders(fetchedData);
+
+    // const mockData: Order[] = [
+    //   {
+    //     id: "1",
+    //     userId: "mock-user-id",
+    //     displayId: "#1001",
+    //     orderStatus: "FINDING_DRIVER",
+    //     orderDetails: "Test Order 1",
+    //     fromAddressLine1: "123 Mock St",
+    //     fromAddressLine2: "Unit 1",
+    //     fromZipCode: "111111",
+    //     toAddressLine1: "456 Destination Ave",
+    //     toAddressLine2: "Unit 2",
+    //     toZipCode: "222222",
+    //     createdAt: new Date(),
+    //     updatedAt: new Date(),
+    //   },
+
+    //   {
+    //     id: "2",
+    //     userId: "mock-user-id",
+    //     displayId: "#1002",
+    //     orderStatus: "DELAYED",
+    //     orderDetails: "Fragile Electronics Package",
+    //     fromAddressLine1: "222 Sender Street",
+    //     fromAddressLine2: "Floor 3",
+    //     fromZipCode: "555555",
+    //     toAddressLine1: "333 Receiver Road",
+    //     toAddressLine2: "",
+    //     toZipCode: "666666",
+    //     createdAt: new Date(Date.now() - 12 * 60 * 60 * 1000), // 12 hours ago
+    //     updatedAt: new Date(Date.now() - 6 * 60 * 60 * 1000), // 6 hours ago
+    //   },
+    // ];
+    setOrders(fetchedData);
   };
 
   useEffect(() => {
