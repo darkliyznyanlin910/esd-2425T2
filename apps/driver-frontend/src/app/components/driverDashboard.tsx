@@ -1,7 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Car, CheckCircle, Package, RefreshCcw } from "lucide-react";
+import {
+  Car,
+  CheckCircle,
+  Package,
+  PackageCheck,
+  RefreshCcw,
+  Truck,
+} from "lucide-react";
 
 import { authClient } from "@repo/auth-client";
 import { Order } from "@repo/db-order/zod";
@@ -596,6 +603,7 @@ export default function DriverDashboard() {
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium">
+                <Truck className="text-blue-600" />
                 Available Orders
               </CardTitle>
               <CardDescription>Orders you can accept</CardDescription>
@@ -607,7 +615,10 @@ export default function DriverDashboard() {
 
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">To Pick Up</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                <Package className="text-blue-600" />
+                To Pick Up
+              </CardTitle>
               <CardDescription>Orders to collect</CardDescription>
             </CardHeader>
             <CardContent>
@@ -617,7 +628,10 @@ export default function DriverDashboard() {
 
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">To Deliver</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                <PackageCheck className="text-blue-600" />
+                To Deliver
+              </CardTitle>
               <CardDescription>Orders to drop off</CardDescription>
             </CardHeader>
             <CardContent>
