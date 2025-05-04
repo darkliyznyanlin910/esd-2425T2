@@ -1,11 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { Bell, Notebook, Truck } from "lucide-react";
+import { Home, Notebook, Truck } from "lucide-react";
 
 import { authClient } from "@repo/auth-client";
-import { getServiceBaseUrl } from "@repo/service-discovery";
 import { Button } from "@repo/ui/button";
 import {
   Sidebar,
@@ -47,6 +45,14 @@ export default function AppSidebar() {
           <SidebarGroupLabel>Applications</SidebarGroupLabel>
           <SidebarMenuItem>
             <SidebarMenuButton
+              onClick={() => router.push("/dashboard")}
+              isActive={pathname === "/dashboard"}
+            >
+              <Home size={18} /> Dashboard
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton
               isActive={pathname === "/order"}
               onClick={() => router.push("/order")}
             >
@@ -59,14 +65,6 @@ export default function AppSidebar() {
               onClick={() => router.push("/toAssign")}
             >
               <Truck size={18} /> To Assign
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              onClick={() => router.push("/notification")}
-              isActive={pathname === "/notification"}
-            >
-              <Bell size={18} /> Notifications
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

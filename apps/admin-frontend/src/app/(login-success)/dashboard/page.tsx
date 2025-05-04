@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { authClient } from "@repo/auth-client";
 import { getServiceBaseUrl } from "@repo/service-discovery";
 
+import Dashboard from "~/app/components/dashboard/dashboard";
 import NotificationComponent from "~/app/components/notifications/notification";
 
 export default function Main() {
@@ -22,5 +23,10 @@ export default function Main() {
       router.push(`${getServiceBaseUrl("customer-frontend")}/auth`);
     }
   }, [session, router]);
-  return <NotificationComponent showComponent={true} />;
+  return (
+    <div className="flex w-screen flex-col">
+      <Dashboard />
+      <NotificationComponent showComponent={true} />
+    </div>
+  );
 }
