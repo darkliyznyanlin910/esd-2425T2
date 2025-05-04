@@ -195,7 +195,7 @@ export default function Dashboard() {
                       >
                         <polyline points="20 6 9 17 4 12"></polyline>
                       </svg>
-                      Delivery within 3-6 hours
+                      Delivery within 24 hours
                     </li>
                     <li className="flex items-center">
                       <svg
