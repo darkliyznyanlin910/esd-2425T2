@@ -359,6 +359,23 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
             .default("desc")
             .describe("the order to sort by")
             .optional(),
+          status: z
+            .enum([
+              "PROCESSING",
+              "FINDING_DRIVER",
+              "DRIVER_FOUND",
+              "PICKED_UP",
+              "DELIVERED",
+              "DELAYED",
+              "PAYMENT_PENDING",
+              "PAYMENT_FAILED",
+              "PAYMENT_SUCCESSFUL",
+            ])
+            .optional(),
+          getFiveMinutesDelayedOrders: z
+            .preprocess((val) => val === "true", z.boolean())
+            .default(false)
+            .optional(),
         }),
       },
       responses: {
@@ -380,7 +397,14 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
     }),
     async (c) => {
       console.log("hit the endpoint to get all orders");
-      const { take, page, sortBy, sortOrder } = c.req.valid("query");
+      const {
+        take,
+        page,
+        sortBy,
+        sortOrder,
+        status,
+        getFiveMinutesDelayedOrders,
+      } = c.req.valid("query");
       const user = c.get("user")!;
 
       console.log(take, page, sortBy, sortOrder);
@@ -394,6 +418,13 @@ const orderRouter = new OpenAPIHono<HonoExtension>()
       const orders = await db.order.findMany({
         where: {
           userId,
+          orderStatus: status,
+          updatedAt: getFiveMinutesDelayedOrders
+            ? {
+                gte: new Date(Date.now() - 5 * 60 * 1000),
+                lte: new Date(Date.now()),
+              }
+            : undefined,
         },
         take,
         skip: page && take ? (page - 1) * take : undefined,

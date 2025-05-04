@@ -1,0 +1,35 @@
+{
+  "name": "@repo/cronjob",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "build": "esbuild src/index.ts --bundle --platform=node --outfile=dist/index.cjs",
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "dev": "pnpm with-env tsx watch src/index.ts",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false",
+    "with-env": "dotenv -e ../../service-env/.env --",
+    "start": "pnpm with-env node dist/index.cjs"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "@repo/prettier-config": "workspace:*",
+    "@repo/tsconfig": "workspace:*",
+    "eslint": "catalog:",
+    "prettier": "catalog:",
+    "typescript": "catalog:"
+  },
+  "dependencies": {
+    "@repo/service-discovery": "workspace:*",
+    "@t3-oss/env-core": "^0.11.1",
+    "esbuild": "^0.25.0",
+    "resend": "^4.5.0",
+    "zod": "catalog:"
+  },
+  "prettier": "@repo/prettier-config"
+}
