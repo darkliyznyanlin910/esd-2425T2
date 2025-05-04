@@ -14,6 +14,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@repo/ui/dialog";
+import { useToast } from "@repo/ui/hooks/use-toast";
 import { Input } from "@repo/ui/input";
 import { Label } from "@repo/ui/label";
 import {
@@ -45,114 +46,59 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@repo/ui/tabs";
 
 import { getEnrichedDriverAssignments } from "../services/assignmentService";
 
-interface DeliveryHistoryItem {
-  id: string;
-  driverId: string;
-  orderId: string;
-  orderStatus: string;
-  createdAt: string;
-  updatedAt: string;
-  orderDetails: {
-    id: string;
-    displayId: string;
-    orderDetails: string;
-    orderStatus: string;
-    fromAddressLine1: string;
-    fromAddressLine2?: string;
-    fromZipCode: string;
-    toAddressLine1: string;
-    toAddressLine2?: string;
-    toZipCode: string;
-    createdAt: string;
-    updatedAt: string;
-    description?: string;
-    pickupContact?: string;
-    deliveryContact?: string;
-    notes?: string;
-    packageSize?: string;
-    packageWeight?: string;
-  } | null;
-}
-
 export default function DeliveryHistory() {
-  const [deliveryHistory, setDeliveryHistory] = useState<DeliveryHistoryItem[]>(
-    [],
-  );
+  const [deliveryHistory, setDeliveryHistory] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [dateFilter, setDateFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedDelivery, setSelectedDelivery] =
-    useState<DeliveryHistoryItem | null>(null);
+  const [selectedDelivery, setSelectedDelivery] = useState<any | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("delivered");
   const itemsPerPage = 10;
   const { useSession } = authClient;
   const { data: session } = useSession();
+  const { toast } = useToast();
 
   useEffect(() => {
-    const fetchDeliveryHistory = async () => {
-      setLoading(true);
-      try {
-        if (!session?.user?.id) {
-          console.error("Session not found or user ID missing.");
-          return;
-        }
-
-        // Use the enriched assignments service
-        const enrichedAssignments = await getEnrichedDriverAssignments(
-          session.user.id,
-          activeTab.toUpperCase(),
-        );
-
-        if (Array.isArray(enrichedAssignments)) {
-          // Map enrichedAssignments to match DeliveryHistoryItem structure
-          const formattedAssignments = enrichedAssignments.map(
-            (assignment) => ({
-              ...assignment,
-              orderDetails: assignment.orderDetails
-                ? {
-                    id: assignment.orderDetails.id || "",
-                    displayId: assignment.orderDetails.id || "",
-                    orderDetails: assignment.orderDetails.description || "",
-                    orderStatus: assignment.orderDetails.status || "",
-                    fromAddressLine1:
-                      assignment.orderDetails.pickupAddress || "",
-                    fromZipCode: assignment.orderDetails.pickupPostalCode || "",
-                    toAddressLine1:
-                      assignment.orderDetails.deliveryAddress || "",
-                    toZipCode: assignment.orderDetails.deliveryPostalCode || "",
-                    createdAt: assignment.orderDetails.createdAt || "",
-                    updatedAt: assignment.orderDetails.updatedAt || "",
-                    description: assignment.orderDetails.description || "",
-                    pickupContact: assignment.orderDetails.pickupContact || "",
-                    deliveryContact:
-                      assignment.orderDetails.deliveryContact || "",
-                    notes: assignment.orderDetails.notes || "",
-                    packageSize: assignment.orderDetails.packageSize || "",
-                    packageWeight: assignment.orderDetails.packageWeight || "",
-                  }
-                : null,
-            }),
-          );
-          setDeliveryHistory(formattedAssignments);
-        } else {
-          console.error("Unexpected response format:", enrichedAssignments);
-          setDeliveryHistory([]);
-        }
-      } catch (error) {
-        console.error("Failed to fetch delivery history:", error);
-        setDeliveryHistory([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (session?.user?.id) {
-      fetchDeliveryHistory();
-    }
+    fetchDeliveryHistoryForTab();
   }, [session, activeTab]);
+
+  const fetchDeliveryHistoryForTab = async () => {
+    if (!session?.user?.id) {
+      console.error("Session not found or user ID missing.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      // Get assignments directly using the assignment service
+      // This follows the same pattern as in driverDashboard.tsx
+      const enrichedAssignments = await getEnrichedDriverAssignments(
+        session.user.id,
+        activeTab.toUpperCase(),
+      );
+
+      console.log(
+        `Received ${enrichedAssignments.length} enriched assignments for ${activeTab} tab`,
+      );
+      setDeliveryHistory(enrichedAssignments);
+
+      // Reset pagination when tab changes
+      setCurrentPage(1);
+    } catch (error) {
+      console.error(`Failed to fetch ${activeTab} delivery history:`, error);
+      toast({
+        title: "Error",
+        description: `Could not load your delivery history. Please try again.`,
+        variant: "destructive",
+      });
+      setDeliveryHistory([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Filter orders based on search term, status, and date
   const filteredOrders = deliveryHistory.filter((order) => {
@@ -161,43 +107,49 @@ export default function DeliveryHistory() {
 
     const matchesSearch =
       order.orderId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.orderDetails.displayId
-        ?.toLowerCase()
+      (order.orderDetails?.id || "")
+        .toLowerCase()
         .includes(searchTerm.toLowerCase()) ||
-      order.orderDetails.orderDetails
-        ?.toLowerCase()
+      (order.orderDetails?.description || "")
+        .toLowerCase()
         .includes(searchTerm.toLowerCase()) ||
-      order.orderDetails.fromAddressLine1
-        ?.toLowerCase()
+      (order.orderDetails?.pickupAddress || "")
+        .toLowerCase()
         .includes(searchTerm.toLowerCase()) ||
-      order.orderDetails.toAddressLine1
-        ?.toLowerCase()
+      (order.orderDetails?.deliveryAddress || "")
+        .toLowerCase()
         .includes(searchTerm.toLowerCase()) ||
-      order.orderDetails.pickupContact
-        ?.toLowerCase()
+      (order.orderDetails?.pickupContact || "")
+        .toLowerCase()
         .includes(searchTerm.toLowerCase()) ||
-      order.orderDetails.deliveryContact
-        ?.toLowerCase()
+      (order.orderDetails?.deliveryContact || "")
+        .toLowerCase()
         .includes(searchTerm.toLowerCase());
 
     const matchesStatus =
       statusFilter === "all" ||
-      order.orderDetails.orderStatus?.toLowerCase() ===
-        statusFilter.toLowerCase();
+      (order.orderDetails?.status || "").toLowerCase() ===
+        statusFilter.toLowerCase() ||
+      order.orderStatus.toLowerCase() === statusFilter.toLowerCase();
 
     let matchesDate = true;
     if (dateFilter === "today") {
       const today = new Date().toISOString().split("T")[0];
-      matchesDate = order.orderDetails.createdAt?.includes(String(today));
+      const dateStr = order.orderDetails?.createdAt || order.createdAt || "";
+      matchesDate = dateStr.includes(String(today));
     } else if (dateFilter === "week") {
       const oneWeekAgo = new Date();
       oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-      const orderDate = new Date(order.orderDetails.createdAt);
+      const orderDate = new Date(
+        order.orderDetails?.createdAt || order.createdAt || "",
+      );
       matchesDate = orderDate >= oneWeekAgo;
     } else if (dateFilter === "month") {
       const oneMonthAgo = new Date();
       oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
-      const orderDate = new Date(order.orderDetails.createdAt);
+      const orderDate = new Date(
+        order.orderDetails?.createdAt || order.createdAt || "",
+      );
       matchesDate = orderDate >= oneMonthAgo;
     }
 
@@ -223,7 +175,7 @@ export default function DeliveryHistory() {
     });
   };
 
-  const handleViewDetails = (delivery: DeliveryHistoryItem) => {
+  const handleViewDetails = (delivery: any) => {
     setSelectedDelivery(delivery);
     setIsDetailsOpen(true);
   };
@@ -254,6 +206,13 @@ export default function DeliveryHistory() {
       <main className="flex-1 overflow-auto p-4 md:p-6">
         <div className="mb-6 flex items-center justify-between">
           <h1 className="text-2xl font-bold">Delivery History</h1>
+          <Button
+            variant="outline"
+            onClick={fetchDeliveryHistoryForTab}
+            disabled={loading}
+          >
+            Refresh
+          </Button>
         </div>
 
         <Tabs
@@ -347,27 +306,21 @@ export default function DeliveryHistory() {
                       paginatedOrders.map((order) => (
                         <TableRow key={order.id}>
                           <TableCell className="font-medium">
-                            {order.orderDetails?.displayId || ""}
+                            {order.orderDetails?.id || order.orderId}
                           </TableCell>
                           <TableCell>
-                            {order.orderDetails?.orderDetails || ""}
+                            {order.orderDetails?.description || "No details"}
                           </TableCell>
                           <TableCell>
-                            {order.orderDetails?.fromAddressLine1 || ""}
-                            {order.orderDetails?.fromAddressLine2
-                              ? `, ${order.orderDetails.fromAddressLine2}`
-                              : ""}
-                            {order.orderDetails?.fromZipCode
-                              ? `, ${order.orderDetails.fromZipCode}`
+                            {order.orderDetails?.pickupAddress || ""}
+                            {order.orderDetails?.pickupPostalCode
+                              ? `, ${order.orderDetails.pickupPostalCode}`
                               : ""}
                           </TableCell>
                           <TableCell>
-                            {order.orderDetails?.toAddressLine1 || ""}
-                            {order.orderDetails?.toAddressLine2
-                              ? `, ${order.orderDetails.toAddressLine2}`
-                              : ""}
-                            {order.orderDetails?.toZipCode
-                              ? `, ${order.orderDetails.toZipCode}`
+                            {order.orderDetails?.deliveryAddress || ""}
+                            {order.orderDetails?.deliveryPostalCode
+                              ? `, ${order.orderDetails.deliveryPostalCode}`
                               : ""}
                           </TableCell>
                           <TableCell>
@@ -501,8 +454,9 @@ export default function DeliveryHistory() {
               <DialogTitle>Delivery Details</DialogTitle>
               <DialogDescription>
                 Order ID:{" "}
-                {selectedDelivery?.orderDetails?.displayId ||
-                  selectedDelivery?.orderId}
+                {selectedDelivery?.orderDetails?.id ||
+                  selectedDelivery?.orderId ||
+                  ""}
               </DialogDescription>
             </DialogHeader>
             {selectedDelivery && (
@@ -537,7 +491,6 @@ export default function DeliveryHistory() {
                   <Label className="text-sm font-medium">Description</Label>
                   <p className="text-sm">
                     {selectedDelivery.orderDetails?.description ||
-                      selectedDelivery.orderDetails?.orderDetails ||
                       "No description available"}
                   </p>
                 </div>
@@ -550,14 +503,13 @@ export default function DeliveryHistory() {
                     <div className="rounded-lg border p-3 text-sm">
                       <p>
                         <strong>Address:</strong>{" "}
-                        {selectedDelivery.orderDetails?.fromAddressLine1}
-                        {selectedDelivery.orderDetails?.fromAddressLine2
-                          ? `, ${selectedDelivery.orderDetails.fromAddressLine2}`
-                          : ""}
+                        {selectedDelivery.orderDetails?.pickupAddress ||
+                          "Not available"}
                       </p>
                       <p>
                         <strong>Postal Code:</strong>{" "}
-                        {selectedDelivery.orderDetails?.fromZipCode}
+                        {selectedDelivery.orderDetails?.pickupPostalCode ||
+                          "Not available"}
                       </p>
                       {selectedDelivery.orderDetails?.pickupContact && (
                         <p>
@@ -575,14 +527,13 @@ export default function DeliveryHistory() {
                     <div className="rounded-lg border p-3 text-sm">
                       <p>
                         <strong>Address:</strong>{" "}
-                        {selectedDelivery.orderDetails?.toAddressLine1}
-                        {selectedDelivery.orderDetails?.toAddressLine2
-                          ? `, ${selectedDelivery.orderDetails.toAddressLine2}`
-                          : ""}
+                        {selectedDelivery.orderDetails?.deliveryAddress ||
+                          "Not available"}
                       </p>
                       <p>
                         <strong>Postal Code:</strong>{" "}
-                        {selectedDelivery.orderDetails?.toZipCode}
+                        {selectedDelivery.orderDetails?.deliveryPostalCode ||
+                          "Not available"}
                       </p>
                       {selectedDelivery.orderDetails?.deliveryContact && (
                         <p>
