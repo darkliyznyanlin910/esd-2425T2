@@ -281,13 +281,6 @@ export default function DeliveryHistory() {
                     <TableRow>
                       <TableHead>Order ID</TableHead>
                       <TableHead>Order Details</TableHead>
-                      <TableHead>From Address</TableHead>
-                      <TableHead>To Address</TableHead>
-                      <TableHead>
-                        {activeTab === "delivered"
-                          ? "Delivery Date"
-                          : "Created Date"}
-                      </TableHead>
                       <TableHead>Status</TableHead>
                       <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
@@ -301,17 +294,6 @@ export default function DeliveryHistory() {
                           </TableCell>
                           <TableCell>
                             {order.orderDetails?.orderDetails || "No details"}
-                          </TableCell>
-                          <TableCell>
-                            {`${order.orderDetails?.fromAddressLine1}, ${order.orderDetails?.fromAddressLine2 || ""}, ${order.orderDetails?.fromZipCode}`}
-                          </TableCell>
-                          <TableCell>
-                            {`${order.orderDetails?.toAddressLine1}, ${order.orderDetails?.toAddressLine2 || ""}, ${order.orderDetails?.toZipCode}`}
-                          </TableCell>
-                          <TableCell>
-                            {formatDate(
-                              order.updatedAt || order.createdAt || "",
-                            )}
                           </TableCell>
                           <TableCell>
                             <Badge
