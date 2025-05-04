@@ -107,22 +107,13 @@ export default function DeliveryHistory() {
 
     const matchesSearch =
       order.orderId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (order.orderDetails?.id || "")
+      (order.orderDetails?.displayId || "")
         .toLowerCase()
         .includes(searchTerm.toLowerCase()) ||
-      (order.orderDetails?.description || "")
+      (order.orderDetails?.orderDetails || "")
         .toLowerCase()
         .includes(searchTerm.toLowerCase()) ||
-      (order.orderDetails?.pickupAddress || "")
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase()) ||
-      (order.orderDetails?.deliveryAddress || "")
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase()) ||
-      (order.orderDetails?.pickupContact || "")
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase()) ||
-      (order.orderDetails?.deliveryContact || "")
+      (order.orderDetails?.fromAddressLine1 || "")
         .toLowerCase()
         .includes(searchTerm.toLowerCase());
 
@@ -306,22 +297,16 @@ export default function DeliveryHistory() {
                       paginatedOrders.map((order) => (
                         <TableRow key={order.id}>
                           <TableCell className="font-medium">
-                            {order.orderDetails?.id || order.orderId}
+                            {order.orderDetails?.displayId || order.orderId}
                           </TableCell>
                           <TableCell>
-                            {order.orderDetails?.description || "No details"}
+                            {order.orderDetails?.orderDetails || "No details"}
                           </TableCell>
                           <TableCell>
-                            {order.orderDetails?.pickupAddress || ""}
-                            {order.orderDetails?.pickupPostalCode
-                              ? `, ${order.orderDetails.pickupPostalCode}`
-                              : ""}
+                            {`${order.orderDetails?.fromAddressLine1}, ${order.orderDetails?.fromAddressLine2 || ""}, ${order.orderDetails?.fromZipCode}`}
                           </TableCell>
                           <TableCell>
-                            {order.orderDetails?.deliveryAddress || ""}
-                            {order.orderDetails?.deliveryPostalCode
-                              ? `, ${order.orderDetails.deliveryPostalCode}`
-                              : ""}
+                            {`${order.orderDetails?.toAddressLine1}, ${order.orderDetails?.toAddressLine2 || ""}, ${order.orderDetails?.toZipCode}`}
                           </TableCell>
                           <TableCell>
                             {formatDate(
@@ -454,7 +439,7 @@ export default function DeliveryHistory() {
               <DialogTitle>Delivery Details</DialogTitle>
               <DialogDescription>
                 Order ID:{" "}
-                {selectedDelivery?.orderDetails?.id ||
+                {selectedDelivery?.orderDetails?.displayId ||
                   selectedDelivery?.orderId ||
                   ""}
               </DialogDescription>
@@ -490,7 +475,7 @@ export default function DeliveryHistory() {
                 <div>
                   <Label className="text-sm font-medium">Description</Label>
                   <p className="text-sm">
-                    {selectedDelivery.orderDetails?.description ||
+                    {selectedDelivery.orderDetails?.orderDetails ||
                       "No description available"}
                   </p>
                 </div>
@@ -503,20 +488,14 @@ export default function DeliveryHistory() {
                     <div className="rounded-lg border p-3 text-sm">
                       <p>
                         <strong>Address:</strong>{" "}
-                        {selectedDelivery.orderDetails?.pickupAddress ||
+                        {`${selectedDelivery.orderDetails?.fromAddressLine1}, ${selectedDelivery.orderDetails?.fromAddressLine2 || ""}` ||
                           "Not available"}
                       </p>
                       <p>
                         <strong>Postal Code:</strong>{" "}
-                        {selectedDelivery.orderDetails?.pickupPostalCode ||
+                        {`${selectedDelivery.orderDetails?.fromZipCode}` ||
                           "Not available"}
                       </p>
-                      {selectedDelivery.orderDetails?.pickupContact && (
-                        <p>
-                          <strong>Contact:</strong>{" "}
-                          {selectedDelivery.orderDetails.pickupContact}
-                        </p>
-                      )}
                     </div>
                   </div>
 
@@ -527,58 +506,17 @@ export default function DeliveryHistory() {
                     <div className="rounded-lg border p-3 text-sm">
                       <p>
                         <strong>Address:</strong>{" "}
-                        {selectedDelivery.orderDetails?.deliveryAddress ||
+                        {`${selectedDelivery.orderDetails?.toAddressLine1}, ${selectedDelivery.orderDetails?.toAddressLine2 || ""}` ||
                           "Not available"}
                       </p>
                       <p>
                         <strong>Postal Code:</strong>{" "}
-                        {selectedDelivery.orderDetails?.deliveryPostalCode ||
+                        {`${selectedDelivery.orderDetails?.toZipCode}` ||
                           "Not available"}
                       </p>
-                      {selectedDelivery.orderDetails?.deliveryContact && (
-                        <p>
-                          <strong>Contact:</strong>{" "}
-                          {selectedDelivery.orderDetails.deliveryContact}
-                        </p>
-                      )}
                     </div>
                   </div>
                 </div>
-
-                {(selectedDelivery.orderDetails?.packageSize ||
-                  selectedDelivery.orderDetails?.packageWeight) && (
-                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                    {selectedDelivery.orderDetails?.packageSize && (
-                      <div>
-                        <Label className="text-sm font-medium">
-                          Package Size
-                        </Label>
-                        <p className="text-sm">
-                          {selectedDelivery.orderDetails.packageSize}
-                        </p>
-                      </div>
-                    )}
-                    {selectedDelivery.orderDetails?.packageWeight && (
-                      <div>
-                        <Label className="text-sm font-medium">
-                          Package Weight
-                        </Label>
-                        <p className="text-sm">
-                          {selectedDelivery.orderDetails.packageWeight}
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {selectedDelivery.orderDetails?.notes && (
-                  <div>
-                    <Label className="text-sm font-medium">Notes</Label>
-                    <p className="text-sm">
-                      {selectedDelivery.orderDetails.notes}
-                    </p>
-                  </div>
-                )}
 
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <div>
