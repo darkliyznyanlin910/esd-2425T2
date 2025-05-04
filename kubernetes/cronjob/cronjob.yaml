@@ -14,7 +14,7 @@ spec:
             command:
             - node
             - /repo/apps/cronjob/dist/index.cjs
+            envFrom:
+              - secretRef:
+                  name: app-environment
           restartPolicy: OnFailure
-          envFrom:
-            - secretRef:
-                name: app-environment
