@@ -54,7 +54,7 @@ async function main() {
   const delayedOrdersData = (await delayedOrders.json()) as any;
   console.log(delayedOrdersData.length);
   const adminEmails = await fetch(
-    `${getServiceBaseUrl("auth", IS_INTERNAL)}/user/getAdminEmails`,
+    `${getServiceBaseUrl("auth", IS_INTERNAL)}/admin/getAdminEmails`,
     {
       headers: {
         Authorization: `Bearer ${env.INTERNAL_COMMUNICATION_SECRET}`,
