@@ -1,3 +1,3 @@
 kustomize:
   images:
-  - esdproject.azurecr.io/esd-chatbot-backend:latest@sha256:cfe327fb9e372a5d7227b84e582f543436888509aaa3db6e831d53791433d20c
+  - esdproject.azurecr.io/esd-chatbot-backend:latest@sha256:88040ea70ac8b49410f3e1a61bed453ad990773cefd5f9062886c345f8e614ce
