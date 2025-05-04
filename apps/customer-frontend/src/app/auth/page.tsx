@@ -16,7 +16,8 @@ export default function AuthPage() {
   const { useSession, signIn } = authClient;
   const { data: session } = useSession();
   const [email, setEmail] = useState("");
-
+  const [phone, setPhone] = useState("");
+  const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [isSignUp, setIsSignUp] = useState<boolean | null>(null);
 
@@ -24,7 +25,7 @@ export default function AuthPage() {
     e.preventDefault();
     if (isSignUp) {
       const res = await HonoClient.user.signup.$post(
-        { json: { email, password, name: "Joe" } },
+        { json: { email, password, name } },
         { init: { credentials: "include" } },
       );
       const data = await res.json();
@@ -79,6 +80,36 @@ export default function AuthPage() {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4 text-blue-950">
+              {isSignUp && (
+                <>
+                  <div className="space-y-2 text-left">
+                    <Label htmlFor="name" className="text-sm sm:text-base">
+                      Username
+                    </Label>
+                    <Input
+                      id="name"
+                      type="text"
+                      required
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      className="text-sm sm:text-base"
+                    />
+                  </div>
+                  <div className="space-y-2 text-left">
+                    <Label htmlFor="phone" className="text-sm sm:text-base">
+                      Phone Number
+                    </Label>
+                    <Input
+                      id="phone"
+                      type="text"
+                      required
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      className="text-sm sm:text-base"
+                    />
+                  </div>
+                </>
+              )}
               <div className="space-y-2 text-left">
                 <Label htmlFor="email" className="text-sm sm:text-base">
                   Email
