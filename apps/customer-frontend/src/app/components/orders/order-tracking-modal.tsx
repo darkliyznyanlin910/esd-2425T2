@@ -6,7 +6,9 @@ import {
   AlertCircle,
   CheckCircle,
   Clock,
-  MapPin,
+  Info,
+  MapPinCheck,
+  MapPinned,
   Package,
   Truck,
   X,
@@ -57,14 +59,6 @@ export function OrderTrackingModal({
         }
 
         const data = (await response.json()) as OrderTrackingRecord[];
-
-        //         const formattedData = data.map((record: OrderTrackingRecord) => ({
-        //           orderId: record.orderId,
-        //           status: record.status,
-        //           createdAt: record.createdAt,
-        //         }));
-
-        //         // Sort by createdAt in descending order (newest first)
         data.sort(
           (a: any, b: any) =>
             new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
@@ -75,59 +69,59 @@ export function OrderTrackingModal({
         //           {
         //             id: "mock-1",
         //             orderId: "1",
-        //             status: "PROCESSING",
+        //             status: "PAYMENT_FAILED",
         //             createdAt: new Date(new Date().getTime() - 45 * 60000),
         //             updatedAt: new Date(new Date().getTime() - 45 * 60000),
         //             description: "Searching for available drivers...",
         //           },
-        //           {
-        //             id: "mock-2",
-        //             orderId: "1",
-        //             status: "PAYMENT_SUCCESSFUL",
-        //             createdAt: new Date(new Date().getTime() - 30 * 60000),
-        //             updatedAt: new Date(new Date().getTime() - 30 * 60000),
-        //             description: "Driver assigned to the order.",
-        //           },
-        //           {
-        //             id: "mock-3",
-        //             orderId: "1",
-        //             status: "FINDING_DRIVER",
-        //             createdAt: new Date(new Date().getTime() - 10 * 60000),
-        //             updatedAt: new Date(new Date().getTime() - 10 * 60000),
-        //             description: "Package picked up by driver.",
-        //           },
-        //           {
-        //             id: "mock-4",
-        //             orderId: "2",
-        //             status: "PROCESSING",
-        //             createdAt: new Date(new Date().getTime() - 90 * 60000),
-        //             updatedAt: new Date(new Date().getTime() - 90 * 60000),
-        //             description: "Searching for available drivers...",
-        //           },
-        //           {
-        //             id: "mock-5",
-        //             orderId: "2",
-        //             status: "PAYMENT_SUCCESSFUL",
-        //             createdAt: new Date(new Date().getTime() - 80 * 60000),
-        //             updatedAt: new Date(new Date().getTime() - 80 * 60000),
-        //             description: "Driver assigned to the order.",
-        //           },
-        //           {
-        //             id: "mock-6",
-        //             orderId: "2",
-        //             status: "FINDING_DRIVER",
-        //             createdAt: new Date(new Date().getTime() - 75 * 60000),
-        //             updatedAt: new Date(new Date().getTime() - 75 * 60000),
-        //             description: "Package picked up by driver.",
-        //           },
-        //           {
-        //             id: "mock-7",
-        //             orderId: "2",
-        //             status: "DELAYED",
-        //             createdAt: new Date(new Date().getTime() - 70 * 60000),
-        //             updatedAt: new Date(new Date().getTime() - 70 * 60000),
-        //             description: "Package picked up by driver.",
-        //           },
+        // {
+        //   id: "mock-2",
+        //   orderId: "1",
+        //   status: "PAYMENT_SUCCESSFUL",
+        //   createdAt: new Date(new Date().getTime() - 30 * 60000),
+        //   updatedAt: new Date(new Date().getTime() - 30 * 60000),
+        //   description: "Driver assigned to the order.",
+        // },
+        // {
+        //   id: "mock-3",
+        //   orderId: "1",
+        //   status: "FINDING_DRIVER",
+        //   createdAt: new Date(new Date().getTime() - 10 * 60000),
+        //   updatedAt: new Date(new Date().getTime() - 10 * 60000),
+        //   description: "Package picked up by driver.",
+        // },
+        // {
+        //   id: "mock-4",
+        //   orderId: "2",
+        //   status: "PAYMENT_PENDING",
+        //   createdAt: new Date(new Date().getTime() - 90 * 60000),
+        //   updatedAt: new Date(new Date().getTime() - 90 * 60000),
+        //   description: "Searching for available drivers...",
+        // },
+        // {
+        //   id: "mock-5",
+        //   orderId: "2",
+        //   status: "PAYMENT_SUCCESSFUL",
+        //   createdAt: new Date(new Date().getTime() - 80 * 60000),
+        //   updatedAt: new Date(new Date().getTime() - 80 * 60000),
+        //   description: "Driver assigned to the order.",
+        // },
+        // {
+        //   id: "mock-6",
+        //   orderId: "2",
+        //   status: "FINDING_DRIVER",
+        //   createdAt: new Date(new Date().getTime() - 75 * 60000),
+        //   updatedAt: new Date(new Date().getTime() - 75 * 60000),
+        //   description: "Package picked up by driver.",
+        // },
+        // {
+        //   id: "mock-7",
+        //   orderId: "2",
+        //   status: "DELAYED",
+        //   createdAt: new Date(new Date().getTime() - 70 * 60000),
+        //   updatedAt: new Date(new Date().getTime() - 70 * 60000),
+        //   description: "Package picked up by driver.",
+        // },
         //         ];
 
         //         const filteredData = mockData
@@ -289,13 +283,19 @@ export function OrderTrackingModal({
                 </div>
                 <div className="mb-6 grid gap-6 md:grid-cols-2">
                   <div className="rounded-lg border p-4">
-                    <h3 className="mb-2 font-medium">Package Details</h3>
+                    <div className="mb-2 flex items-center gap-2">
+                      <Package className="h-4 w-4 text-gray-500" />
+                      <h3 className="font-medium">Package Details</h3>
+                    </div>
                     <p className="text-sm text-gray-600">
                       {order.orderDetails}
                     </p>
                   </div>
                   <div className="rounded-lg border p-4">
-                    <h3 className="mb-2 font-medium">Order Information</h3>
+                    <div className="mb-2 flex items-center gap-2">
+                      <Info className="h-4 w-4 text-gray-500" />
+                      <h3 className="font-medium">Order Information</h3>
+                    </div>
                     <div className="space-y-1 text-sm text-gray-600">
                       <p>Order ID: {order.displayId}</p>
                       <p>Created: {formatDate(order.createdAt)}</p>
@@ -307,7 +307,7 @@ export function OrderTrackingModal({
                 <div className="mb-8 grid gap-4 md:grid-cols-2">
                   <div className="rounded-lg border p-4">
                     <div className="mb-2 flex items-center gap-2">
-                      <MapPin className="h-4 w-4 text-gray-500" />
+                      <MapPinCheck className="h-4 w-4 text-gray-500" />
                       <h3 className="font-medium">Pickup Address</h3>
                     </div>
                     <div className="text-sm text-gray-600">
@@ -320,7 +320,7 @@ export function OrderTrackingModal({
                   </div>
                   <div className="rounded-lg border p-4">
                     <div className="mb-2 flex items-center gap-2">
-                      <MapPin className="h-4 w-4 text-gray-500" />
+                      <MapPinned className="h-4 w-4 text-gray-500" />
                       <h3 className="font-medium">Delivery Address</h3>
                     </div>
                     <div className="text-sm text-gray-600">
