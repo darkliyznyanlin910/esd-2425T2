@@ -25,6 +25,9 @@ case "$ACTION" in
     # DB Seeder
     docker build -t esdproject.azurecr.io/esd-db-seeder:latest -f dbSeeder.Dockerfile . --push
 
+    # Cronjob
+    docker build -t esdproject.azurecr.io/esd-cronjob:latest -f apps/cronjob/Dockerfile . --push
+
     # Backend
     docker build -t esdproject.azurecr.io/esd-auth:latest -f apps/auth/Dockerfile . --push
     docker build -t esdproject.azurecr.io/esd-chatbot-backend:latest -f apps/chatbot-backend/Dockerfile . --push
@@ -68,6 +71,7 @@ case "$ACTION" in
         kubectl apply -k kubernetes/backend
         kubectl apply -k kubernetes/frontend
         kubectl apply -k kubernetes/nginx
+        kubectl apply -k kubernetes/cronjob
         ;;
       "temporal")
         kubectl apply -k kubernetes/temporal
@@ -80,6 +84,7 @@ case "$ACTION" in
         kubectl delete -k kubernetes/nginx
         kubectl delete -k kubernetes/frontend
         kubectl delete -k kubernetes/backend
+        kubectl delete -k kubernetes/cronjob
         ;;
     esac
     ;;

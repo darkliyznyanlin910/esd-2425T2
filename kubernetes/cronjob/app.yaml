@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cronjob
+  namespace: argocd
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: esdproject.azurecr.io/esd-cronjob:latest
+    argocd-image-updater.argoproj.io/write-back-method: git:secret:argocd/repo-2279814874
+    argocd-image-updater.argoproj.io/git-branch: main
+    argocd-image-updater.argoproj.io/update-strategy: digest
+    argocd-image-updater.argoproj.io/pull-secret: pullsecret:argocd/argocd-image-updater
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/darkliyznyanlin910/esd-2425T2.git
+    targetRevision: HEAD
+    path: kubernetes/cronjob/
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
