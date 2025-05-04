@@ -99,7 +99,7 @@ export default function NotificationComponent({
         switch (message.event) {
           case "receiveDelay":
             newNotification.title = "Order Delay Notification";
-            newNotification.message = `Delay: ${message.data}`;
+            newNotification.message = `Delay: ${message.data.id}`;
             newNotification.type = "delay";
 
             toast({
@@ -115,7 +115,7 @@ export default function NotificationComponent({
             break;
           case "manualAssignment":
             newNotification.title = "Order Reassignment Required";
-            newNotification.message = `Reassigned: ${message.data}`;
+            newNotification.message = `Reassign: ${message.data.id}`;
             newNotification.type = "assignment";
 
             toast({
