@@ -1,3 +1,3 @@
 kustomize:
   images:
-  - esdproject.azurecr.io/esd-auth:latest@sha256:36380875fa1bf55fac8eb0f5d39ae99cbb4911244fedec6c6aa5b758a1d77d45
+  - esdproject.azurecr.io/esd-auth:latest@sha256:455f012fbcf1221df1997be7e7e9e9b5214bda0718e9c6cf9e0bbb947275c430
