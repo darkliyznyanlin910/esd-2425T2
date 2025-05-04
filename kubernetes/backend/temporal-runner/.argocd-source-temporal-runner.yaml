@@ -1,3 +1,3 @@
 kustomize:
   images:
-  - esdproject.azurecr.io/esd-temporal:latest@sha256:325fc9694a98267e885c1fb63cc9e1597fe676a3cca1881767a4d56fe881594e
+  - esdproject.azurecr.io/esd-temporal:latest@sha256:d64fee93bfd719e3dba4d2a8c5d09b1569e8ff3c08ecf8b9d4f3588b50012f17
