@@ -21,6 +21,13 @@ export function AppSidebar() {
   const router = useRouter();
   const pathname = usePathname();
 
+  // Define menu items for scalable sidebar
+  const menuItems = [
+    { icon: Home, label: "Dashboard", path: "/dashboard" },
+    { icon: Notebook, label: "Orders", path: "/orders" },
+    { icon: Bot, label: "ChatBot", path: "/chat" },
+  ];
+
   const handleSignOut = async () => {
     await signOut();
     router.push("/auth");
@@ -42,30 +49,19 @@ export function AppSidebar() {
       <SidebarContent>
         <SidebarMenu>
           <SidebarGroupLabel>Applications</SidebarGroupLabel>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              isActive={pathname === "/dashboard"}
-              onClick={() => router.push("/dashboard")}
-            >
-              <Home /> Dashboard
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              isActive={pathname === "/orders"}
-              onClick={() => router.push("/orders")}
-            >
-              <Notebook /> Orders
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              onClick={() => router.push("/chat")}
-              isActive={pathname === "/chat"}
-            >
-              <Bot /> ChatBot
-            </SidebarMenuButton>
-          </SidebarMenuItem>
+          {menuItems.map(({ icon: Icon, label, path }) => (
+            <SidebarMenuItem key={path}>
+              <SidebarMenuButton
+                isActive={pathname === path}
+                onClick={() => router.push(path)}
+                className={`flex items-center gap-2 px-3 py-2 rounded-md ${
+                  pathname === path ? "border-l-4 border-blue-600 bg-blue-50" : ""
+                }`}
+              >
+                <Icon /> {label}
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          ))}
         </SidebarMenu>
       </SidebarContent>
       <SidebarFooter>

@@ -27,6 +27,12 @@ export default function AppSidebar() {
     router.push("/auth");
   };
 
+  const menuItems = [
+    { icon: Home, label: "Dashboard", path: "/dashboard" },
+    { icon: Notebook, label: "Orders", path: "/order" },
+    { icon: Truck, label: "To Assign", path: "/toAssign" },
+  ];
+
   return (
     <Sidebar>
       <SidebarHeader>
@@ -43,30 +49,19 @@ export default function AppSidebar() {
       <SidebarContent>
         <SidebarMenu>
           <SidebarGroupLabel>Applications</SidebarGroupLabel>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              onClick={() => router.push("/dashboard")}
-              isActive={pathname === "/dashboard"}
-            >
-              <Home size={18} /> Dashboard
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              isActive={pathname === "/order"}
-              onClick={() => router.push("/order")}
-            >
-              <Notebook size={18} /> Orders
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              isActive={pathname === "/toAssign"}
-              onClick={() => router.push("/toAssign")}
-            >
-              <Truck size={18} /> To Assign
-            </SidebarMenuButton>
-          </SidebarMenuItem>
+          {menuItems.map(({ icon: Icon, label, path }) => (
+            <SidebarMenuItem key={path}>
+              <SidebarMenuButton
+                isActive={pathname === path}
+                onClick={() => router.push(path)}
+                className={`flex items-center gap-2 px-3 py-2 rounded-md ${
+                  pathname === path ? "border-l-4 border-blue-600 bg-blue-50" : ""
+                }`}
+              >
+                <Icon size={18} /> {label}
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          ))}
         </SidebarMenu>
       </SidebarContent>
       <SidebarFooter>
