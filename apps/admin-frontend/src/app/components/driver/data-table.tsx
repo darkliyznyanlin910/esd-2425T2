@@ -76,7 +76,7 @@ export function DataTable<TData, TValue>({
             onChange={(e) => setSelectedColumn(e.target.value)}
             className="rounded border border-gray-300 p-2"
           >
-            <option value="id">Order ID</option>
+            <option value="displayId">Order ID</option>
             <option value="userId">Customer ID</option>
           </select>
 
