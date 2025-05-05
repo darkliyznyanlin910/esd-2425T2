@@ -1,3 +1,3 @@
 kustomize:
   images:
-  - esdproject.azurecr.io/esd-notification:latest@sha256:854e9331ca5fdd80b5d9289478e970d0c45bcb3ed147cf3ace7bf326bd918f06
+  - esdproject.azurecr.io/esd-notification:latest@sha256:46dd37dd45ab7af3799a2f9f900a0fb71a1d703f7069868c87585820e9f13cb3
