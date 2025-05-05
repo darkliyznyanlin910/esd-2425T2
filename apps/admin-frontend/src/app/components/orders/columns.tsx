@@ -8,7 +8,7 @@ import { Button } from "@repo/ui/button";
 
 export const columns: ColumnDef<Order>[] = [
   {
-    accessorKey: "id",
+    accessorKey: "displayId",
     header: "ID",
   },
   {
