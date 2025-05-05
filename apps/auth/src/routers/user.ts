@@ -96,6 +96,9 @@ const userRouter = new OpenAPIHono()
           bearer: {
             tokens: [env.INTERNAL_COMMUNICATION_SECRET],
           },
+          authBased: {
+            allowedRoles: ["driver"],
+          },
         }),
       ],
       responses: {
