@@ -39,7 +39,7 @@ export function DataTable<TData, TValue>({
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [filterValue, setFilterValue] = useState("");
-  const [selectedColumn, setSelectedColumn] = useState("id");
+  const [selectedColumn, setSelectedColumn] = useState("displayId");
 
   const table = useReactTable({
     data,
@@ -82,7 +82,7 @@ export function DataTable<TData, TValue>({
 
           <Input
             placeholder={`Search by ${
-              selectedColumn === "id" ? "Order ID" : "Customer ID"
+              selectedColumn === "displayId" ? "Order ID" : "Customer ID"
             }`}
             value={filterValue}
             onChange={handleFilterChange}
