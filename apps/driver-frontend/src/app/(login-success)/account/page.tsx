@@ -63,11 +63,16 @@ export default function Account() {
       const driverResponse = await fetch(
         `${getServiceBaseUrl("driver")}/driver/${session?.user.id}`,
         {
+          method: "GET",
           credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
         },
       );
 
       if (!driverResponse.ok) {
+        console.error(`Failed to fetch driver data: ${driverResponse.status}`);
         throw new Error(
           `Failed to fetch driver data: ${driverResponse.status}`,
         );
@@ -89,6 +94,7 @@ export default function Account() {
       );
 
       if (!userResponse.ok) {
+        console.error(`Failed to fetch user data: ${userResponse.status}`);
         throw new Error(`Failed to fetch user data: ${userResponse.status}`);
       }
 
