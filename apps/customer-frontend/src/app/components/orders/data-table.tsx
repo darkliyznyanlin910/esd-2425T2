@@ -87,18 +87,11 @@ export function DataTable<TData, TValue>({
             className="h-8 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm"
           >
             <option value="displayId">Order ID</option>
-            <option value="userId">Customer ID</option>
             <option value="orderDetails">Order Details</option>
           </select>
           <Input
             placeholder={`Search by ${
-              selectedColumn === "displayId"
-                ? "Order ID"
-                : selectedColumn === "userId"
-                  ? "Customer ID"
-                  : selectedColumn === "orderDetails"
-                    ? "Order Details"
-                    : "Status"
+              selectedColumn === "displayId" ? "Order ID" : "Order Details"
             }`}
             value={filterValue}
             onChange={handleFilterChange}
