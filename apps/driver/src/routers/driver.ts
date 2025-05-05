@@ -60,6 +60,13 @@ const driverRouter = new OpenAPIHono<HonoExtension>()
     createRoute({
       method: "get",
       path: "/:id",
+      middleware: [
+        authMiddleware({
+          authBased: {
+            allowedRoles: ["driver", "admin"],
+          },
+        }),
+      ] as const,
       description: "Get driver by id",
       request: { params: z.object({ id: z.string() }) },
       responses: {
