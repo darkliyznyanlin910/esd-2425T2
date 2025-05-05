@@ -54,7 +54,7 @@ export default function AuthPage() {
     }
 
     if (session.user.role === "admin") {
-      router.push("/order");
+      router.push("/dashboard");
     } else {
       setError("Unauthorized access.");
       console.log(error);
