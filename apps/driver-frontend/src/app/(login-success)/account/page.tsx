@@ -80,7 +80,11 @@ export default function Account() {
       const userResponse = await fetch(
         `${getServiceBaseUrl("auth")}/user/${session?.user.id}`,
         {
+          method: "GET",
           credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
         },
       );
 
