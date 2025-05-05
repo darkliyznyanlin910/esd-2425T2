@@ -23,7 +23,7 @@ import { SelectionTable } from "./driver-selection";
 
 export const columns: ColumnDef<Order>[] = [
   {
-    accessorKey: "id",
+    accessorKey: "displayId",
     header: "ID",
   },
   {
