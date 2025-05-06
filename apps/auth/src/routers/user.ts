@@ -145,13 +145,6 @@ const userRouter = new OpenAPIHono()
           },
         },
       },
-      middleware: [
-        authMiddleware({
-          bearer: {
-            tokens: [env.INTERNAL_COMMUNICATION_SECRET],
-          },
-        }),
-      ],
       responses: {
         200: {
           content: {
