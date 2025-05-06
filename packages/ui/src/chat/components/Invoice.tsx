@@ -37,8 +37,7 @@ export const Invoice: React.FC<InvoiceProps> = ({ invocation }) => {
         <Button
           variant="outline"
           size="sm"
-          // @ts-ignore
-          onClick={() => window.open(result.url ?? result.invoiceUrl, "_blank")}
+          onClick={() => window.open(result.url, "_blank")}
         >
           Download
         </Button>
