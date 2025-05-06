@@ -144,15 +144,13 @@ export const toolFunctionMap: ToolFunctionMap = {
       credentials: "include",
     });
     const data = (await res.json()) as {
-      orderId: string;
-      amount: number;
-      invoiceUrl: string;
+      invoice: { orderId: string; amount: number; invoiceUrl: string };
     };
     return {
       orderId,
       displayId: displayId,
-      amount: data.amount,
-      url: data.invoiceUrl,
+      amount: data.invoice.amount,
+      url: data.invoice.invoiceUrl,
     };
   },
 };
