@@ -71,5 +71,4 @@ spec:
             key: AZURE_STORAGE_KEY
         wal:
           maxParallel: 8
-  monitoring:
-    enablePodMonitor: true
+
