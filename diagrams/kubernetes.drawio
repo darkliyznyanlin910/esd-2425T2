@@ -1,6 +1,6 @@
 <mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36" version="26.2.14">
   <diagram id="-KNKdC8MD2lTnJiW_7VM" name="Page-1">
-    <mxGraphModel dx="3785" dy="328" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3300" pageHeight="4681" math="0" shadow="0">
+    <mxGraphModel dx="4866" dy="1060" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3300" pageHeight="4681" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="IT4rPf45ZYRlz2UmnC27-86" value="background" style="locked=1;" parent="0" />
@@ -518,6 +518,9 @@
         </mxCell>
         <mxCell id="sQu_het5nIy1YkSfT0uD-12" value="Resend" style="shape=image;verticalLabelPosition=bottom;labelBackgroundColor=default;verticalAlign=top;aspect=fixed;imageAspect=0;editableCssRules=.*;image=data:image/svg+xml,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9IjE4NiAxNTQgMjQ0IDI5My40NzEwMDgzMDA3ODEyNSIgaGVpZ2h0PSIyOTMuNDcxMDA4MzAwNzgxMjUiIHdpZHRoPSIyNDQiPiYjeGE7PHBhdGggZmlsbD0iYmxhY2siIGQ9Ik0xODYgNDQ3LjQ3MVYxNTRIMzE4LjA2MkMzMzYuNzg4IDE1NCAzNTMuNjk3IDE1OC4wNTMgMzY4Ljc5IDE2Ni4xNThDMzg0LjE2MyAxNzQuMjYzIDM5Ni4xODEgMTg1LjQ0MyA0MDQuODQ1IDE5OS42OThDNDEzLjUxIDIxMy42NzIgNDE3Ljg0MiAyMjkuNjA0IDQxNy44NDIgMjQ3LjQ5MUM0MTcuODQyIDI2NS45MzggNDEzLjUxIDI4Mi41NjggNDA0Ljg0NSAyOTcuMzgxQzM5Ni4xODEgMzExLjkxNSAzODQuMzAyIDMyMy4zNzUgMzY5LjIwOSAzMzEuNzU5QzM1NC4xMTcgMzQwLjE0NCAzMzcuMDY3IDM0NC4zMzcgMzE4LjA2MiAzNDQuMzM3SDI1My45MTdWNDQ3LjQ3MUgxODZaTTM0OC42NjcgNDQ3LjQ3MUwyNzQuMDQxIDMxNC45OUwzNDYuOTkgMzA0LjUwOUw0MzAgNDQ3LjQ3MUgzNDguNjY3Wk0yNTMuOTE3IDI4OS44MzVIMzExLjc3M0MzMTkuMDQgMjg5LjgzNSAzMjUuMzI5IDI4OC4yOTggMzMwLjYzOSAyODUuMjIzQzMzNi4yMjkgMjgxLjg2OSAzNDAuNDIxIDI3Ny4yNTggMzQzLjIxNiAyNzEuMzg4QzM0Ni4yOTEgMjY1LjUxOSAzNDcuODI4IDI1OC44MTEgMzQ3LjgyOCAyNTEuMjY1QzM0Ny44MjggMjQzLjcxOCAzNDYuMTUxIDIzNy4xNSAzNDIuNzk3IDIzMS41NkMzMzkuNDQzIDIyNS42OTEgMzM0LjU1MiAyMjEuMjE5IDMyOC4xMjQgMjE4LjE0NEMzMjEuOTc1IDIxNS4wNyAzMTQuNDI4IDIxMy41MzMgMzA1LjQ4NCAyMTMuNTMzSDI1My45MTdWMjg5LjgzNVoiLz4mI3hhOzwvc3ZnPg==;" vertex="1" parent="1">
           <mxGeometry x="328.34000000000003" y="880" width="33.31" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="sQu_het5nIy1YkSfT0uD-13" value="Azure&lt;div&gt;Container&lt;/div&gt;&lt;div&gt;Registry&lt;/div&gt;" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/containers/Container_Registries.svg;" vertex="1" parent="1">
+          <mxGeometry x="1310" y="437.9" width="52.5" height="47.1" as="geometry" />
         </mxCell>
         <mxCell id="IT4rPf45ZYRlz2UmnC27-45" value="groups" style="" parent="0" />
         <mxCell id="IT4rPf45ZYRlz2UmnC27-153" value="cloud native postgres" style="fillColor=none;strokeColor=#5A6C86;dashed=1;verticalAlign=top;fontStyle=0;fontColor=#5A6C86;whiteSpace=wrap;html=1;" parent="IT4rPf45ZYRlz2UmnC27-45" vertex="1">
